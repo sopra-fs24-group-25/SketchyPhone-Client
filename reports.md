@@ -20,3 +20,7 @@
 
 Victor Cruz da Silva
 - Created GameRoom Entity and the according service, controller and repository files. Added endpoint for room creation according to our REST specs. #64
+
+Noah Isaak
+- Created GameRoom UI and respective .scss and basic functionalities to fetch from server. #26
+-Created UserPreview component, UserOverviewContainer component and various smaller helper components to show users and admin of current game room. #27
