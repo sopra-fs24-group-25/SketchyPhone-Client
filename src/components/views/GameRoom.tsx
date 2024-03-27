@@ -10,29 +10,40 @@ import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import { User } from "types";
 
+
 const GameRoom = () => {
 
-    return (
-        <BaseContainer>
-        <div className = "gameroom header">
-            <BurgerMenu></BurgerMenu>
-        </div>
-        <div className = "gameroom container">
-            <BackButton></BackButton>
-            <div className ="gameroom buttons-container">
-                <Button
-                width = "200%">
-                    New Game
-                </Button>
-                <Button
-                width = "200%">
-                    Join Game
-                </Button>
-            </div>
-            <img src = {require('../../chubs-hero-4.png')}/>
-        </div>
-        </BaseContainer>
+    const navigate = useNavigate();
 
+    const open_menu = (): void => {
+        //open menu with profile, settings, and logout
+    };
+
+    const logout = (): void => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
+
+    return ( //temporary logout with back button, needs to be in burger menu later
+        <BaseContainer>
+            <div className = "gameroom header">
+                <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+            </div>
+            <div className = "gameroom container">
+                <BackButton onClick={() => logout()}></BackButton>
+                <div className ="gameroom buttons-container">
+                    <Button
+                        width = "200%">
+                        New Game
+                    </Button>
+                    <Button
+                        width = "200%">
+                        Join Game
+                    </Button>
+                </div>
+                <img src = {require("../../chubs-hero-4.png")}/>
+            </div>
+        </BaseContainer>
     );
 }
 
