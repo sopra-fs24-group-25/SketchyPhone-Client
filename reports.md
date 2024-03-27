@@ -18,4 +18,5 @@
 
 ## 22.3 - 29.3
 
-...
+Victor Cruz da Silva
+- Created GameRoom Entity and the according service, controller and repository files. Added endpoint for room creation according to our REST specs. #64
