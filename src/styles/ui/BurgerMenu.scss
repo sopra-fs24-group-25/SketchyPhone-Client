@@ -1,0 +1,20 @@
+@import "../theme";
+
+.burgermenu{
+    padding: 6px;
+    height: 50px;
+    width: 50px;
+    border: none;
+    border-radius: $borderRadius;
+    cursor: pointer;
+    opacity: 1;
+    background-color: #cccccc00;
+    background-image: url("../../burger-menu-svgrepo-com.svg");
+    background-position: center;
+    background-size:cover;
+    transition: all 0.3s ease;
+
+    &:hover{
+        transform: scale(1.1);
+    }
+}
