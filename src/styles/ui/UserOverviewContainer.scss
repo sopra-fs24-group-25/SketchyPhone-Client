@@ -1,24 +1,36 @@
 @import "../theme";
 
 .usercontainer {
-    max-width: 400px;
-    max-height: 400px;
+    width: 600px;
+    height: 300px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     background-color: rgba(255, 255, 255, 0.308);
     padding: 10px;
-    border-radius: 5%;
-    justify-content: space-around;
+    border-radius: 5%/10%;
+    justify-content: flex-start;
     overflow-y: scroll;
 
     @include scrollbar;
 
-    &.user{
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        background-color: transparent;
 
-    }
 }
+.user{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    background-color: transparent;
+    height: 70px;
+    width: 250px;
+    margin-left:auto;
+    overflow: hidden;
+}   
+.admin{
+    color:blue;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+

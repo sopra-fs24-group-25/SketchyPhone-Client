@@ -4,7 +4,7 @@ import "styles/ui/UserPreview.scss"
 
 export const UserPreview = props => (
     <img className={`userpreview ${props.className}`}
-        src={require('./../../user-svgrepo-com.svg').default} >
+        src={require('./../../icons/user-svgrepo-com.svg').default} >
 
     </img>
 );

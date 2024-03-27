@@ -10,7 +10,7 @@ import { UserPreview } from "components/ui/UserPreview";
 import { UserOverviewContainer } from "components/ui/UserOverviewContainer";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
-import { User } from "models/User";
+import  User from "models/User";
 import GameRoomDetails from "models/GameRoomDetails";
 import Game from "./Game";
 
@@ -18,11 +18,10 @@ import Game from "./Game";
 const GameRoom = () => {
 
     const navigate = useNavigate();
-    const [name, setName] = useState<string>("noah");
-    const [username, setUsername] = useState<string>("crisaak");
+    const [name, setName] = useState<string>("peter");
+    const [username, setUsername] = useState<string>("lustig");
     const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
-    const users = Array.from(Array(10).keys());
-
+    const [users, setUsers] = useState<[]>(Array(0));
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
     };
@@ -34,10 +33,21 @@ const GameRoom = () => {
 
     const createGame = async () => {
         try {
-            const requestBody = JSON.stringify({ username, name });
-            const response = await api.post("/gameRooms/create", requestBody);
+            // const requestBody = JSON.stringify({ username, name });
+            // const response = await api.post("/gameRooms/create", requestBody);
+            setUsers(Array(
+                new User({username: "player3000"}),
+                new User({username: "leckerschmecker"}),
+                new User({username: "soprauser"}),
+                new User({username: "woopwoop"}),
+                new User({username: "1234123"}),
+                new User({username: "coolcool"}),
+                new User({username: "adminUser", isAdmin: true}),
+                new User({username: "1234123"}),
+                new User({username: "coolcool"}),
+                new User({username: "lastuser"})));
 
-            console.log(response.data);
+                console.log(users);
         }
         catch (error) {
             alert(
@@ -50,29 +60,54 @@ const GameRoom = () => {
 
     }
 
+    function roomChoice() {
+        return (
+            <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+                </div>
+                <div className="gameroom container">
+                    <BackButton onClick={() => logout()}></BackButton>
+                    <div className="gameroom buttons-container">
+                        <Button
+                            width="80%"
+                            onClick={() => createGame()}>
+                            New Game
+                        </Button>
+                        <Button
+                            width="80%">
+                            Join Game
+                        </Button>
+                    </div>
+                    <div className="mascotte">
+                        <img src={require("../../icons/ChubbyGuy.png")} />
+                    </div>
+                </div>
+            </BaseContainer>);
+    }
+
+    function overview() {
+        return (
+            <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+                </div>
+                <div className="gameroom container">
+                    <BackButton onClick={() => logout()}></BackButton>
+
+                    <UserOverviewContainer
+                        userList={users}
+                        showUserNames={true}></UserOverviewContainer>
+                </div>
+
+            </BaseContainer>
+
+        );
+    }
+
     return ( //temporary logout with back button, needs to be in burger menu later
-        <BaseContainer>
-            <div className="gameroom header">
-                <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
-            </div>
-            <div className="gameroom container">
-                <BackButton onClick={() => logout()}></BackButton>
-                <div className="gameroom buttons-container">
-                    <Button
-                        width="80%"
-                        onClick={() => createGame()}>
-                        New Game
-                    </Button>
-                    <Button
-                        width="80%">
-                        Join Game
-                    </Button>
-                </div>
-                <div className="mascotte">
-                    <img src={require("../../icons/ChubbyGuy.png")} />
-                </div>
-            </div>
-        </BaseContainer>
+        users.length !== 0 ? overview() : roomChoice()
+
     );
 }
 
