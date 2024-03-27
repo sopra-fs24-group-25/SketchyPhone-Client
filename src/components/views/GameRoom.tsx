@@ -66,7 +66,7 @@ const GameRoom = () => {
                     </Button>
                 </div>
                 <div className="mascotte">
-                    <img src={require("../../chubs-hero-4.png")} />
+                    <img src={require("../../icons/ChubbyGuy.png")} />
                 </div>
             </div>
         </BaseContainer>
