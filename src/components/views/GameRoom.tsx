@@ -9,11 +9,16 @@ import { BurgerMenu } from "components/ui/BurgerMenu";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import { User } from "types";
+import GameRoomDetails from "models/GameRoomDetails";
+import Game from "./Game";
 
 
 const GameRoom = () => {
 
     const navigate = useNavigate();
+    const [name, setName] = useState<string>("noah");
+    const [username, setUsername] = useState<string>("crisaak");
+    const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -24,24 +29,45 @@ const GameRoom = () => {
         navigate("/login");
     };
 
+    const createGame = async () => {
+        try {
+            const requestBody = JSON.stringify({username, name});
+            const response = await api.post("/gameRooms/create", requestBody);
+
+            console.log(response.data);
+        }
+        catch (error) {
+            alert(
+                `Something went wrong during the login: \n${handleError(error)}`
+            );
+        }
+    }
+
+    const joinGame = (): void => {
+
+    }
+
     return ( //temporary logout with back button, needs to be in burger menu later
         <BaseContainer>
-            <div className = "gameroom header">
+            <div className="gameroom header">
                 <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
             </div>
-            <div className = "gameroom container">
+            <div className="gameroom container">
                 <BackButton onClick={() => logout()}></BackButton>
-                <div className ="gameroom buttons-container">
+                <div className="gameroom buttons-container">
                     <Button
-                        width = "200%">
+                        width="80%"
+                        onClick={() => createGame()}>
                         New Game
                     </Button>
                     <Button
-                        width = "200%">
+                        width="80%">
                         Join Game
                     </Button>
                 </div>
-                <img src = {require("../../chubs-hero-4.png")}/>
+                <div className="mascotte">
+                    <img src={require("../../chubs-hero-4.png")} />
+                </div>
             </div>
         </BaseContainer>
     );

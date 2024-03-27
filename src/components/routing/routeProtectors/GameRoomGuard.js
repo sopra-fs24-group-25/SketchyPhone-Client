@@ -12,12 +12,13 @@ import PropTypes from "prop-types";
  * @param props
  */
 export const GameRoomGuard = () => {
-  if (localStorage.getItem("token")) {
+  // if (localStorage.getItem("token")) {
     
-    return <Outlet />;
-  }
+  //   return <Outlet />;
+  // }
   
-  return <Navigate to="/login" replace />;
+  // return <Navigate to="/login" replace />;
+  return <Outlet/>;
 };
 
 GameRoomGuard.propTypes = {

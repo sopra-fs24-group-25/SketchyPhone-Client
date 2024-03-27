@@ -23,7 +23,8 @@ $button-color: #E493B3;
 $button-text-color: black;
 /* some constants */
 
-$DESKTOP_WIDTH: 1160px;
+$DESKTOP_WIDTH: 100vw;
+$DESKTOP_HEIGHT: 100vh;
 $SMALL_LAPTOPS_WIDTH: 970px;
 $TABLETS_WIDTH: 750px;
 $SMALL_WIDTH: 768px;

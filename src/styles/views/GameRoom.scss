@@ -4,14 +4,20 @@
     &.buttons-container{
         display: flex;
         flex-direction: column;
-        margin: auto;
-        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 5px;
+        gap: 20px;
+        width: 20%;
     }
 
     &.container{
         display: flex;
         flex-direction: row;
+        justify-content:space-around;
         align-items: center;
+        width: $DESKTOP_WIDTH;
+        gap: 5px;
     }
 
     &.header {
