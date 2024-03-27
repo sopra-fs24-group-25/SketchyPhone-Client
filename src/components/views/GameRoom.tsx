@@ -51,29 +51,28 @@ const GameRoom = () => {
     }
 
     return ( //temporary logout with back button, needs to be in burger menu later
-    <BaseContainer>
-        <div className="gameroom header">
-            <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
-        </div>
-        <div className="gameroom container">
-            <BackButton onClick={() => logout()}></BackButton>
-            <div className="gameroom buttons-container">
-                <Button
-                    width="80%"
-                    onClick={() => createGame()}>
-                    New Game
-                </Button>
-                <Button
-                    width="80%">
-                    Join Game
-                </Button>
+        <BaseContainer>
+            <div className="gameroom header">
+                <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
             </div>
-            <div className="mascotte">
-                <img src={require("../../chubs-hero-4.png")} />
+            <div className="gameroom container">
+                <BackButton onClick={() => logout()}></BackButton>
+                <div className="gameroom buttons-container">
+                    <Button
+                        width="80%"
+                        onClick={() => createGame()}>
+                        New Game
+                    </Button>
+                    <Button
+                        width="80%">
+                        Join Game
+                    </Button>
+                </div>
+                <div className="mascotte">
+                    <img src={require("../../icons/ChubbyGuy.png")} />
+                </div>
             </div>
-
-        </div>
-    </BaseContainer>
+        </BaseContainer>
     );
 }
 
