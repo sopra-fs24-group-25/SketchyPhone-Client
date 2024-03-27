@@ -1,0 +1,24 @@
+@import "../theme";
+
+.usercontainer {
+    max-width: 400px;
+    max-height: 400px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: rgba(255, 255, 255, 0.308);
+    padding: 10px;
+    border-radius: 5%;
+    justify-content: space-around;
+    overflow-y: scroll;
+
+    @include scrollbar;
+
+    &.user{
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: transparent;
+
+    }
+}

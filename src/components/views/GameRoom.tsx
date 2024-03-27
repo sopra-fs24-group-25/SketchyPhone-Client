@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
+import { UserPreview } from "components/ui/UserPreview";
+import { UserOverviewContainer } from "components/ui/UserOverviewContainer";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
-import { User } from "types";
+import { User } from "models/User";
 import GameRoomDetails from "models/GameRoomDetails";
 import Game from "./Game";
 
@@ -19,6 +21,7 @@ const GameRoom = () => {
     const [name, setName] = useState<string>("noah");
     const [username, setUsername] = useState<string>("crisaak");
     const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
+    const users = Array.from(Array(10).keys());
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -31,7 +34,7 @@ const GameRoom = () => {
 
     const createGame = async () => {
         try {
-            const requestBody = JSON.stringify({username, name});
+            const requestBody = JSON.stringify({ username, name });
             const response = await api.post("/gameRooms/create", requestBody);
 
             console.log(response.data);
@@ -48,28 +51,29 @@ const GameRoom = () => {
     }
 
     return ( //temporary logout with back button, needs to be in burger menu later
-        <BaseContainer>
-            <div className="gameroom header">
-                <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+    <BaseContainer>
+        <div className="gameroom header">
+            <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+        </div>
+        <div className="gameroom container">
+            <BackButton onClick={() => logout()}></BackButton>
+            <div className="gameroom buttons-container">
+                <Button
+                    width="80%"
+                    onClick={() => createGame()}>
+                    New Game
+                </Button>
+                <Button
+                    width="80%">
+                    Join Game
+                </Button>
             </div>
-            <div className="gameroom container">
-                <BackButton onClick={() => logout()}></BackButton>
-                <div className="gameroom buttons-container">
-                    <Button
-                        width="80%"
-                        onClick={() => createGame()}>
-                        New Game
-                    </Button>
-                    <Button
-                        width="80%">
-                        Join Game
-                    </Button>
-                </div>
-                <div className="mascotte">
-                    <img src={require("../../chubs-hero-4.png")} />
-                </div>
+            <div className="mascotte">
+                <img src={require("../../chubs-hero-4.png")} />
             </div>
-        </BaseContainer>
+
+        </div>
+    </BaseContainer>
     );
 }
 
