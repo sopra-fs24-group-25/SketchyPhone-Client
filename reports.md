@@ -29,3 +29,8 @@ Noah Isaak
 Noé Matumona
 - Created Homepage UI with Guide and sign in buttons. Not connected correctly yet. Temporary link /start, should be homepage in future.
 - Started with creating join game UI and functionality client-side #5
+
+Xindi Liu
+- The server will respond to a user with the game room token after receiving a join request with a valid game room pin. #40
+- After a game session is over, the server will change the respective game room's availability to "available" #41
+- If the game room is full and a join request is received, a response is returned explaining the reason a user can't join #42
