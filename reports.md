@@ -24,6 +24,7 @@ Victor Cruz da Silva
 Noah Isaak
 - Created GameRoom UI and respective .scss and basic functionalities to fetch from server. #26
 - Created UserPreview component, UserOverviewContainer component and various smaller helper components to show users and admin of current game room. #27
+- Show who is admin in the UserOverviewContainer #28
 
 Noé Matumona
 - Created Homepage UI with Guide and sign in buttons. Not connected correctly yet. Temporary link /start, should be homepage in future.
