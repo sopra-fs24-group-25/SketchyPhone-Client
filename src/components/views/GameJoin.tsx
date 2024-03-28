@@ -13,12 +13,12 @@ import GameRoomDetails from "models/GameRoomDetails";
 import Game from "./Game";
 
 
-const GameRoom = () => {
+const GameJoin = () => {
 
     const navigate = useNavigate();
     const [name, setName] = useState<string>("noah");
     const [username, setUsername] = useState<string>("crisaak");
-    const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
+    const [gameRoom, setGameRoom] = useState<typeof GameJoin>(null);
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -29,22 +29,21 @@ const GameRoom = () => {
         navigate("/login");
     };
 
-    const createGame = async () => {
+    
+
+    const joinGame = (): void => {
+        console.log("hl");
         try {
             const requestBody = JSON.stringify({username, name});
-            const response = await api.post("/gameRooms/create", requestBody);
+            //const response = await api.post("/gameRooms/join", requestBody); // fix request
 
-            console.log(response.data);
+            //console.log(response.data);
         }
         catch (error) {
             alert(
                 `Something went wrong during the login: \n${handleError(error)}`
             );
         }
-    }
-
-    const joinGame = (): void => {
-        navigate("/join")
     }
 
     return ( //temporary logout with back button, needs to be in burger menu later
@@ -55,11 +54,10 @@ const GameRoom = () => {
             <div className="gameroom container">
                 <BackButton onClick={() => logout()}></BackButton>
                 <div className="gameroom buttons-container">
-                    <Button
-                        width="80%"
-                        onClick={() => createGame()}>
-                        New Game
-                    </Button>
+                    <div
+                        // textfield to come
+                    >
+                    </div>
                     <Button
                         width="80%"
                         onClick={() => joinGame()}>
@@ -74,4 +72,4 @@ const GameRoom = () => {
     );
 }
 
-export default GameRoom;
+export default GameJoin;

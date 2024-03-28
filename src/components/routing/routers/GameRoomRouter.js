@@ -1,6 +1,7 @@
 import React from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
 import GameRoom from "../../views/GameRoom";
+import GameJoin from "../../views/GameJoin";
 import PropTypes from "prop-types";
 
 const GameRoomRouter = () => {
@@ -9,6 +10,8 @@ const GameRoomRouter = () => {
       <Routes>
 
         <Route path="" element={<GameRoom />} />
+
+        <Route path="join" element={<GameJoin />} />
 
         <Route path="dashboard" element={<GameRoom />} />
 
