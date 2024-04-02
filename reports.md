@@ -34,3 +34,11 @@ Xindi Liu
 - The server will respond to a user with the game room token after receiving a join request with a valid game room pin. #40
 - After a game session is over, the server will change the respective game room's availability to "available" #41
 - If the game room is full and a join request is received, a response is returned explaining the reason a user can't join #42
+
+## 01.4 - 07.4
+
+Xindi Liu
+- Create method is service class to save a text prompt with the data from the http request #51
+- Create mapping in controller to post a text prompt #52
+- Sanitize text prompt #53
+
