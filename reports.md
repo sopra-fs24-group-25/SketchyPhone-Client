@@ -46,4 +46,5 @@ Victor Cruz da Silva
 - Added SecureRandom functionality to create a secure six-digit game pin. #65
 - Added Settings entity and debugged game entity to show the list of users correctly. #65, #68
 - Added put mapping to update and get mapping to retrieve the current settings, and added the functionality in the game service. #68, #69
+- Corrected code for a user to join a game room, create game session and get all game sessions of a room, save text prompt on server. #40, #42, #51, #52, #53
 
