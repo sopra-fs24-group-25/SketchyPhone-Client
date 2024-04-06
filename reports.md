@@ -42,3 +42,8 @@ Xindi Liu
 - Create mapping in controller to post a text prompt #52
 - Sanitize text prompt #53
 
+Victor Cruz da Silva
+- Added SecureRandom functionality to create a secure six-digit game pin. #65
+- Added Settings entity and debugged game entity to show the list of users correctly. #65, #68
+- Added put mapping to update and get mapping to retrieve the current settings, and added the functionality in the game service. #68, #69
+
