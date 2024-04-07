@@ -1,6 +1,6 @@
 # M2
 
-## 14.3 - 21.3
+## 14.03 - 21.03
 
 **Group Member 1**
 
@@ -16,7 +16,7 @@
 - The third thing you did. [Link to task](https://www.example.com)
 - ...
 
-## 22.3 - 29.3
+## 22.03 - 29.03
 
 Victor Cruz da Silva
 - Created GameRoom Entity and the according service, controller and repository files. Added endpoint for room creation according to our REST specs. #64
@@ -35,7 +35,7 @@ Xindi Liu
 - After a game session is over, the server will change the respective game room's availability to "available" #41
 - If the game room is full and a join request is received, a response is returned explaining the reason a user can't join #42
 
-## 01.4 - 07.4
+## 01.04 - 07.04
 
 Xindi Liu
 - Create method is service class to save a text prompt with the data from the http request #51
@@ -54,3 +54,8 @@ Noé Matumona
 - Made pictures and text unavailable for dragging and selecting respectively
 - Changed main.yml file to avoid triggering actions when editing reports.md
 
+## 08.04 - 14.04
+
+Noé Matumona
+- Implemented pin invalid msg for Join Game #6
+- further cleanup for #5, #7
