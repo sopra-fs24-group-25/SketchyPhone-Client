@@ -6,31 +6,31 @@ import GameSettings from "../../views/GameSettings";
 import PropTypes from "prop-types";
 
 const GameRoomRouter = () => {
-  return (
-    <div style={{display: "flex", flexDirection: "column"}}>
-      <Routes>
+    return (
+        <div style={{display: "flex", flexDirection: "column"}}>
+            <Routes>
 
-        <Route path="" element={<GameRoom />} />
+                <Route path="" element={<GameRoom />} />
 
-        <Route path="join" element={<GameJoin />} />
+                <Route path="join" element={<GameJoin />} />
 
-        <Route path="dashboard" element={<GameRoom />} />
+                <Route path="dashboard" element={<GameRoom />} />
 
-        <Route path="gamesettings" element={<GameSettings />} />
+                <Route path="gamesettings" element={<GameSettings />} />
 
-        <Route path="*" element={<Navigate to="dashboard" replace />} />
+                <Route path="*" element={<Navigate to="dashboard" replace />} />
 
-      </Routes>
-   
-    </div>
-  );
+            </Routes>
+    
+        </div>
+    );
 };
 /*
 * Don't forget to export your component!
  */
 
 GameRoomRouter.propTypes = {
-  base: PropTypes.string
+    base: PropTypes.string
 }
 
 export default GameRoomRouter;

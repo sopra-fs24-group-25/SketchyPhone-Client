@@ -8,14 +8,14 @@ import PropTypes from "prop-types";
  * instead of 'export default' at the end of the file.
  */
 export const StartGuard = () => {
-  if (!localStorage.getItem("token")) {
+    if (!localStorage.getItem("token")) {
+        
+        return <Outlet />;
+    }
     
-    return <Outlet />;
-  }
-  
-  return <Navigate to="/GameRoom" replace />;
+    return <Navigate to="/GameRoom" replace />;
 };
 
 StartGuard.propTypes = {
-  children: PropTypes.node
+    children: PropTypes.node
 }
