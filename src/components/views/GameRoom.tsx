@@ -10,6 +10,7 @@ import { UserPreview } from "components/ui/UserPreview";
 import { UserOverviewContainer } from "components/ui/UserOverviewContainer";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
+import "styles/ui/ChubbyGuy.scss";
 import  User from "models/User";
 import GameRoomDetails from "models/GameRoomDetails";
 import Game from "./Game";
@@ -28,7 +29,7 @@ const GameRoom = () => {
 
     const logout = (): void => {
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
     };
 
     const createGame = async () => {
@@ -47,7 +48,7 @@ const GameRoom = () => {
                 new User({username: "coolcool"}),
                 new User({username: "lastuser"})));
 
-                console.log(users);
+            console.log(users);
         }
         catch (error) {
             alert(
@@ -80,8 +81,8 @@ const GameRoom = () => {
                             Join Game
                         </Button>
                     </div>
-                    <div className="mascotte">
-                        <img src={require("../../icons/ChubbyGuy.png")} />
+                    <div className="mascot">
+                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false"/>
                     </div>
                 </div>
             </BaseContainer>);

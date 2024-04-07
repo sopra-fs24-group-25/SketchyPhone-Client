@@ -19,7 +19,7 @@ const FormField = (props) => {
             <label className="login label">{props.label}</label>
             <input
                 className="login input"
-                placeholder="enter here.."
+                placeholder={props.placeholder}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
             />
@@ -29,17 +29,19 @@ const FormField = (props) => {
 
 FormField.propTypes = {
     label: PropTypes.string,
+    placeholder: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
 };
 
 const Login = () => {
     const navigate = useNavigate();
-    const [name, setName] = useState<string>(null);
-    const [username, setUsername] = useState<string>(null);
+    const [password, setPassword] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
 
     const doLogin = async () => {
         try {
+            const name = password // temporary to get it to work
             const requestBody = JSON.stringify({ username, name });
             const response = await api.post("/users", requestBody);
 
@@ -64,17 +66,19 @@ const Login = () => {
                 <div className="login form">
                     <FormField
                         label="Username"
+                        placeholder="Username"
                         value={username}
                         onChange={(un: string) => setUsername(un)}
                     />
                     <FormField
-                        label="Name"
-                        value={name}
-                        onChange={(n) => setName(n)}
+                        label="Password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(p: string) => setPassword(p)}
                     />
                     <div className="login button-container">
                         <Button
-                            disabled={!username || !name}
+                            disabled={!username || !password}
                             width="100%"
                             onClick={() => doLogin()}
                         >

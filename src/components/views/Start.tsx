@@ -7,7 +7,7 @@ import { GuideButton } from "components/ui/GuideButton";
 import "styles/views/Start.scss";
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
-import Guide from "./Guide.json"
+import Guide from "./Guide.json";
 import Header from "./Header";
 
 /*
@@ -22,7 +22,7 @@ const GuideField = (props) => {
         <div className="start guide">
             <h2>Quick Guide to the Game</h2>
             <h1>{props.index}.</h1>
-            <h2 style={{"text-align": "center"}}>{Guide[`${props.index}`]}</h2>
+            <h2 style={{"textAlign": "center"}}>{Guide[`${props.index}`]}</h2>
         </div>
     );
 };

@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 import PropTypes from "prop-types";
-import { UserPreview } from '../ui/UserPreview';
+import { UserPreview } from "../ui/UserPreview";
 import "styles/ui/UserOverviewContainer.scss"
 
 export const UserOverviewContainer = props => (

@@ -10,6 +10,7 @@
     flex-direction: column;
   }
   &.subcontainer {
+    user-select: none;
     display: flex;
     margin-top: 2em;
     min-height: 400px;
@@ -53,6 +54,7 @@
     margin-top: 2em;
   }
   &.sign-in-link {
+    user-select: none;
     display: flex;
     justify-content: center;
     margin-top: 10px;

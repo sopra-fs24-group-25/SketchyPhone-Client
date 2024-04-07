@@ -1,6 +1,6 @@
 @import "../theme";
 
-.login {
+.join {
   &.container {
     margin-top: 2em;
     min-height: 300px;
@@ -21,32 +21,35 @@
     padding-right: 37px;
     border-radius: 0.75em;
     background-color: $background;
-    transition: opacity 0.5s ease, transform 0.5s ease;
     box-shadow: $dropShadow;
   }
   &.field {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: 20em;
   }
   &.input {
-    height: 35px;
+    height: 50px;
     padding-left: 15px;
     margin-left: -4px;
     border: none;
-    border-radius: 0.75em;
+    border-radius: 2em;
     margin-bottom: 20px;
     color: $fieldTextColor;
+    font-size: x-large;
+    font-weight: 600;
   }
   &.label {
     user-select: none;
     color: $textColor;
     margin-bottom: 10px;
-    font-weight: 300;
+    font-weight: 600;
+    font-size: xx-large;
   }
   &.button-container {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     margin-top: 2em;
   }
 }
