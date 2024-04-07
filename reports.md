@@ -48,3 +48,7 @@ Victor Cruz da Silva
 - Added put mapping to update and get mapping to retrieve the current settings, and added the functionality in the game service. #68, #69
 - Corrected code for a user to join a game room, create game session and get all game sessions of a room, save text prompt on server. #40, #42, #51, #52, #53
 
+Noé Matumona
+- Implemented UI for Join Game with game PIN, nickname, and avatar #5, #7
+- Made pictures and text unavailable for dragging and selecting respectively
+
