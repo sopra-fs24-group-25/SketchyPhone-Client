@@ -51,4 +51,5 @@ Victor Cruz da Silva
 Noé Matumona
 - Implemented UI for Join Game with game PIN, nickname, and avatar #5, #7
 - Made pictures and text unavailable for dragging and selecting respectively
+- Changed main.yml file to avoid triggering actions when editing reports.md
 
