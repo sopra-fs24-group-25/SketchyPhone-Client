@@ -10,6 +10,8 @@ import {LoginGuard} from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
 import {StartGuard} from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
+import GameSettings from "../../views/GameSettings";
+
 
 /**
  * Main router of your application.
@@ -43,6 +45,8 @@ const AppRouter = () => {
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
                 </Route>
+
+                <Route path="/gamesettings" element={<GameSettings/>} />
 
                 <Route path="/" element={
                     <Navigate to="/game" replace />
