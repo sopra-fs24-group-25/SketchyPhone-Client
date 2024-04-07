@@ -61,14 +61,15 @@ const GameRoom = () => {
         navigate("/join")
     }
 
-    function roomChoice() {
+    // Function to return the basic choices for connection to a room
+    function RoomChoice() {
         return (
             <BaseContainer>
                 <div className="gameroom header">
                     <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
                 </div>
                 <div className="gameroom container">
-                    <BackButton onClick={() => logout()}></BackButton>
+                    <BackButton onClick={() => navigate("/")}></BackButton>
                     <div className="gameroom buttons-container">
                         <Button
                             width="80%"
@@ -88,14 +89,15 @@ const GameRoom = () => {
             </BaseContainer>);
     }
 
-    function overview() {
+    // Users overview
+    function Overview() {
         return (
-            <BaseContainer>
+            <BaseContainer className= "gameroom basecontainer">
                 <div className="gameroom header">
                     <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
                 </div>
                 <div className="gameroom container">
-                    <BackButton onClick={() => logout()}></BackButton>
+                    <BackButton onClick={() => logout()}></BackButton> {/* Should go back not logout */}
 
                     <UserOverviewContainer
                         userList={users}
@@ -108,7 +110,7 @@ const GameRoom = () => {
     }
 
     return ( //temporary logout with back button, needs to be in burger menu later
-        users.length !== 0 ? overview() : roomChoice()
+        users.length !== 0 ? Overview() : RoomChoice()
 
     );
 }

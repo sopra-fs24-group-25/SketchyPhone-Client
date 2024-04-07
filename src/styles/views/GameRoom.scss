@@ -8,14 +8,12 @@
         align-items: center;
         margin: 5px;
         gap: 20px;
-        width: 20%;
+        width: 30%;
     }
 
     &.container{
-        display: flex;
         flex-direction: row;
-        justify-content:space-around;
-        align-items: center;
+        @include center;
         width: $DESKTOP_WIDTH;
         gap: 5px;
     }
@@ -23,4 +21,10 @@
     &.header {
         padding-top: 10px;
     }
+
+    // &.basecontainer {
+    //     height: 100vh;
+    //     display:flex;
+    //     align-items: center;
+    // }
 }
