@@ -47,7 +47,7 @@ Victor Cruz da Silva
 - Added Settings entity and debugged game entity to show the list of users correctly. #65, #68
 - Added put mapping to update and get mapping to retrieve the current settings, and added the functionality in the game service. #68, #69
 - Corrected code for a user to join a game room, create game session and get all game sessions of a room, save text prompt on server. #40, #42, #51, #52, #53
-- Added functionality to edit user profile (mappings to create and get avatars, encode avatars correctly, added authentication of user with token in the according http requests). #78, #79, #79
+- Added functionality to edit user profile (mappings to create and get avatars, encode avatars correctly, added authentication of user with token in the according http requests). #78, #79, #80
 
 Noé Matumona
 - Implemented UI for Join Game with game PIN, nickname, and avatar #5, #7
