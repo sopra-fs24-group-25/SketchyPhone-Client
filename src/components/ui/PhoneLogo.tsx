@@ -4,6 +4,6 @@ import PhoneSVG from "../../icons/PhoneLogo.svg"
 
 export const PhoneLogo = () => {
     return(
-        <img src={PhoneSVG}/>
+        <img src={PhoneSVG} style={{userSelect:"none", "-webkit-user-drag":"none"}}/>
     );
 };

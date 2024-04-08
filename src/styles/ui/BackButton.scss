@@ -1,6 +1,6 @@
 @import "../theme";
 
-.backbutton{
+.backbutton {
     padding: 6px;
     height: 50px;
     width: 50px;
@@ -13,8 +13,13 @@
     background-position: center;
     background-size:cover;
     transition: all 0.3s ease;
-
-    &:hover{
+    user-select: none;
+    
+    &:hover {
         transform: scale(1.1);
+    }
+    &:disabled {
+        cursor: default;
+        opacity: 0;
     }
 }

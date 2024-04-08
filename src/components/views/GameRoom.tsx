@@ -102,7 +102,7 @@ const GameRoom = () => {
                     <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
                 </div>
                 <div className="gameroom container">
-                    <BackButton onClick={() => navigate("/")}></BackButton>
+                    <BackButton disabled={true} onClick={() => navigate("/")}></BackButton>
                     <div className="gameroom buttons-container">
                         <Button
                             width="80%"

@@ -20,10 +20,12 @@ const JoinField = (props) => {
         <div className="join field">
             <label className="join label">{props.label}</label>
             <input
-                className="join input"
+                className={`join input ${props.disabled ? "invalid" : ""}`}
                 placeholder={props.placeholder}
+                style={{userSelect:"none"}}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
+                disabled={props.disabled}
             />
         </div>
     );
@@ -34,6 +36,7 @@ JoinField.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 const GameJoin = () => {
@@ -43,6 +46,7 @@ const GameJoin = () => {
     const [username, setUsername] = useState<string>("crisaak");
     const [gameRoom, setGameRoom] = useState<typeof GameJoin>(null);
     const [pin, setPin] = useState<string>("");
+    const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
     const [nickname, setNickname] = useState<string>("");
     const [avatar, setAvatar] = useState<number>(null);
     const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
@@ -74,13 +78,18 @@ const GameJoin = () => {
         //avatarSelection.find(({ id }) => id === index).selected = "active";
         console.log("eojh");
     }
-    
 
     const validatePin = async () => {
         try {
             const response = true//await api.post(`/gameRooms/join/${pin}`);
-            if (response === true) { // fix later with correct server behavior
+            if (pin === "123") { // fix later with correct server behavior
                 setView("nicknameView");
+            } else {
+                setPinInvalid(true);
+                setPin("Invalid PIN!");
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                setPinInvalid(false);
+                setPin("");
             }
             //console.log(response.data);
         }
@@ -169,10 +178,11 @@ const GameJoin = () => {
                     placeholder="Game PIN"
                     value={pin}
                     onChange={(p: string) => setPin(p)}
+                    disabled={pinInvalid ? true : false}
                 ></JoinField>
                 <Button
                     disabled={pin === "" ? true : false}
-                    width="80%"
+                    width="50%"
                     onClick={() => validatePin()}>
                     Continue
                 </Button>
@@ -192,7 +202,7 @@ const GameJoin = () => {
                 ></JoinField>
                 <Button
                     disabled={nickname === "" ? true : false}
-                    width="80%"
+                    width="50%"
                     onClick={() => validateNickname()}>
                     Continue
                 </Button>
@@ -206,16 +216,15 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{"alignItems":"left"}}>
                 <div className="join label">Choose avatar</div>
                 <text className="start sign-in-link"
-                    onClick={() => drawAvatar()}
-                >or personalize your own avatar!</text>
+                    onClick={() => drawAvatar()}>
+                    or personalize your own avatar!</text>
                 <AvatarChoice
                     avatarList={avatarSelection}
-                    choose={(id) => chooseAvatar(id)}
-                >
+                    choose={(id) => chooseAvatar(id)}>
                 </AvatarChoice>
                 <Button
                     disabled={avatar === null ? true : false}
-                    width="80%"
+                    width="50%"
                     onClick={() => validateAvatar()}>
                     Continue
                 </Button>

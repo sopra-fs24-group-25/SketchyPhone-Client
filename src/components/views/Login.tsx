@@ -21,6 +21,7 @@ const FormField = (props) => {
                 className="login input"
                 placeholder={props.placeholder}
                 value={props.value}
+                type={props.type}
                 onChange={(e) => props.onChange(e.target.value)}
             />
         </div>
@@ -31,13 +32,15 @@ FormField.propTypes = {
     label: PropTypes.string,
     placeholder: PropTypes.string,
     value: PropTypes.string,
+    type: PropTypes.string,
     onChange: PropTypes.func,
 };
 
 const Login = () => {
     const navigate = useNavigate();
-    const [password, setPassword] = useState<string>("");
     const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<Boolean>(false);
 
     const doLogin = async () => {
         try {
@@ -74,8 +77,13 @@ const Login = () => {
                         label="Password"
                         placeholder="Password"
                         value={password}
+                        type={showPassword ? "text" : "password"}
                         onChange={(p: string) => setPassword(p)}
                     />
+                    <Button //change formatting in future
+                        onClick={() => setShowPassword(!showPassword)}
+                        width="10%">
+                    </Button>
                     <div className="login button-container">
                         <Button
                             disabled={!username || !password}
