@@ -6,6 +6,10 @@ export type User = {
 };
 
 export type GameRoom = {
-  name: string;
-  admin: string;
+  admin: number;
+  gameId: number;
+  gamePin: number;
+  gameToken: string;
+  status: string;
+  users: [User]
 }

@@ -4,8 +4,11 @@
 
 class GameRoomDetails {
     constructor(data = {}) {
-        this.name = null;
         this.admin = null;
+        this.gameId = null;
+        this.gamePin = null;
+        this.gameToken = null;
+        this.status = null;
         Object.assign(this, data);
     }
 }

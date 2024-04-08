@@ -16,8 +16,6 @@ const GameRoomRouter = () => {
 
         <Route path="dashboard" element={<GameRoom />} />
 
-        <Route path="gamesettings" element={<GameSettings />} />
-
         <Route path="*" element={<Navigate to="dashboard" replace />} />
 
       </Routes>
