@@ -59,3 +59,6 @@ Noé Matumona
 Noé Matumona
 - Implemented pin invalid msg for Join Game #6
 - further cleanup for #5, #7
+
+Victor Cruz da Silva
+- Added functionality and endpoint to delete a temporary user when they leave a game room, added functionality to reassign admin role when admin leaves in a lobby with multiple players. #67
