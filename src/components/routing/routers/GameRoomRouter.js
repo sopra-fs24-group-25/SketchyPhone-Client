@@ -14,7 +14,7 @@ const GameRoomRouter = () => {
 
                 <Route path="join" element={<GameJoin />} />
 
-        <Route path="dashboard" element={<GameRoom />} />
+                <Route path="dashboard" element={<GameRoom />} />
 
                 <Route path="*" element={<Navigate to="dashboard" replace />} />
 

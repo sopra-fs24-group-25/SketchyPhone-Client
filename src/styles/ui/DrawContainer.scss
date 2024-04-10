@@ -1,0 +1,17 @@
+@import "../theme";
+
+.drawContainer {
+    display: flex;
+    flex-direction: row;
+
+    &.drawCanvas{
+        background-color: white;
+    }
+
+    &.tools {
+        display: flex;
+        flex-direction: column;
+    }
+
+    
+}
