@@ -62,3 +62,9 @@ Noé Matumona
 
 Victor Cruz da Silva
 - Added functionality and endpoint to delete a temporary user when they leave a game room, added functionality to reassign admin role when admin leaves in a lobby with multiple players. #67
+  
+Noah Isaak
+- Various minor styling changes
+- Created Admin Settings page (including storing settings data on server) #33
+- Reworked .scss and functionalities for GameRoom creation views #26 #27
+- Created Canvas React Component for basic drawing features #43
