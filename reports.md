@@ -58,7 +58,12 @@ Noé Matumona
 
 Noé Matumona
 - Implemented pin invalid msg for Join Game #6
-- further cleanup for #5, #7
+- Further cleanup for #5, #7
+- Implemented waiting room #8
+- Implemented room not available view when the room has status CLOSED
+- Implemented slide menu when clicking burger menu (not everywhere yet)
+- Started implementing automatically joining the active game room when available #10
+- Started implementing storing game tokens in session storage #11
 
 Victor Cruz da Silva
 - Added functionality and endpoint to delete a temporary user when they leave a game room, added functionality to reassign admin role when admin leaves in a lobby with multiple players. #67
