@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import "styles/ui/ChubbyGuy.scss";
 import User from "models/User";
-import GameRoomDetails from "models/GameRoomDetails";
+import GameRoomDetails from "models/GameRoom";
 import Game from "./Game";
 
 

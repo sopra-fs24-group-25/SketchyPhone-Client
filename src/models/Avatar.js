@@ -7,7 +7,8 @@ class Avatar {
         this.encodedImage = null;
         this.creator = null;
         this.creationDateTime = null;
-        this.selected = "inactive";
+
+        this.selected = "inactive"; //missing in UML, maybe only important for client side
         Object.assign(this, data);
     }
 }

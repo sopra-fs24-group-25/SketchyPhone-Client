@@ -46,7 +46,7 @@ const Login = () => {
         try {
             const name = password // temporary to get it to work
             const requestBody = JSON.stringify({ username, name });
-            const response = await api.post("/users", requestBody);
+            const response = await api.post("/users", requestBody); //will change in future: post /login
 
             // Get the returned user and update a new object.
             const user = new User(response.data);

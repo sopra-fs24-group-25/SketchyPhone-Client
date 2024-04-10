@@ -54,6 +54,13 @@
     font-weight: 600;
     font-size: xx-large;
   }
+  &.title {
+    user-select: none;
+    color: $textColor;
+    margin-bottom: 10px;
+    font-weight: 900;
+    font-size: 3em;
+  }
   &.button-container {
     display: flex;
     justify-content: left;

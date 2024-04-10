@@ -1,6 +1,6 @@
 @import "../theme";
 
-.burgermenu{
+.burgermenu {
     padding: 6px;
     height: 50px;
     width: 50px;
@@ -11,10 +11,12 @@
     background-color: #cccccc00;
     background-image: url("../../icons/BurgerMenu.svg");
     background-position: center;
-    background-size:cover;
+    background-size: cover;
     transition: all 0.3s ease;
-
-    &:hover{
+    &:hover {
         transform: scale(1.1);
+    }
+    &:disabled {
+        visibility: hidden;
     }
 }
