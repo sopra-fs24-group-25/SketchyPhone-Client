@@ -73,3 +73,7 @@ Noah Isaak
 - Created Admin Settings page (including storing settings data on server) #33
 - Reworked .scss and functionalities for GameRoom creation views #26 #27
 - Created Canvas React Component for basic drawing features #43
+
+Xindi Liu 
+- Refined the design for Figma so the frontend can follow the flow more smoothly
+- still on it..
