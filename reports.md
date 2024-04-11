@@ -67,6 +67,7 @@ Noé Matumona
 
 Victor Cruz da Silva
 - Added functionality and endpoint to delete a temporary user when they leave a game room, added functionality to reassign admin role when admin leaves in a lobby with multiple players. #67
+- Added Drawing entity, added post mapping and functionality to create drawing, added get mapping and functionality to assign drawing to user, changed game session entity to work with the game functionality, fixed bug in admin reassignment when admin leaves game room, added authentication for starting a game. #89, #90, #91
   
 Noah Isaak
 - Various minor styling changes
