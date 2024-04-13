@@ -77,4 +77,4 @@ Noah Isaak
 
 Xindi Liu 
 - Refined the design for Figma so the frontend can follow the flow more smoothly
-- still on it..
+- Implemented Endpoint to display the current text prompt on the screen. #92
