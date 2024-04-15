@@ -78,3 +78,8 @@ Noah Isaak
 Xindi Liu 
 - Refined the design for Figma so the frontend can follow the flow more smoothly
 - Implemented Endpoint to display the current text prompt on the screen. #92
+
+## 15.04 - 21.04
+
+Victor Cruz da Silva
+- Changed createDrawing and createTextPrompt methods to save the current drawing/text prompt as the previous text prompt/drawing’s next, updated text prompt mapping and controller method, to save previous drawing, updated drawing and text prompt creation to save current, to prevent assignment of already used text prompts or drawings in later rounds. #51, #52, #34
