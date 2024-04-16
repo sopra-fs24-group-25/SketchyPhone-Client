@@ -83,3 +83,4 @@ Xindi Liu
 
 Victor Cruz da Silva
 - Changed createDrawing and createTextPrompt methods to save the current drawing/text prompt as the previous text prompt/drawing’s next, updated text prompt mapping and controller method, to save previous drawing, updated drawing and text prompt creation to save current, to prevent assignment of already used text prompts or drawings in later rounds. #51, #52, #34
+- Added get mappings for text prompts and drawings for the presentation at the end of the game, added mapping to get the first text prompt of a sequence making sure we don’t repeat a sequence. #35, #36, #37, #38, #39 
