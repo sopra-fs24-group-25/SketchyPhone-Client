@@ -18,31 +18,35 @@ import Game from "./Game";
 
 
 const GameRoom = () => {
-
     const navigate = useNavigate();
-    // just for testing
-    const [name, setName] = useState<string>("TestUser");
     const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(null);
-    const [thisUser, setThisUser] = useState<User>(null);
+    const [thisUser, setThisUser] = useState<User>(JSON.parse(sessionStorage.getItem("user")));
     const [isGameCreated, setIsGameCreated] = useState(false);
     const [users, setUsers] = useState<Array<User>>(null);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
 
+
+    const defaultNumCycles = 3;
+    const defaultGameSpeed = 1;
+    const defaultIsEnabledTTS = true;
+
     // Settings states
-    const [numCycles, setNumCycles] = useState(sessionStorage.getItem("numCycles")); // will default to first option when null
-    const [timeLimit, setTimeLimit] = useState(sessionStorage.getItem("timeLimit"));
-    const [isEnabledTTS, setIsEnabledTTS] = useState(JSON.parse(sessionStorage.getItem("isEnabledTTS"))); // Need to parse it otherwise will stay true for any string
+    const [numCycles, setNumCycles] = useState(defaultNumCycles); // will default to first option when null
+    const [gameSpeed, setGameSpeed] = useState(defaultGameSpeed);
+    const [isEnabledTTS, setIsEnabledTTS] = useState(defaultIsEnabledTTS); // Need to parse it otherwise will stay true for any string
+
+
     const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
-
     useEffect(() => {
+        console.log(thisUser);
         let interval = setInterval(() => {
             fetchGameRoomUsers();
 
         }, 1000); // Set interval to 1 second
 
         return () => clearInterval(interval);
-    }, [gameRoom, isGameCreated, users])
+    }, [gameRoom, isGameCreated, users, thisUser])
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -70,13 +74,22 @@ const GameRoom = () => {
 
     async function createGame() {
         try {
-            const requestBody = JSON.stringify({ name });
+            const name = thisUser.name ? thisUser.name : "TESTUSER";
+            const password = thisUser.password ? thisUser.name : "password";
+            const requestBody = JSON.stringify({ name, password });
             const response = await api.post("/gameRooms/create", requestBody);
 
+            // Create new gameRoomDetails
             const thisgameroom = new GameRoomDetails(response.data);
 
-            sessionStorage.setItem("adminUser", JSON.stringify(thisgameroom.users[0]));
+            // Set sessionstorage
+            sessionStorage.setItem("adminUser", JSON.stringify(thisgameroom.users[0])); // This might not be smart
             sessionStorage.setItem("gameRoomDetails", JSON.stringify(thisgameroom));
+
+            // Set default settings values on game creation
+            sessionStorage.setItem("numCycles", defaultNumCycles.toString());
+            sessionStorage.setItem("gameSpeed", defaultGameSpeed.toString());
+            sessionStorage.setItem("isEnabledTTS", defaultIsEnabledTTS ? "True" : "False");
 
             setUsers(thisgameroom.users);
             setThisUser(thisgameroom.users[0]);
@@ -164,24 +177,43 @@ const GameRoom = () => {
         );
     }
 
+    async function sendGameSettings() {
+        try {
+            const requestBody = { gameSettingsId: gameRoom.gameSettingsId, enableTextToSpeech: isEnabledTTS, gameSpeed: gameSpeed, numCycles: numCycles };
+            const response = await api.put(`/gameRooms/${gameRoom.gameId}/settings`, requestBody);
+            console.log(response);
+
+
+            alert("Settings saved");
+
+            setIsSettingsActive(false);
+        } catch (error) {
+            console.error(
+                `Something went wrong while sending game settings: \n${handleError(
+                    error
+                )}`
+            );
+            console.error("Details:", error);
+            alert(
+                "Something went wrong while sending game settings! See the console for details."
+            );
+        }
+    }
+
     function GameSettings() {
         const onSettingsSave = async () => {
             // First send data to server
 
             // Store to sessionstorage
             sessionStorage.setItem("numCycles", numCycles);
-            sessionStorage.setItem("timeLimit", timeLimit);
+            sessionStorage.setItem("gameSpeed", gameSpeed);
             sessionStorage.setItem("isEnabledTTS", isEnabledTTS);
 
-            // Requestbody for gamesettings put
-            const requestBody = { gameSettingsId: gameRoom.gameSettingsId, enableTextToSpeech: isEnabledTTS, gameSpeed: timeLimit, numCycles: numCycles };
-            const response = await api.put(`/gameRooms/${gameRoom.gameId}/settings`, requestBody);
-            console.log(response);
+            console.log(isEnabledTTS);
+            console.log(numCycles);
+            console.log(gameSpeed);
 
-
-            alert("Settings saved")
-
-            setIsSettingsActive(false);
+            await sendGameSettings();
         }
 
         return (
@@ -212,14 +244,14 @@ const GameRoom = () => {
                             </select>
                         </div>
                         <div className="settings option">
-                            <label htmlFor="timeLimit">Time limit per action:</label>
+                            <label htmlFor="gameSpeed">Time limit per action:</label>
 
                             <select
-                                name="timeLimit"
-                                value={timeLimit}
-                                defaultValue={timeLimit}
-                                id="timeLimit"
-                                onChange={(e) => setTimeLimit(e.target.value)}
+                                name="gameSpeed"
+                                value={gameSpeed}
+                                defaultValue={gameSpeed}
+                                id="gameSpeed"
+                                onChange={(e) => setGameSpeed(e.target.value)}
                             >
                                 <option value={2}>normal</option>
                                 <option value={1}>relaxed</option>

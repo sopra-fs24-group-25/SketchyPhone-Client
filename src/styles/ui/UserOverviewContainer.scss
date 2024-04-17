@@ -13,24 +13,29 @@
     overflow-y: scroll;
 
     @include scrollbar;
-
-
 }
-.user{
-    display:flex;
+.user {
+    display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     background-color: transparent;
     height: 70px;
-    width: 250px;
-    margin-left:auto;
-    overflow: hidden;
-}   
-.admin{
-    color:blue;
+    width: 50%;
+    overflow:hidden;
+    // text-overflow: ellipsis;
+    // white-space: nowrap;
+}
+.username{
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+.admin {
+    color: blue;
     font-weight: bold;
     text-transform: uppercase;
 }
-
