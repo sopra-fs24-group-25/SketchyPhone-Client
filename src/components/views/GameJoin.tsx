@@ -128,6 +128,7 @@ const GameJoin = () => {
                 setView("openRoomView");
                 await startCountdown(3);
                 navigate("/GameRoom");
+                
                 return;
             } else if (room.status === "IN-PLAY") {
                 console.log("waiting");

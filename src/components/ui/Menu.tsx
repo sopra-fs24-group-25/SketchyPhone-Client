@@ -10,8 +10,7 @@ export const Menu = props => (
         className={`screen-layer ${props.open ? "open" : "closed"}`}
         onClick={() => props.menuButton(!props.open)}>
         <div
-            className={`menu-container ${props.open ? "open" : "closed"}`}
-            onClick={() => props.menuButton(!props.open)}>
+            className={`menu-container ${props.open ? "open" : "closed"}`}>
             <div className="gameroom header">
                 <BackButton
                     onClick={() => props.menuButton(!props.open)}>
