@@ -15,6 +15,8 @@ $accentDark: #b8527b;
 $textColor: white;
 $background: #2626326b;
 
+$error-color: red;
+
 // $background-size: 100% 100%;
 // $background-position: 0px 0px,0px 0px,0px 0px,0px 0px;
 $radial-gradients: radial-gradient(23% 100% at 0% 50%, #EA4AA2FF 0%, #FF000000 100%),radial-gradient(100% 100% at 29% 0%, #A44DBAFF 0%, #FF000000 100%),radial-gradient(70% 70% at 100% 0%, #EA4AA2FF 0%, #FF000000 99%),radial-gradient(150% 150% at 71% 100%, #65BBFDFF 1%, #FF000000 99%);
@@ -73,5 +75,85 @@ $borderRadius: 0.75em;
   }
   &::-webkit-scrollbar-corner {
       background-color: transparent;
+  }
+}
+
+@keyframes shake1 {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+    color: $error-color;
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+    color: $error-color;
+  }
+}
+
+@keyframes shake2 {
+  0%,
+  100% {
+    transform: translateX(0);
+    color: $error-color;
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(10px);
+    color: $error-color;
+  }
+}
+
+@keyframes shake3 {
+  0% {
+    transform: translateX(0);
+    color: $error-color;
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+    color: $error-color;
   }
 }

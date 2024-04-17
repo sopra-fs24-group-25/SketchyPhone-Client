@@ -99,7 +99,7 @@ const GameJoin = () => {
             if (room.status === "OPEN") {
                 //navigate to active gameroom
                 console.log("open");
-                //navigate("/lobby");
+                //navigate("/game");
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 setView("openRoomView");
                 await startCountdown(3);
@@ -137,18 +137,20 @@ const GameJoin = () => {
                     //potentially tell server that user will join soon
                 }
             } else {
-                setPinInvalid(true);
-                setPin("Invalid PIN!");
-                await new Promise((resolve) => setTimeout(resolve, 2000));
-                setPinInvalid(false);
-                setPin("");
+                throw new Error;
             }
             //console.log(response.data);
         }
         catch (error) {
-            alert(
-                `Something went wrong during joining: \n${handleError(error)}`
-            );
+            setPinInvalid(true);
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            setPin("Invalid PIN!");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setPinInvalid(false);
+            setPin("");
+            //alert(
+            //    `Something went wrong during joining: \n${handleError(error)}`
+            //);
         }
     }
 
@@ -192,7 +194,7 @@ const GameJoin = () => {
         try {
             const response = true//await api.post(`/gameRooms/join/${pin}`);
             if (response === true) { // fix later with correct server behavior
-                navigate("/game") // temporary
+                //navigate("/game") // temporary
             }
             //console.log(response.data);
         }
@@ -204,7 +206,7 @@ const GameJoin = () => {
     }
 
     function baseView(content, goPlace, placement = "mid", visible = true) {
-        return ( //temporary logout with back button, needs to be in burger menu later
+        return (
             <BaseContainer>
                 <div className="gameroom header">
                     <BurgerMenu

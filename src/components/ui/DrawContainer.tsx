@@ -13,7 +13,7 @@ import { api, handleError } from "helpers/api";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration }) => {
+export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration, setNextTask }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -190,6 +190,7 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     async function onSubmit() {
         allowDraw = false;
         await sendImage();
+        setNextTask("Text Prompt");
     }
 
     // Draw function where actual drawing is performed with context
@@ -309,6 +310,7 @@ DrawContainer.propTypes = {
     width: PropTypes.number.isRequired,
     textPrompt: PropTypes.string,
     textPromptId: PropTypes.number,
-    timerDuration: PropTypes.number
+    timerDuration: PropTypes.number,
+    setNextTask: PropTypes.func,
 };
 export default DrawContainer;

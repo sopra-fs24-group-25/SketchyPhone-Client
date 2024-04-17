@@ -30,7 +30,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  transition: transform 0.3s cubic-bezier(0, 0.52, 0, 1);
+  transition: transform 0.3s cubic-bezier(0.52, 0.52, 0, 1);
   z-index: 1000;
   &.closed {
     transform: translate3d(-100vw, 0, 0);

@@ -12,7 +12,7 @@
     flex-direction: row;
     @include center;
     width: $DESKTOP_WIDTH;
-}
+  }
   &.form {
     display: flex;
     flex-direction: column;
@@ -49,7 +49,8 @@
     font-size: x-large;
     font-weight: 600;
     &.invalid {
-      color: red;
+      animation: shake2 0.4s ease-in-out 0s 1;
+      color: $error-color;
     }
   }
   &.label {
