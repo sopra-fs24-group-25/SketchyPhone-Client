@@ -38,21 +38,21 @@ FormField.propTypes = {
 
 const Login = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState<string>("");
+    const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<Boolean>(false);
 
     const doLogin = async () => {
         try {
-            const name = password // temporary to get it to work
-            const requestBody = JSON.stringify({ username, name });
+            const requestBody = JSON.stringify({ name, password });
             const response = await api.post("/users", requestBody); //will change in future: post /login
 
             // Get the returned user and update a new object.
             const user = new User(response.data);
 
             // Store the token into the local storage.
-            localStorage.setItem("token", user.token);
+            sessionStorage.setItem("token", user.token);
+            sessionStorage.setItem("user", JSON.stringify(user));
 
             // Login successfully worked --> navigate to the route /game in the GameRouter
             navigate("/GameRoom");
@@ -70,8 +70,8 @@ const Login = () => {
                     <FormField
                         label="Username"
                         placeholder="Username"
-                        value={username}
-                        onChange={(un: string) => setUsername(un)}
+                        value={name}
+                        onChange={(un: string) => setName(un)}
                     />
                     <FormField
                         label="Password"
@@ -83,10 +83,11 @@ const Login = () => {
                     <Button //change formatting in future
                         onClick={() => setShowPassword(!showPassword)}
                         width="10%">
+                            Show Password
                     </Button>
                     <div className="login button-container">
                         <Button
-                            disabled={!username || !password}
+                            disabled={!name || !password}
                             width="100%"
                             onClick={() => doLogin()}
                         >

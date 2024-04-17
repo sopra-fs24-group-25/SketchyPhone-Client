@@ -6,10 +6,13 @@ import "styles/ui/UserOverviewContainer.scss"
 export const UserOverviewContainer = props => (
     <div className={`usercontainer ${props.className}`}>
         {props.userList.map((item) => (
-            <div className = "usercontainer user" key={item.name}>
+            <div className="usercontainer user" key={item.name}>
                 <UserPreview ></UserPreview>
-                {props.showUserNames && <div>{item.name}</div>}
-                {item.isAdmin && <div className = "admin">admin</div>}
+                <div>
+                    {props.showUserNames && <p className ="username">{item.name}</p>}
+                    {item.role === "admin" && <p className="admin">admin</p>}
+                </div>
+
             </div>
         ))}
     </div>

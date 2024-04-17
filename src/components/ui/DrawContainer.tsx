@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { api, handleError } from "helpers/api";
+
 
 
 // Default draw container
@@ -11,7 +13,7 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
+export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -46,9 +48,10 @@ export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
     let initialized = false;
 
     const onMouseDown = (e) => {
-        // console.log("mouse pressed");
         // Check if in range
         if (curX > 0 && curX < width && curY > 0 && curY < height) {
+            console.log("mouse pressed");
+
             pressed = true;
             newAction = true;
 
@@ -74,12 +77,28 @@ export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
     const onButtonClear = () => {
         if (ctx.current) {
             lineDrawActions = [];
+            rectangleDrawActions = [];
             ctx.current.clearRect(0, 0, width, height);
         }
     }
 
     const onClickRect = () => {
         drawRect = !drawRect;
+    }
+
+    async function sendImage() {
+        try {
+            // Send image here
+            const gameSessionId = sessionStorage.getItem("gameSessionId");
+            const userId = sessionStorage.getItem("userId");
+            const userToken = sessionStorage.getItem("userToken")
+            const base64Canvas = canvas.current.toDataURL("image/jpeg").split(';base64,')[1];
+        }
+        catch (error) {
+            alert(
+                `Something went wrong: \n${handleError(error)}`
+            );
+        }
     }
 
     const onUndo = () => {
@@ -168,15 +187,9 @@ export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
         return degrees * Math.PI / 180;
     };
 
-    function onSave() {
-        // Save image
-        submitImageData = ctx.current.getImageData(0, 0, width, height);
-    }
-
-    function onSubmit() {
-        // Create axios for submitting
-        // alert("SUBMIT IMAGE");
-        // allowDraw = false;
+    async function onSubmit() {
+        allowDraw = false;
+        await sendImage();
     }
 
     // Draw function where actual drawing is performed with context
@@ -225,6 +238,9 @@ export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
         }
 
         ctx.current?.reset();
+
+        // TODO: Should draw them in order they were drawn
+        // Here we draw all the line path elements
         lineDrawActions.forEach(element => {
             element.forEach(lineElement => {
                 ctx.current.fillStyle = lineElement[1];
@@ -234,9 +250,9 @@ export const DrawContainer = ({ height, width, textPrompt, timerDuration }) => {
 
         });
 
+        // Here we draw all the rectangle paths
         rectangleDrawActions.forEach(element => {
-
-            ctx.current.fillStyle = element[0][1];
+            ctx.current.strokeStyle = element[0][1];
             ctx.current.lineWidth = element[0][2];
             ctx.current.stroke(element[0][0]);
         });
@@ -292,6 +308,7 @@ DrawContainer.propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     textPrompt: PropTypes.string,
+    textPromptId: PropTypes.number,
     timerDuration: PropTypes.number
 };
 export default DrawContainer;

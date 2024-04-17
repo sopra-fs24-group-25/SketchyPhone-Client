@@ -44,7 +44,6 @@ const GameJoin = () => {
 
     const navigate = useNavigate();
     const [name, setName] = useState<string>("noah");
-    const [username, setUsername] = useState<string>("crisaak");
     const [gameRoom, setGameRoom] = useState<typeof GameJoin>(null);
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
@@ -147,8 +146,12 @@ const GameJoin = () => {
 
     const validatePin = async () => {
         try {
-            const response = 0//await api.post(`/gameRooms/join/${pin}`);
+            const requestBody = {"name": name, "password": "defaultPassword"}
+            const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
             const room = new GameRoom({status: "OPEN"});
+
+            console.log(response);
+
             setGameRoom(room);
             if (pin === "123") { // fix later with correct server behavior
                 sessionStorage.setItem("GameRoomToken", room.token);
