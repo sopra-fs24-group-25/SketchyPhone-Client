@@ -30,6 +30,8 @@ const Game = () => {
             <DrawContainer
                 height={400}
                 width={600}
+                textPrompt = "A dog eating a tasty banana"
+                timerDuration={5}
 
             />
         </BaseContainer>

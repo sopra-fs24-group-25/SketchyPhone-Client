@@ -2,15 +2,68 @@
 
 .drawContainer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
     &.drawCanvas{
         background-color: white;
+        border-radius: 20px;
+    }
+
+    &.container {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &.subcontainer {
+        display: flex;
+        align-items: center;
+        gap: 20px;
     }
 
     &.tools {
         display: flex;
         flex-direction: column;
+        padding: 20px;
+        margin:0 20px 0 0px;
+        background-color: rgba(255, 255, 255, 0.281);
+        border-radius:20px;
+        gap: 5px;
+        align-items: center;
+    }
+
+    &.textPrompt{
+        font-size: x-large;
+        text-align: center;
+        margin:20px;
+    }
+
+    input[type="color"]{
+        border-style: none;
+        background-color: transparent;
+        &:hover{
+            scale: 1.1;
+        }
+    }
+
+    button {
+        border-style: none;
+        border-radius: 10px;
+        width: 100%;
+        &:hover{
+            background-color: $accent;
+        }
+        &:active{
+            background-color: $accentDark;
+        }
+    }
+
+    .time {
+        font-size: large;
+        text-align: center;
+    }
+
+    &.timer{
+        margin:0 0px 0 20px;
     }
 
     
