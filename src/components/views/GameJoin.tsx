@@ -224,7 +224,7 @@ const GameJoin = () => {
         }
     }
 
-    function baseView(content, goPlace, visible = true) {
+    function baseView(content, goPlace, placement = "mid", visible = true) {
         return ( //temporary logout with back button, needs to be in burger menu later
             <BaseContainer>
                 <div className="gameroom header">
@@ -233,7 +233,7 @@ const GameJoin = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-                <div className="gameroom container">
+                <div className={`join container-${placement}`}>
                     <BackButton
                         onClick={() => goPlace()}
                         disabled={!visible}></BackButton>
@@ -306,7 +306,8 @@ const GameJoin = () => {
                     Continue
                 </Button>
             </div>,
-            () => setView("nicknameView")
+            () => setView("nicknameView"),
+            "up"
         );
     }
 
@@ -334,6 +335,7 @@ const GameJoin = () => {
                 <h2 className="join title">{countdownNumber} seconds</h2>
             </div>,
             () => goBack(),
+            "mid",
             false
         );
     }
@@ -349,6 +351,7 @@ const GameJoin = () => {
                 <h2 className="join title">{countdownNumber} seconds</h2>
             </div>,
             () => goBack(),
+            "mid",
             false
         );
     }

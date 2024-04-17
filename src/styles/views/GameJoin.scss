@@ -1,13 +1,18 @@
 @import "../theme";
 
 .join {
-  &.container {
-    margin-top: 2em;
-    min-height: 300px;
-    /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
-    @include center;
-    flex-direction: column;
+  &.container-up {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: $DESKTOP_WIDTH;
+    height: $DESKTOP_HEIGHT / 2.5;
   }
+  &.container-mid {
+    flex-direction: row;
+    @include center;
+    width: $DESKTOP_WIDTH;
+}
   &.form {
     display: flex;
     flex-direction: column;
