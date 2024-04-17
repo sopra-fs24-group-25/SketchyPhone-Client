@@ -1,51 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import "../../styles/ui/MenuButton.scss";
 import "../../styles/ui/MenuContainer.scss";
 import { BackButton } from "components/ui/BackButton";
 //import "styles/views/GameRoom.scss";
 
-export const Menu = props => (
-    <div
-        className={`screen-layer ${props.open ? "open" : "closed"}`}
-        onClick={() => props.menuButton(!props.open)}>
+const Menu = (openMenu, toggleMenu) => {
+
+    const navigate = useNavigate();
+
+    const openProfile = () => {
+        //navigate("/profile");
+        console.log("To profile");
+    }
+
+    const openHistory = () => {
+        //navigate("/history");
+        console.log("To history");
+    }
+
+    const logout = (): void => {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("GameRoomToken");
+        navigate("/");
+    };
+
+    return (
         <div
-            className={`menu-container ${props.open ? "open" : "closed"}`}>
-            <div className="gameroom header">
-                <BackButton
-                    onClick={() => props.menuButton(!props.open)}>
-                </BackButton>
-            </div>
-            <div //profile
-                {...props}
-                className="menu-button"
-                onClick={() => props.profileButton()}
-            >
-                Profile
-            </div>
-            <div //history
-                {...props}
-                className="menu-button"
-                onClick={() => props.historyButton()}
-            >
-                History
-            </div>
-            <div //logout
-                {...props}
-                className="menu-button"
-                onClick={() => props.logoutButton()}
-            >
-                Log out
+            className={`screen-layer ${openMenu ? "open" : "closed"}`}
+            onClick={() => toggleMenu()}>
+            <div
+                className={`menu-container ${openMenu ? "open" : "closed"}`}>
+                <div className="gameroom header">
+                    <BackButton
+                        onClick={() => toggleMenu()}>
+                    </BackButton>
+                </div>
+                <div //profile
+                    className="menu-button"
+                    onClick={() => openProfile()}
+                >
+                    Profile
+                </div>
+                <div //history
+                    className="menu-button"
+                    onClick={() => openHistory()}
+                >
+                    History
+                </div>
+                <div //logout
+                    className="menu-button"
+                    onClick={() => logout()}
+                >
+                    Log out
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+}
 
-Menu.propTypes = {
-    className: PropTypes.string,
-    open: PropTypes.bool,
-    menuButton: PropTypes.func,
-    profileButton: PropTypes.func,
-    historyButton: PropTypes.func,
-    logoutButton: PropTypes.func,
-};
+export default Menu;

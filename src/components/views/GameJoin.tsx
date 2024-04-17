@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
-import { Menu } from "components/ui/Menu";
+import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import "styles/views/GameJoin.scss";
@@ -54,33 +54,9 @@ const GameJoin = () => {
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
 
-    const open_menu = () => {
-        return (
-            <Menu
-                open={openMenu}
-                menuButton={() => setOpenMenu(false)}
-                profileButton={() => openProfile()}
-                historyButton={() => openHistory()}
-                logoutButton={() => logout()}
-            ></Menu>
-        )
-    };
-
-    const openProfile = () => {
-        //navigate("/profile");
-        console.log("To profile");
+    const toggleMenu = () => {
+        setOpenMenu(!openMenu);
     }
-
-    const openHistory = () => {
-        //navigate("/history");
-        console.log("To history");
-    }
-
-    const logout = (): void => {
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("GameRoomToken");
-        navigate("/");
-    };
 
     const goBack = (): void => {
         setCountdownNumber(0);
@@ -245,7 +221,7 @@ const GameJoin = () => {
                         <img src={require("../../icons/ChubbyGuy.png")} draggable="false"/>
                     </div>
                 </div>
-                {open_menu()}
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );
     }

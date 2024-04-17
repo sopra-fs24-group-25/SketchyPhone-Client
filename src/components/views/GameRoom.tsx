@@ -8,6 +8,7 @@ import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import { UserPreview } from "components/ui/UserPreview";
 import { UserOverviewContainer } from "components/ui/UserOverviewContainer";
+import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import "styles/views/GameSettings.scss" // Merge into one later
@@ -24,7 +25,7 @@ const GameRoom = () => {
     const [isGameCreated, setIsGameCreated] = useState(false);
     const [users, setUsers] = useState<Array<User>>(null);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
-
+    const [openMenu, setOpenMenu] = useState<Boolean>(false);
 
     const defaultNumCycles = 3;
     const defaultGameSpeed = 1;
@@ -51,6 +52,10 @@ const GameRoom = () => {
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
     };
+
+    const toggleMenu = () => {
+        setOpenMenu(!openMenu);
+    }
 
     const logout = (): void => {
         localStorage.removeItem("token");
@@ -112,7 +117,7 @@ const GameRoom = () => {
         return (
             <BaseContainer>
                 <div className="gameroom header">
-                    <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu>
                 </div>
                 <div className="gameroom container">
                     <BackButton disabled={true} onClick={() => navigate("/")}></BackButton>
@@ -132,6 +137,7 @@ const GameRoom = () => {
                         <img src={require("../../icons/ChubbyGuy.png")} draggable="false" />
                     </div>
                 </div>
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer>);
     }
 
@@ -140,7 +146,7 @@ const GameRoom = () => {
         return (
             <BaseContainer>
                 <div className="gameroom header">
-                    <BurgerMenu onClick={() => open_menu()}></BurgerMenu>
+                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu>
                 </div>
                 <div className="gameroom container">
                     <BackButton onClick={() => logout()}></BackButton> {/* Should go back not logout */}
@@ -172,6 +178,7 @@ const GameRoom = () => {
                         </div>
                     </div>
                 </div>
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer >
 
         );
@@ -219,7 +226,7 @@ const GameRoom = () => {
         return (
             <BaseContainer>
                 <div className="settings header">
-                    <BurgerMenu></BurgerMenu> {/* ADD menu functionality*/}
+                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu> {/* ADD menu functionality*/}
                 </div>
                 <BackButton onClick={() => navigate("/gameroom")}></BackButton>
                 <div className="settings container">
@@ -277,6 +284,7 @@ const GameRoom = () => {
                         Save</Button>
 
                 </div>
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );
     }
