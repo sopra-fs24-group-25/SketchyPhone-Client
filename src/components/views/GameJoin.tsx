@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
@@ -10,7 +10,7 @@ import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import "styles/views/GameJoin.scss";
-import { User } from "types";
+import User from "models/User";
 import GameRoom from "models/GameRoom";
 import Game from "./Game";
 import { AvatarChoice } from "components/ui/AvatarChoice";
@@ -23,7 +23,7 @@ const JoinField = (props) => {
             <input
                 className={`join input ${props.disabled ? "invalid" : ""}`}
                 placeholder={props.placeholder}
-                style={{userSelect:"none"}}
+                style={{ userSelect: "none" }}
                 value={props.value}
                 onChange={(e) => props.onChange(e.target.value)}
                 disabled={props.disabled}
@@ -43,6 +43,9 @@ JoinField.propTypes = {
 const GameJoin = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
     const [name, setName] = useState<string>("noah");
     const [gameRoom, setGameRoom] = useState<typeof GameJoin>(null);
     const [pin, setPin] = useState<string>("");
@@ -50,9 +53,10 @@ const GameJoin = () => {
     const [nickname, setNickname] = useState<string>("");
     const [avatar, setAvatar] = useState<number>(null);
     const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
-    const [view, setView] = useState<string>("pinView");
+    const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
+    const [user, setUser] = useState(null);
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
@@ -60,13 +64,13 @@ const GameJoin = () => {
 
     const goBack = (): void => {
         setCountdownNumber(0);
-        sessionStorage.removeItem("GameRoomToken");
+        sessionStorage.removeItem("gameroomToken");
         navigate("/GameRoom");
     };
 
     const chooseAvatar = (index: number) => {
         setAvatar(index);
-        avatarSelection.forEach(function(a) {
+        avatarSelection.forEach(function (a) {
             if (a.id === index) {
                 a.selected = "active";
             } else {
@@ -91,11 +95,11 @@ const GameJoin = () => {
 
     const checkRoomAvailability = async () => {
         var array = ["IN-PLAY", "IN-PLAY", "OPEN", "CLOSED"];
-        var room : GameRoom;
+        var room: GameRoom;
         setView("waitingRoomView");
         while (true) {
             const response = 0//GET gameroom status
-            room = new GameRoom({status: array[Math.floor(Math.random() * array.length)]});
+            room = new GameRoom({ status: array[Math.floor(Math.random() * array.length)] });
             if (room.status === "OPEN") {
                 //navigate to active gameroom
                 console.log("open");
@@ -104,7 +108,7 @@ const GameJoin = () => {
                 setView("openRoomView");
                 await startCountdown(3);
                 navigate("/GameRoom");
-                
+
                 return;
             } else if (room.status === "IN-PLAY") {
                 console.log("waiting");
@@ -115,7 +119,7 @@ const GameJoin = () => {
                 setView("unavailableRoomView");
                 await startCountdown(5);
                 navigate("/GameRoom");
-                
+
                 return;
             }
         }
@@ -123,7 +127,7 @@ const GameJoin = () => {
 
     const validatePin = async () => {
         try {
-            const requestBody = {"name": name, "password": "defaultPassword"}
+            const requestBody = { "name": nickname, "password": "defaultPassword" }
             const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
             const room = new GameRoom(response.data);
 
@@ -131,8 +135,11 @@ const GameJoin = () => {
 
             setGameRoom(room);
             if (room.gameId) { // checking if gameId exists
-                sessionStorage.setItem("GameRoomToken", room.token);
-                setView("nicknameView");
+                sessionStorage.setItem("gameroomToken", room.token);
+
+                // check room availability
+                checkRoomAvailability();
+
                 if (room.status === "OPEN") {
                     //potentially tell server that user will join soon
                 }
@@ -156,15 +163,19 @@ const GameJoin = () => {
 
     const validateNickname = async () => {
         try {
+            // Lets assume the nickname is valid
+            const user = new User({"name": nickname})
+            sessionStorage.setItem("user", JSON.stringify(user));
+
             setAvatar(null);
 
             //fetch avatars GET avatars
             const response = true//await api.post(`/gameRooms/join/${pin}`);
             if (response === true) { // fix later with correct server behavior
                 const fetchedAvatars = Array(
-                    new Avatar({id: 1}),
-                    new Avatar({id: 2}),
-                    new Avatar({id: 300})
+                    new Avatar({ id: 1 }),
+                    new Avatar({ id: 2 }),
+                    new Avatar({ id: 300 })
                 );//await api.get(`/users/${UserId}`) //implement correct request
                 setAvatarSelection(fetchedAvatars);
                 setView("avatarView");
@@ -180,8 +191,9 @@ const GameJoin = () => {
 
     const validateAvatar = async () => {
         try {
-            //fetch room again to verify if still open
-            checkRoomAvailability();
+            // MISSING validate
+            isGameCreator ? navigate("/gameRoom") : setView("pinView")
+            
         }
         catch (error) {
             alert(
@@ -220,7 +232,7 @@ const GameJoin = () => {
                         disabled={!visible}></BackButton>
                     {content}
                     <div className="mascot">
-                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false"/>
+                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false" />
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
@@ -265,13 +277,13 @@ const GameJoin = () => {
                     Continue
                 </Button>
             </div>,
-            () => setView("pinView")
+            () => isGameCreator ? navigate("/gameRoom") : setView("pinView")
         );
     }
 
     function avatarView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{"alignItems":"left"}}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join label">Choose avatar</div>
                 <text className="start sign-in-link"
                     onClick={() => drawAvatar()}>
@@ -294,7 +306,7 @@ const GameJoin = () => {
 
     function waitingRoomView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{"alignItems":"left"}}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Waiting room...</div>
                 <Spinner></Spinner>
                 <text>
@@ -307,7 +319,7 @@ const GameJoin = () => {
 
     function unavailableRoomView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{"alignItems":"left"}}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Room currently unavailable...</div>
                 <text>
                     The game room is no longer active. Please return and insert a new game PIN to start a new session.
@@ -323,7 +335,7 @@ const GameJoin = () => {
 
     function openRoomView() { //temporary
         return baseView(
-            <div className="gameroom buttons-container" style={{"alignItems":"left"}}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Temporary view for open game...</div>
                 <text>
                     Will redirect to active game room in future.
@@ -337,25 +349,29 @@ const GameJoin = () => {
         );
     }
 
+    let renderComponent;
+
     if (view === "pinView") {
-        return pinView();
+        renderComponent = pinView();
     }
-    if (view === "nicknameView") {
-        return nicknameView();
+    else if (view === "nicknameView") {
+        renderComponent = nicknameView();
     }
-    if (view === "avatarView") {
-        return avatarView();
+    else if (view === "avatarView") {
+        renderComponent = avatarView();
     }
-    if (view === "waitingRoomView") {
-        return waitingRoomView();
+    else if (view === "waitingRoomView") {
+        renderComponent = waitingRoomView();
     }
-    if (view === "unavailableRoomView") {
-        return unavailableRoomView();
+    else if (view === "unavailableRoomView") {
+        renderComponent = unavailableRoomView();
     }
-    if (view === "openRoomView") { //temporary
-        return openRoomView();
+    else if (view === "openRoomView") { //temporary
+        renderComponent = openRoomView();
     }
-    
+
+    return renderComponent;
+
 }
 
 export default GameJoin;

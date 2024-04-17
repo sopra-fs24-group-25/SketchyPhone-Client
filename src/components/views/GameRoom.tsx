@@ -50,13 +50,11 @@ const GameRoom = () => {
     // For persistent user
     const [thisUser, setThisUser] = useState<User>(JSON.parse(sessionStorage.getItem("user")));
 
-    const [username, setUsername] = useState(null);
     const [users, setUsers] = useState<Array<User>>(null);
 
     // Conditional rendering flags
     const [isGameCreated, setIsGameCreated] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
-    const [isSettingNickname, setIsSettingNickname] = useState(false);
 
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
 
@@ -70,11 +68,10 @@ const GameRoom = () => {
     const [gameSpeed, setGameSpeed] = useState(defaultGameSpeed);
     const [isEnabledTTS, setIsEnabledTTS] = useState(defaultIsEnabledTTS); // Need to parse it otherwise will stay true for any string
 
-    const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
+    // const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
 
     useEffect(() => {
-        console.log("useEffect")
         if (isGameCreated) {
             let interval = setInterval(() => {
                 fetchGameRoomUsers();
@@ -82,9 +79,14 @@ const GameRoom = () => {
             }, 1000); // Set interval to 1 second
 
             return () => clearInterval(interval);
+        } else {
+            createGame();
         }
 
-    }, [gameRoom, isGameCreated, users, thisUser, isSettingNickname, username])
+        setIsGameCreated(gameRoom !== null);
+
+
+    }, [gameRoom, isGameCreated, users, thisUser])
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -113,9 +115,12 @@ const GameRoom = () => {
     }
 
     async function createGame() {
+        if (!thisUser) {
+            return;
+        }
         try {
-            const name = thisUser !== null ? thisUser.name : username;
-            const password = thisUser !== null ? thisUser.name : "password";
+            const name = thisUser.name;
+            const password = "password"; // PLACEHOLDER
             const requestBody = JSON.stringify({ name, password });
             const response = await api.post("/gameRooms/create", requestBody);
 
@@ -143,33 +148,32 @@ const GameRoom = () => {
         }
     }
 
+    // Send to server to start game
+    async function startGame() {
+        try {
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const response = await api.post(`/games/${gameRoom.gameId}/start`, null, { headers: headers })
+            console.log(response.data);
+        }
+        catch (error) {
+            alert(
+                `Error while attempting to start game: \n${handleError(error)}`
+            );
+        }
+    }
+
     const joinGame = (): void => {
         navigate("/join")
     }
 
-    const EnterNickname = () => {
-        const handleClick = (e) => {
-            createGame();
-            setIsSettingNickname(false);
-        }
-        return (
-            <div>
-                <JoinField
-                    label="Set nickname"
-                    placeholder="Nickname"
-                    value={username}
-                    onChange={(n: string) => setUsername(n)}
-                ></JoinField>
-                <Button
-                    onClick={(e) => handleClick(e)}>
-                    Save
-                </Button>
-            </div>
-        );
-    }
 
     // Function to return the basic choices for connection to a room
     function RoomChoice() {
+
+        const handleGameCreate = () => {
+            navigate("/join", { state: { isGameCreator: true } }); // We pass the isGameCreator flag
+        }
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -180,8 +184,7 @@ const GameRoom = () => {
                     <div className="gameroom buttons-container">
                         <Button
                             width="80%"
-                            // onClick={() => createGame()}
-                            onClick={() => setIsSettingNickname(true)}
+                            onClick={() => handleGameCreate()} // We use this route to fetch username, avatar etc.
                         >
                             New Game
                         </Button>
@@ -225,7 +228,7 @@ const GameRoom = () => {
                             showUserNames={true}></UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
                             <Button
-                                onClick={() => navigate("/gameroom")}
+                                onClick={() => startGame()}
                             >Start Game</Button>
                             <Button
                                 onClick={() => navigate("/")}
@@ -351,8 +354,6 @@ const GameRoom = () => {
 
     if (isSettingsActive) {
         renderComponent = <GameSettings />;
-    } else if (isSettingNickname) {
-        renderComponent = <EnterNickname />;
     } else if (isGameCreated && gameRoom) {
         renderComponent = <Overview />;
     } else {
