@@ -125,12 +125,12 @@ const GameJoin = () => {
         try {
             const requestBody = {"name": name, "password": "defaultPassword"}
             const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
-            const room = new GameRoom({status: "OPEN"});
+            const room = new GameRoom(response.data);
 
-            console.log(response);
+            console.log(room);
 
             setGameRoom(room);
-            if (pin === "123") { // fix later with correct server behavior
+            if (room.gameId) { // checking if gameId exists
                 sessionStorage.setItem("GameRoomToken", room.token);
                 setView("nicknameView");
                 if (room.status === "OPEN") {

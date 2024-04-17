@@ -17,16 +17,50 @@ import User from "models/User";
 import GameRoomDetails from "models/GameRoom";
 import Game from "./Game";
 
+const JoinField = (props) => {
+    return (
+        <div className="join field">
+            <label className="join label">{props.label}</label>
+            <input
+                className={`join input ${props.disabled ? "invalid" : ""}`}
+                placeholder={props.placeholder}
+                style={{ userSelect: "none" }}
+                value={props.value}
+                onChange={(e) => props.onChange(e.target.value)}
+                disabled={props.disabled}
+            />
+        </div>
+    );
+};
+
+JoinField.propTypes = {
+    label: PropTypes.string,
+    placeholder: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    disabled: PropTypes.bool,
+};
 
 const GameRoom = () => {
+
     const navigate = useNavigate();
+
     const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(null);
+
+    // For persistent user
     const [thisUser, setThisUser] = useState<User>(JSON.parse(sessionStorage.getItem("user")));
-    const [isGameCreated, setIsGameCreated] = useState(false);
+
+    const [username, setUsername] = useState(null);
     const [users, setUsers] = useState<Array<User>>(null);
+
+    // Conditional rendering flags
+    const [isGameCreated, setIsGameCreated] = useState(false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
+    const [isSettingNickname, setIsSettingNickname] = useState(false);
+
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
 
+    // Default settings
     const defaultNumCycles = 3;
     const defaultGameSpeed = 1;
     const defaultIsEnabledTTS = true;
@@ -36,18 +70,21 @@ const GameRoom = () => {
     const [gameSpeed, setGameSpeed] = useState(defaultGameSpeed);
     const [isEnabledTTS, setIsEnabledTTS] = useState(defaultIsEnabledTTS); // Need to parse it otherwise will stay true for any string
 
-
     const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
+
     useEffect(() => {
-        console.log(thisUser);
-        let interval = setInterval(() => {
-            fetchGameRoomUsers();
+        console.log("useEffect")
+        if (isGameCreated) {
+            let interval = setInterval(() => {
+                fetchGameRoomUsers();
 
-        }, 1000); // Set interval to 1 second
+            }, 1000); // Set interval to 1 second
 
-        return () => clearInterval(interval);
-    }, [gameRoom, isGameCreated, users, thisUser])
+            return () => clearInterval(interval);
+        }
+
+    }, [gameRoom, isGameCreated, users, thisUser, isSettingNickname, username])
 
     const open_menu = (): void => {
         //open menu with profile, settings, and logout
@@ -75,12 +112,10 @@ const GameRoom = () => {
         setUsers(fetchedUsers);
     }
 
-
-
     async function createGame() {
         try {
-            const name = thisUser.name ? thisUser.name : "TESTUSER";
-            const password = thisUser.password ? thisUser.name : "password";
+            const name = thisUser !== null ? thisUser.name : username;
+            const password = thisUser !== null ? thisUser.name : "password";
             const requestBody = JSON.stringify({ name, password });
             const response = await api.post("/gameRooms/create", requestBody);
 
@@ -112,6 +147,27 @@ const GameRoom = () => {
         navigate("/join")
     }
 
+    const EnterNickname = () => {
+        const handleClick = (e) => {
+            createGame();
+            setIsSettingNickname(false);
+        }
+        return (
+            <div>
+                <JoinField
+                    label="Set nickname"
+                    placeholder="Nickname"
+                    value={username}
+                    onChange={(n: string) => setUsername(n)}
+                ></JoinField>
+                <Button
+                    onClick={(e) => handleClick(e)}>
+                    Save
+                </Button>
+            </div>
+        );
+    }
+
     // Function to return the basic choices for connection to a room
     function RoomChoice() {
         return (
@@ -124,7 +180,9 @@ const GameRoom = () => {
                     <div className="gameroom buttons-container">
                         <Button
                             width="80%"
-                            onClick={() => createGame()}>
+                            // onClick={() => createGame()}
+                            onClick={() => setIsSettingNickname(true)}
+                        >
                             New Game
                         </Button>
                         <Button
@@ -289,16 +347,19 @@ const GameRoom = () => {
         );
     }
 
+    let renderComponent;
 
-    //Conditional rendering
     if (isSettingsActive) {
-        return GameSettings();
-    }
-    if (isGameCreated && gameRoom) {
-        return Overview()
+        renderComponent = <GameSettings />;
+    } else if (isSettingNickname) {
+        renderComponent = <EnterNickname />;
+    } else if (isGameCreated && gameRoom) {
+        renderComponent = <Overview />;
+    } else {
+        renderComponent = <RoomChoice />;
     }
 
-    return RoomChoice()
+    return renderComponent;
 
 }
 

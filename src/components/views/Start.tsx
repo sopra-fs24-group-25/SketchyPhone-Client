@@ -44,7 +44,7 @@ const Start = () => {
     };
 
     const doPlayGuest = (): void => {
-        navigate("/login");
+        navigate("/GameRoom");
     };
 
     const doSignUp = (): void => {
@@ -75,7 +75,7 @@ const Start = () => {
                         <div className="start button-container">
                             <Button
                                 width="100%"
-                                onClick={() => doLogin()}
+                                onClick={() => doPlayGuest()}
                             >
                                 Play as a guest
                             </Button>
@@ -89,7 +89,7 @@ const Start = () => {
                             </Button>
                         </div>
                         <div className="start sign-in-link"
-                            onClick={() => doPlayGuest()}>
+                            onClick={() => doLogin()}>
                             Already have an account? Log in
                         </div>
                     </div>
