@@ -88,3 +88,9 @@ Victor Cruz da Silva
 Xindi Liu
 - currently configurating Websockets, created dependencies and implemented websocketsconfiguration class
 - Working on user story #66, #70, #71
+
+Noé Matumona
+- Added various tasks from user story #4 (#19, #20, #22, #23, #24, #25)
+- #24, #25 need more work to be fully functional
+- implemented various visual changes
+- further integrated slide menu in more views
