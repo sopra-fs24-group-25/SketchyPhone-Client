@@ -37,8 +37,9 @@ const Game = () => {
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
+        setIsInitialPrompt(false)
     }
-    
+
     const fetchDrawing = async () => {
         const gameID = sessionStorage.getItem("gameID");
         const userID = sessionStorage.getItem("userID");
@@ -69,7 +70,7 @@ const Game = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-                <div className={`join container-mid`}>
+                <div className={"join container-mid"}>
                 </div>
                 <TextPromptContainer
                     drawing={currentDrawing}
@@ -84,14 +85,20 @@ const Game = () => {
     if (currentTask === "Drawing") {
         return (
             <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
+                </div>
                 <DrawContainer
                     height={400}
                     width={600}
                     textPrompt = "A dog eating a tasty banana" // Just for testing
                     textPromptId = {1} // Just for testing
                     timerDuration={20}
-                    setNextTask={setCurrentTask}
-                />
+                    setNextTask={setCurrentTask}>
+                </DrawContainer>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );

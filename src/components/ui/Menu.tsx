@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import "../../styles/ui/MenuButton.scss";
+import "../../styles/ui/BackButton.scss";
 import "../../styles/ui/MenuContainer.scss";
 import { BackButton } from "components/ui/BackButton";
 //import "styles/views/GameRoom.scss";
@@ -32,8 +33,8 @@ const Menu = (openMenu, toggleMenu) => {
             onClick={() => toggleMenu()}>
             <div
                 className={`menu-container ${openMenu ? "open" : "closed"}`}>
-                <div className="gameroom header">
-                    <BackButton
+                <div>
+                    <BackButton className="menu-backbutton"
                         onClick={() => toggleMenu()}>
                     </BackButton>
                 </div>

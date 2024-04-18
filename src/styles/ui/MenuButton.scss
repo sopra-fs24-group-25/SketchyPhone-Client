@@ -4,16 +4,13 @@
     user-select: none;
     display: flex;
     justify-content: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     &:hover {
         scale: 1.1;
     }
-    padding: 6px;
-    margin-top: 2em;
-    user-select: none;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
     font-weight: 725;
     font-size: 30px;
     text-align: left;

@@ -6,7 +6,6 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { api, handleError } from "helpers/api";
 
 
-
 // Default draw container
 
 // For more see:
@@ -69,8 +68,12 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 
     const onMouseMove = (e) => {
         {
-            curX = e.pageX - canvas.current.offsetLeft;
-            curY = e.pageY - canvas.current.offsetTop;
+            try {
+                curX = e.pageX - canvas.current.offsetLeft;
+                curY = e.pageY - canvas.current.offsetTop;
+            } catch {
+                console.log("not yet ready")
+            }
         }
     }
 
@@ -92,7 +95,7 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
             const gameSessionId = sessionStorage.getItem("gameSessionId");
             const userId = sessionStorage.getItem("userId");
             const userToken = sessionStorage.getItem("userToken")
-            const base64Canvas = canvas.current.toDataURL("image/jpeg").split(';base64,')[1];
+            const base64Canvas = canvas.current.toDataURL("image/jpeg").split(";base64,")[1];
         }
         catch (error) {
             alert(
@@ -135,14 +138,12 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     const getTimeSeconds = (time) => (minuteSeconds - time) | 0;
 
 
-
-
     function initialize() {
         console.log("initializing");
         canvas.current = document.getElementById("canvas");
 
         if (canvas.current !== null) {
-            ctx.current = (canvas.current as HTMLCanvasElement).getContext('2d');
+            ctx.current = (canvas.current as HTMLCanvasElement).getContext("2d");
         }
 
         initialized = (canvas.current !== null && ctx.current !== null);
@@ -158,27 +159,27 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
             // Save initial image for resetting
             ctx.current.save();
 
-            colorPicker = document.querySelector('input[type="color"]');
-            sizePicker = document.querySelector('input[type="range"]');
-            clearBtn = document.querySelector('button');
+            colorPicker = document.querySelector("input[type='color']");
+            sizePicker = document.querySelector("input[type='range']");
+            clearBtn = document.querySelector("button");
 
             // Add event listener for mouse move
             document.addEventListener("mousemove", onMouseMove);
 
             // Add event listener for mouse down
-            document.addEventListener('mousedown', onMouseDown);
+            document.addEventListener("mousedown", onMouseDown);
 
             // Add event listener for mouse up
-            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener("mouseup", onMouseUp);
 
             // Add event listener for undo
-            document.addEventListener('keydown', function (event) {
-                if (event.ctrlKey && event.key === 'z') {
+            document.addEventListener("keydown", function (event) {
+                if (event.ctrlKey && event.key === "z") {
                     onUndo();
                 }
             });
 
-            clearBtn.addEventListener('click', onButtonClear);
+            clearBtn.addEventListener("click", onButtonClear);
         }
     }, [])
 
@@ -313,4 +314,5 @@ DrawContainer.propTypes = {
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,
 };
+
 export default DrawContainer;

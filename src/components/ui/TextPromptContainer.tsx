@@ -29,7 +29,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             const userId = sessionStorage.getItem("userId");
             const userToken = sessionStorage.getItem("userToken");
             textPrompt;
-            console.log("sending textprompt to server");
+            console.log("sending text prompt to server");
         }
         catch (error) {
             alert(
@@ -40,7 +40,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 
     async function onSubmit() {
         await sendTextPrompt();
-        //setNextTask("Drawing");
+        setNextTask("Drawing");
     }
 
     const timerProps = {
@@ -63,49 +63,49 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
     }
 
     return (
-            <div className="prompt container">
-                <div className={`prompt title ${isInitialPrompt ? "hidden" : ""}`}
-                >
-                    It&apos;s time to guess what this drawing is about
-                </div>
-                <div className="prompt drawing"
-                    style={{backgroundColor: `${isInitialPrompt ? "transparent" : "white"}`}}
-                >
-                    <div className="prompt field">
-                        {drawing}
-                    </div>
-                </div>
-                <div className="prompt timer">
-                    <CountdownCircleTimer
-                        {...timerProps}
-                        colors="#000000"
-                        duration={timerDuration}
-                        initialRemainingTime={remainingTime & minuteSeconds}
-                        onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
-
-                        // Here submit if timer ran out
-                        onUpdate={(remainingTime) => (remainingTime === 0 && onSubmit())}
-                    >
-                    </CountdownCircleTimer>
-                    <div className="prompt sub-container">
-                        <label className="prompt label">{isInitialPrompt ? "Input a quirky sentence:" : "Describe the drawing:"}</label>
-                        <input
-                            className={`prompt input ${promptTooLong ? "invalid" : ""}`}
-                            placeholder={`Max ${maxChars} characters`}
-                            style={{userSelect:"none"}}
-                            value={textPrompt}
-                            onChange={(t) => handleChange(t)}
-                        />
-                    </div>
-                </div>
-                <Button
-                    width="20%"
-                    onClick={() => onSubmit()}
-                    disabled={!textPrompt}
-                >
-                    Submit
-                </Button>
+        <div className="prompt container">
+            <div className={`prompt title ${isInitialPrompt ? "hidden" : ""}`}
+            >
+                It&apos;s time to guess what this drawing is about
             </div>
+            <div className="prompt drawing"
+                style={{backgroundColor: `${isInitialPrompt ? "transparent" : "white"}`}}
+            >
+                <div className="prompt field">
+                    {drawing}
+                </div>
+            </div>
+            <div className="prompt timer">
+                <CountdownCircleTimer
+                    {...timerProps}
+                    colors="#000000"
+                    duration={timerDuration}
+                    initialRemainingTime={remainingTime & minuteSeconds}
+                    onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
+
+                    // Here submit if timer ran out
+                    onUpdate={(remainingTime) => (remainingTime === 0 && onSubmit())}
+                >
+                </CountdownCircleTimer>
+                <div className="prompt sub-container">
+                    <label className="prompt label">{isInitialPrompt ? "Input a quirky sentence:" : "Describe the drawing:"}</label>
+                    <input
+                        className={`prompt input ${promptTooLong ? "invalid" : ""}`}
+                        placeholder={`Max ${maxChars} characters`}
+                        style={{userSelect:"none"}}
+                        value={textPrompt}
+                        onChange={(t) => handleChange(t)}
+                    />
+                </div>
+            </div>
+            <Button
+                width="20%"
+                onClick={() => onSubmit()}
+                disabled={!textPrompt}
+            >
+                Submit
+            </Button>
+        </div>
     )
 
 }
