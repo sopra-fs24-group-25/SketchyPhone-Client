@@ -94,3 +94,13 @@ Noé Matumona
 - #24, #25 need more work to be fully functional
 - implemented various visual changes
 - further integrated slide menu in more views
+
+Noah Isaak
+- Create drawing surface as react component #43 #42
+- Allow simple basic drawing tools #44
+- Refactored to allow for drawing history and undo #45
+- Imported and used timer, incorporated timer functionality #46 #47
+- Allow for submitting of drawn image #48
+- minor fixes across the board
+- attached server functionality across the board
+  
