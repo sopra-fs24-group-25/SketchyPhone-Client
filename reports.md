@@ -103,4 +103,11 @@ Noah Isaak
 - Allow for submitting of drawn image #48
 - minor fixes across the board
 - attached server functionality across the board
-  
+
+## 22.04 - 28.04 
+
+Xindi Liu
+- Incorporated WebSocket functionality into the server side, including configuration and the WebSocket controller.
+- Implemented logic to handle user reconnection upon disconnection.
+- Enhanced the GameService to dynamically remove game rooms when they become inactive and have fewer than three users.
+- Updated the build.gradle file to include dependencies required for WebSocket functionality.
