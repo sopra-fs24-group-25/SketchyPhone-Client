@@ -15,8 +15,8 @@ import "styles/views/GameSettings.scss" // Merge into one later
 import "styles/ui/ChubbyGuy.scss";
 import User from "models/User";
 import GameRoomDetails from "models/GameRoom";
-import Game from "./Game";
 import GameSession from "models/GameSession";
+import Game from "../../models/Game"
 
 const JoinField = (props) => {
     return (
@@ -48,8 +48,8 @@ const GameRoom = () => {
 
     const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(null);
 
-    // For persistent user
-    const [thisUser, setThisUser] = useState<User>(JSON.parse(sessionStorage.getItem("user")));
+    // Need to do it like this
+    const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const [users, setUsers] = useState<Array<User>>(null);
 
@@ -108,6 +108,8 @@ const GameRoom = () => {
         }
 
         const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+
+        // add try catch
         const response = await api.get(`/gameRooms/${gameRoom.gameId}/users`, { headers: headers })
 
         let fetchedUsers = new Array<User>(response.data)[0];
@@ -125,17 +127,19 @@ const GameRoom = () => {
             const requestBody = JSON.stringify({ name, password });
             const response = await api.post("/gameRooms/create", requestBody);
 
+            const game = new Game(response.data);
+  
             // Create new gameRoomDetails
             const thisgameroom = new GameRoomDetails(response.data);
-
-            // Set sessionstorage
-            sessionStorage.setItem("adminUser", JSON.stringify(thisgameroom.users[0])); // This might not be smart
-            sessionStorage.setItem("gameRoomDetails", JSON.stringify(thisgameroom));
 
             // Set default settings values on game creation
             sessionStorage.setItem("numCycles", defaultNumCycles.toString());
             sessionStorage.setItem("gameSpeed", defaultGameSpeed.toString());
             sessionStorage.setItem("isEnabledTTS", defaultIsEnabledTTS ? "True" : "False");
+
+            // Store user and gameroom to sessionstorage
+            sessionStorage.setItem("user", JSON.stringify(thisgameroom.users[0]));
+            sessionStorage.setItem("gameRoom", JSON.stringify(thisgameroom));
 
             setUsers(thisgameroom.users);
             setThisUser(thisgameroom.users[0]);
@@ -156,10 +160,13 @@ const GameRoom = () => {
             const response = await api.post(`/games/${gameRoom.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
+            console.log(gameSession);
 
             // check if user is admin and navigate to start
-            if(gameSession !== null && gameSession.admin === thisUser.id){
-                sessionStorage.setItem("gameSession", gameSession);
+            if (gameSession !== null && gameSession.admin === thisUser.id) {
+                console.log("storing gamesession");
+                console.log(gameSession);
+                sessionStorage.setItem("gameSession", JSON.stringify(gameSession));
                 navigate("/game");
             }
         }

@@ -4,6 +4,9 @@ import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { api, handleError } from "helpers/api";
+import GameSession from "../../models/GameSession"
+import User from "../../models/User";
+import DrawingPrompt from "../../models/DrawingPrompt";
 
 
 // Default draw container
@@ -91,11 +94,26 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 
     async function sendImage() {
         try {
-            // Send image here
-            const gameSessionId = sessionStorage.getItem("gameSessionId");
-            const userId = sessionStorage.getItem("userId");
-            const userToken = sessionStorage.getItem("userToken")
+            // Send text here
+            const user = new User(JSON.parse(sessionStorage.getItem("user")));
+            const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+
+            // Get last gamesession (will always be the current)
+            const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+
+            // If we have a previous drawing id
+            const previousTextPromptId = textPromptId;
+
             const base64Canvas = canvas.current.toDataURL("image/jpeg").split(";base64,")[1];
+
+            const requestBody = {drawingBase64: base64Canvas};
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
+            console.log(requestBody);
+
+            const url = `/games/${gameSessionId}/drawings/${user.id}/${previousTextPromptId}`;
+            const response = await api.post(url, requestBody, { headers: requestHeader });
+            console.log(response);
+
         }
         catch (error) {
             alert(

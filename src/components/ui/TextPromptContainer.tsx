@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { api, handleError } from "helpers/api";
-import {PhoneLogo} from "../ui/PhoneLogo";
+import { PhoneLogo } from "../ui/PhoneLogo";
 import "../../styles/ui/BaseContainer.scss";
 import "../../styles/ui/TextPromptContainer.scss";
 import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import PropTypes from "prop-types";
+import TextPrompt from "models/TextPrompt";
+import User from "../../models/User"
+import GameSession from "../../models/GameSession"
 
 export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, setNextTask }) => {
 
-    const [textPrompt, setTextPrompt] = useState<String>("");
+    const [textPromptContent, setTextPromptContent] = useState<String>("");
     const [promptTooLong, setPromptTooLong] = useState<Boolean>(false);
 
     const maxChars = 50;
@@ -21,14 +24,43 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
     const remainingTime = endTime - startTime;
 
     //fetch drawing, if first time, draw PhoneLogo
-    
+
     async function sendTextPrompt() {
         try {
-            // Send image here
-            const gameSessionId = sessionStorage.getItem("gameSessionId");
-            const userId = sessionStorage.getItem("userId");
-            const userToken = sessionStorage.getItem("userToken");
-            textPrompt;
+            // Send text here
+            const user = new User(JSON.parse(sessionStorage.getItem("user")));
+            const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+
+            // console.log(gameSession.gameSessions[gameSession.gameSessions.length -1].gameSessionId);
+            console.log(user);
+
+            // Get last gamesession (will always be the current)
+            const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+
+            // for the very first text prompts -> insert 777 as previousDrawingId (from server documentation)
+            const requestHeader = { "Authorization":  user.token, "X-User-ID": user.id };
+
+            // If we have a previous drawing id
+            const previousDrawingId = (drawing === null) ? 777 : drawing.drawingId;
+
+
+            // Create new textprompt object and assign content
+            const textPrompt = new TextPrompt();
+            textPrompt.content = textPromptContent;
+
+            const requestBody = JSON.stringify(textPrompt);
+            
+            const url = `/games/${gameSessionId}/prompts/${user.id}/${previousDrawingId}`;
+            const response = api.post(url, requestBody, { headers: requestHeader });
+
+            // Some logging
+            console.log(drawing);
+            console.log(previousDrawingId);
+            console.log(requestBody);
+            console.log(url);
+            console.log(response);
+
+            textPromptContent;
             console.log("sending text prompt to server");
         }
         catch (error) {
@@ -40,6 +72,10 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 
     async function onSubmit() {
         await sendTextPrompt();
+
+        // Lets wait for 2 seconds
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         setNextTask("Drawing");
     }
 
@@ -56,10 +92,10 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             setPromptTooLong(false);
         } else {
             setPromptTooLong(false);
-            setTextPrompt(t.target.value);
+            setTextPromptContent(t.target.value);
         }
-        console.log("field", t.target.value);
-        console.log("prompt", textPrompt);
+        // console.log("field", t.target.value);
+        // console.log("prompt", textPromptContent);
     }
 
     return (
@@ -69,10 +105,13 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
                 It&apos;s time to guess what this drawing is about
             </div>
             <div className="prompt drawing"
-                style={{backgroundColor: `${isInitialPrompt ? "transparent" : "white"}`}}
+                style={{ backgroundColor: `${isInitialPrompt ? "transparent" : "white"}` }}
             >
                 <div className="prompt field">
-                    {drawing}
+                    {drawing !== null && <img
+                        src={`data:image/png; base64, ${drawing.encodedImage}`}
+                    ></img>}
+
                 </div>
             </div>
             <div className="prompt timer">
@@ -92,8 +131,8 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
                     <input
                         className={`prompt input ${promptTooLong ? "invalid" : ""}`}
                         placeholder={`Max ${maxChars} characters`}
-                        style={{userSelect:"none"}}
-                        value={textPrompt}
+                        style={{ userSelect: "none" }}
+                        value={textPromptContent}
                         onChange={(t) => handleChange(t)}
                     />
                 </div>
@@ -101,7 +140,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             <Button
                 width="20%"
                 onClick={() => onSubmit()}
-                disabled={!textPrompt}
+                disabled={!textPromptContent}
             >
                 Submit
             </Button>
@@ -111,7 +150,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 }
 
 TextPromptContainer.propTypes = {
-    drawing: PropTypes.image,
+    drawing: PropTypes.object,
     isInitialPrompt: PropTypes.bool,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,

@@ -15,6 +15,7 @@ import GameRoom from "models/GameRoom";
 import Game from "./Game";
 import { AvatarChoice } from "components/ui/AvatarChoice";
 import Avatar from "models/Avatar";
+import { resolveTypeReferenceDirective } from "typescript";
 
 const JoinField = (props) => {
     return (
@@ -164,8 +165,26 @@ const GameJoin = () => {
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
-            const user = new User({"name": nickname})
+            const user = new User({"name": nickname, "password": "defaultPassword"})
             sessionStorage.setItem("user", JSON.stringify(user));
+
+            // CURRENTLY CONFLICT WITH /gameRooms/create, user gets created twice
+            // // Post to users to create user
+            // const requestBody = JSON.stringify(user);
+            // try{
+            //     const response = await api.post("/users", requestBody);
+            //     console.log(response.data);
+
+            //     const userCreatedResponse = new User(response.data);
+
+            //     sessionStorage.setItem("user", JSON.stringify(userCreatedResponse));
+
+            // }
+            // catch(error){
+            //     alert(`Something happened while creating the user: ${error}`)
+            // }
+
+
 
             setAvatar(null);
 

@@ -5,7 +5,7 @@
 class DrawingPrompt {
     constructor(data = {}) {
         this.drawingId = null;
-        this.creatorId = null;
+        this.creator = null;
         this.encodedImage = null;
         this.creationDateTime = null;
         this.previousTextPromptId = null;
