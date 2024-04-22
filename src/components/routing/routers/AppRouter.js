@@ -11,6 +11,7 @@ import Login from "../../views/Login";
 import {StartGuard} from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
 import GameSettings from "../../views/GameSettings";
+import SandboxView from "../../views/SandboxView"
 
 
 /**
@@ -42,11 +43,12 @@ const AppRouter = () => {
                     <Route path="/" element={<Start/>} />
                 </Route>
 
+                <Route path="/sandboxview" element={<SandboxView />}>
+                </Route>
+
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
                 </Route>
-
-                <Route path="/gamesettings" element={<GameSettings/>} />
 
                 <Route path="/" element={
                     <Navigate to="/game" replace />

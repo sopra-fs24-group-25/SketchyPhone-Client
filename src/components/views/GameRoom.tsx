@@ -16,6 +16,7 @@ import "styles/ui/ChubbyGuy.scss";
 import User from "models/User";
 import GameRoomDetails from "models/GameRoom";
 import Game from "./Game";
+import GameSession from "models/GameSession";
 
 const JoinField = (props) => {
     return (
@@ -153,7 +154,14 @@ const GameRoom = () => {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
             const response = await api.post(`/games/${gameRoom.gameId}/start`, null, { headers: headers })
-            console.log(response.data);
+
+            const gameSession = new GameSession(response.data);
+
+            // check if user is admin and navigate to start
+            if(gameSession !== null && gameSession.admin === thisUser.id){
+                sessionStorage.setItem("gameSession", gameSession);
+                navigate("/game");
+            }
         }
         catch (error) {
             alert(
