@@ -15,7 +15,7 @@ import DrawingPrompt from "../../models/DrawingPrompt";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration, setNextTask }) => {
+export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -70,18 +70,18 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     }
 
     const onMouseMove = (e) => {
-        {
+        if (allowDraw) {
             try {
                 curX = e.pageX - canvas.current.offsetLeft;
                 curY = e.pageY - canvas.current.offsetTop;
             } catch {
-                console.log("not yet ready")
+                //console.log("not yet ready")
             }
         }
     }
 
     const onButtonClear = () => {
-        if (ctx.current) {
+        if (ctx.current && allowDraw) {
             lineDrawActions = [];
             rectangleDrawActions = [];
             ctx.current.clearRect(0, 0, width, height);
@@ -208,7 +208,13 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 
     async function onSubmit() {
         allowDraw = false;
+        
+    }
+
+    async function onTimerEnd() {
+        await onSubmit();
         await sendImage();
+        setInitial(false);
         setNextTask("Text Prompt");
     }
 
@@ -288,13 +294,13 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     return (
         <div>
             <div className="drawContainer" >
-                <h className="drawContainer textPrompt">Hey! It is time to draw: {textPrompt}</h>
+                <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt}</h>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
                         <input type="color" defaultValue={defaultColor}></input>
                         <label htmlFor="brushSize">Brush Size</label>
                         <input type="range" min="2" max="50" defaultValue="10" id="brushSize"></input>
-                        <button>Clear Canvas</button>
+                        <button onClick={() => onButtonClear()}>Clear Canvas</button>
                         <button onClick={() => onClickRect()}>Rectangle</button>
                     </div>
                     <div className="drawContainer subcontainer">
@@ -314,7 +320,7 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
                             onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
 
                             // Here submit if timer ran out
-                            onUpdate={(remainingTime) => (remainingTime === 0 && onSubmit())}
+                            onUpdate={(remainingTime) => (remainingTime === 0 && onTimerEnd())}
                         >
                         </CountdownCircleTimer>
                     </div>
@@ -331,6 +337,7 @@ DrawContainer.propTypes = {
     textPromptId: PropTypes.number,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,
+    setInitial: PropTypes.func,
 };
 
 export default DrawContainer;

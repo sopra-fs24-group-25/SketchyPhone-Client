@@ -11,6 +11,7 @@
         width: 30%;
 
         &.row-flex {
+            width: 75%;
             flex-direction: row;
         }
     }
@@ -41,23 +42,29 @@
         background-color: white;
         height: 60px;
         width: 300px;
+        font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 30px;
         margin: 0px 0px 20px 0px;
         p {
-            color: black;
+            color: $fieldTextColor;
         }
     }
 
-    &.waiting{
-        background-color: rgba(0, 0, 0, 0.342);
+    &.waiting {
+        user-select: none;
+        background-color: $background;
         text-align: center;
+        border-radius: 1em;
 
         p {
-            padding: 5px;
-            font-style: italic;
+            padding: 10px;
+        }
+        &.non-admin {
+            padding: 10px;
+            font-size: large;
         }
     }
 }

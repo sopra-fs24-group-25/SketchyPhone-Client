@@ -48,7 +48,7 @@ const GameJoin = () => {
 
     const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
     const [name, setName] = useState<string>("noah");
-    const [gameRoom, setGameRoom] = useState<typeof GameJoin>(null);
+    const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
     const [nickname, setNickname] = useState<string>("");
@@ -64,9 +64,17 @@ const GameJoin = () => {
     }
 
     const goBack = (): void => {
+        //does not work anymore, enters a newly created room when exiting
         setCountdownNumber(0);
+        setGameRoom(null);
+        setIsGameCreator(false);
+        setPin("");
+        sessionStorage.removeItem("numCycles");
+        sessionStorage.removeItem("gameSpeed");
+        sessionStorage.removeItem("isEnabledTTS");
+        sessionStorage.removeItem("gameRoom");
         sessionStorage.removeItem("gameroomToken");
-        navigate("/GameRoom");
+        navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
     };
 
     const chooseAvatar = (index: number) => {
@@ -95,70 +103,76 @@ const GameJoin = () => {
     }
 
     const checkRoomAvailability = async () => {
-        var array = ["IN-PLAY", "IN-PLAY", "OPEN", "CLOSED"];
-        var room: GameRoom;
         setView("waitingRoomView");
-        while (true) {
-            const response = 0//GET gameroom status
-            room = new GameRoom({ status: array[Math.floor(Math.random() * array.length)] });
-            if (room.status === "OPEN") {
-                //navigate to active gameroom
-                console.log("open");
-                //navigate("/game");
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                setView("openRoomView");
-                await startCountdown(3);
-                navigate("/GameRoom");
+        var status;
+        var numChecks = 4;
+        while (numChecks >= 0) {
+            numChecks -= 1;
+            try {
+                const requestBody = { "name": nickname, "password": "defaultPassword" }
+                const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
+                const room = new GameRoom(response.data);
+                sessionStorage.setItem("gameroomToken", room.token);
+                if (room.status === "OPEN") {
+                    console.log("room open");
+                    setView("openRoomView");
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: room } });
 
-                return;
-            } else if (room.status === "IN-PLAY") {
-                console.log("waiting");
-                setView("waitingRoomView");
-                await new Promise((resolve) => setTimeout(resolve, 5000));
-            } else if (room.status === "CLOSED") {
-                console.log("closed");
-                setView("unavailableRoomView");
-                await startCountdown(5);
-                navigate("/GameRoom");
+                    return;
+                } else if (room.status === "IN-PLAY" || status === "in play") {
+                    console.log("in waiting room");
+                    setView("waitingRoomView");
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                } else if (room.status === "CLOSED" || status === "closed") {
+                    console.log("room closed");
+                    setView("unavailableRoomView");
+                    await startCountdown(5);
+                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
 
-                return;
+                    return;
+                } else {
+                    console.log("not fetched room info yet");
+                    setView("waitingRoomView");
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                }
+            } catch (error) {
+                console.log("in error")
+                status = error.response.data.message;
+                if (numChecks === 0) {
+                    status = "closed";
+                }
+                if (status.includes("in play")) {
+                    status = "in play";
+                    console.log("in waiting room");
+                    setView("waitingRoomView");
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                } else if (status.includes("closed")) {
+                    status = "closed";
+                    console.log("room closed");
+                    setView("unavailableRoomView");
+                    await startCountdown(5);
+                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
+
+                    return;
+                } else {
+                    console.log("nothing in error")
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                }
             }
         }
     }
 
     const validatePin = async () => {
         try {
-            const requestBody = { "name": nickname, "password": "defaultPassword" }
-            const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
-            const room = new GameRoom(response.data);
-
-            console.log(room);
-
-            setGameRoom(room);
-            if (room.gameId) { // checking if gameId exists
-                sessionStorage.setItem("gameroomToken", room.token);
-
-                // check room availability
-                checkRoomAvailability();
-
-                if (room.status === "OPEN") {
-                    //potentially tell server that user will join soon
-                }
-            } else {
-                throw new Error;
-            }
-            //console.log(response.data);
-        }
-        catch (error) {
+            await checkRoomAvailability();
+        } catch (error) {
             setPinInvalid(true);
             await new Promise((resolve) => setTimeout(resolve, 500));
             setPin("Invalid PIN!");
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setPinInvalid(false);
             setPin("");
-            //alert(
-            //    `Something went wrong during joining: \n${handleError(error)}`
-            //);
         }
     }
 
@@ -296,7 +310,7 @@ const GameJoin = () => {
                     Continue
                 </Button>
             </div>,
-            () => isGameCreator ? navigate("/gameRoom") : setView("pinView")
+            () => goBack()
         );
     }
 
@@ -332,7 +346,7 @@ const GameJoin = () => {
                     Please wait. The game room is currently hosting a game. You will be granted access by the admin once this game session concludes.
                 </text>
             </div>,
-            () => setView("avatarView")
+            () => goBack()
         );
     }
 
@@ -352,15 +366,14 @@ const GameJoin = () => {
         );
     }
 
-    function openRoomView() { //temporary
+    function openRoomView() {
         return baseView(
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
-                <div className="join title">Temporary view for open game...</div>
+                <div className="join title">Joining room...</div>
+                <Spinner></Spinner>
                 <text>
-                    Will redirect to active game room in future.
+                    Please wait. In just a moment you&apos;ll be redirected to the room.
                 </text>
-                <h2 className="join label">Going back in...</h2>
-                <h2 className="join title">{countdownNumber} seconds</h2>
             </div>,
             () => goBack(),
             "mid",
@@ -385,7 +398,7 @@ const GameJoin = () => {
     else if (view === "unavailableRoomView") {
         renderComponent = unavailableRoomView();
     }
-    else if (view === "openRoomView") { //temporary
+    else if (view === "openRoomView") {
         renderComponent = openRoomView();
     }
 

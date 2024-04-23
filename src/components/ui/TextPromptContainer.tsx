@@ -74,7 +74,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
         await sendTextPrompt();
 
         // Lets wait for 2 seconds
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        //await new Promise((resolve) => setTimeout(resolve, 2000));
 
         setNextTask("Drawing");
     }
@@ -108,9 +108,10 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
                 style={{ backgroundColor: `${isInitialPrompt ? "transparent" : "white"}` }}
             >
                 <div className="prompt field">
-                    {drawing !== null && <img
+                    {isInitialPrompt ? drawing : (drawing !== null && <img
                         src={`data:image/png; base64, ${drawing.encodedImage}`}
-                    ></img>}
+                        style={{userSelect:"none", "-webkit-user-drag":"none"}}
+                    ></img>)}
 
                 </div>
             </div>

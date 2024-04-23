@@ -1,6 +1,7 @@
 @import "../theme";
 
 .settings {
+    user-select: none;
     display: flex;
     flex-direction: row;
 
@@ -28,12 +29,30 @@
         }
     }
 
+    &.button-container {
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        align-items: center;
+        justify-content: space-evenly;
+        width: 30%;
+    }
+
+    &.title {
+        user-select: none;
+        color: $textColor;
+        margin-bottom: 10px;
+        font-weight: 700;
+        font-size: 3em;
+    }
+
     &.header {
         padding-top: 10px;
     }
 }
 
 select {
+    cursor: pointer;
     width: 100px;
     border: none;
     text-align: center;

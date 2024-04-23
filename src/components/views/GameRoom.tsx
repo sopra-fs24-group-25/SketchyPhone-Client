@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
@@ -45,16 +45,18 @@ JoinField.propTypes = {
 const GameRoom = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(null);
+    const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(location.state ? location.state.gameRoom : null);
 
     // Need to do it like this
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const [users, setUsers] = useState<Array<User>>(null);
+    const [isAdmin, setIsAdmin] = useState<Boolean>(false);
 
     // Conditional rendering flags
-    const [isGameCreated, setIsGameCreated] = useState(false);
+    const [isGameCreated, setIsGameCreated] = useState(location.state ? location.state.isGameCreated : false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
 
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
@@ -89,18 +91,9 @@ const GameRoom = () => {
 
     }, [gameRoom, isGameCreated, users, thisUser])
 
-    const open_menu = (): void => {
-        //open menu with profile, settings, and logout
-    };
-
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
     }
-
-    const logout = (): void => {
-        localStorage.removeItem("token");
-        navigate("/");
-    };
 
     async function fetchGameRoomUsers() {
         if (gameRoom === null || isSettingsActive) {
@@ -125,13 +118,18 @@ const GameRoom = () => {
             const name = thisUser.name;
             const password = "password"; // PLACEHOLDER
             const requestBody = JSON.stringify({ name, password });
-            const response = await api.post("/gameRooms/create", requestBody);
+            var thisgameroom;
+            if (gameRoom) {
+                thisgameroom = gameRoom;
+            } else {
+                const response = await api.post("/gameRooms/create", requestBody);
 
-            const game = new Game(response.data);
-  
-            // Create new gameRoomDetails
-            const thisgameroom = new GameRoomDetails(response.data);
-
+                const game = new Game(response.data);
+    
+                // Create new gameRoomDetails
+                thisgameroom = new GameRoomDetails(response.data);
+                setIsAdmin(true);
+            }
             // Set default settings values on game creation
             sessionStorage.setItem("numCycles", defaultNumCycles.toString());
             sessionStorage.setItem("gameSpeed", defaultGameSpeed.toString());
@@ -177,6 +175,27 @@ const GameRoom = () => {
         }
     }
 
+    const exitRoom = async () => {
+        try {
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            await api.delete(`/games/${gameRoom.gameId}/leave/${thisUser.id}`, { headers: headers });
+            setIsAdmin(false);
+            setGameRoom(null);
+            setIsGameCreated(false);
+            setUsers(null);
+            setThisUser(null);
+            sessionStorage.removeItem("numCycles");
+            sessionStorage.removeItem("gameSpeed");
+            sessionStorage.removeItem("isEnabledTTS");
+            sessionStorage.removeItem("gameRoom");
+            sessionStorage.removeItem("gameroomToken");
+            navigate("/gameRoom");
+            console.log("out");
+        } catch (error) {
+            alert(`Could not exit:\n ${handleError(error)}`);
+        }
+    }
+
     const joinGame = (): void => {
         navigate("/join")
     }
@@ -198,13 +217,13 @@ const GameRoom = () => {
                     <BackButton disabled={true} onClick={() => navigate("/")}></BackButton>
                     <div className="gameroom buttons-container">
                         <Button
-                            width="80%"
+                            width="50%"
                             onClick={() => handleGameCreate()} // We use this route to fetch username, avatar etc.
                         >
                             New Game
                         </Button>
                         <Button
-                            width="80%"
+                            width="50%"
                             onClick={() => joinGame()}>
                             Join Game
                         </Button>
@@ -222,11 +241,12 @@ const GameRoom = () => {
         return (
             <BaseContainer>
                 <div className="gameroom header">
-                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu>
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
                 </div>
                 <div className="gameroom container">
-                    <BackButton onClick={() => logout()}></BackButton> {/* Should go back not logout */}
-
                     <div className="gameroom subcontainer">
                         <div className="gameroom pin">
                             <p>Game PIN: {gameRoom["gamePin"]}</p>
@@ -240,23 +260,30 @@ const GameRoom = () => {
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
                             userList={users}
-                            showUserNames={true}></UserOverviewContainer>
+                            showUserNames={true}>
+                        </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
+                            {isAdmin ?
+                                <Button
+                                    width="50%"
+                                    onClick={() => startGame()}
+                                >Start Game</Button>
+                            : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>}
                             <Button
-                                onClick={() => startGame()}
-                            >Start Game</Button>
-                            <Button
-                                onClick={() => navigate("/")}
+                                width="50%"
+                                onClick={() => exitRoom()}
                             >Exit Room</Button>
-                            <Button
-                                onClick={() => setIsSettingsActive(true)}
-                            >Settings</Button>
+                            {isAdmin ?
+                                <Button
+                                    width="50%"
+                                    onClick={() => setIsSettingsActive(true)}
+                                >Settings</Button>
+                            : null}
                         </div>
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer >
-
         );
     }
 
@@ -301,12 +328,15 @@ const GameRoom = () => {
 
         return (
             <BaseContainer>
-                <div className="settings header">
-                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu> {/* ADD menu functionality*/}
+                <div className="gameroom header">
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
                 </div>
-                <BackButton onClick={() => navigate("/gameroom")}></BackButton>
+
                 <div className="settings container">
-                    <h1>Settings</h1>
+                    <div className="settings title">Settings</div>
 
                     {/* TODO: fetch stored values from sessionstorage*/}
                     <div className="settings options-container">
@@ -354,10 +384,18 @@ const GameRoom = () => {
                             </label>
                         </div>
                     </div>
-                    <Button
-                        width="10%"
-                        onClick={() => onSettingsSave()}>
-                        Save</Button>
+                    <div className="settings button-container">
+                        <BackButton
+                            onClick={() => setIsSettingsActive(false)}>
+                        </BackButton>
+                        <Button
+                            width="40%"
+                            onClick={() => onSettingsSave()}
+                        >
+                            Save
+                        </Button>
+                    </div>
+                    
 
                 </div>
                 {Menu(openMenu, toggleMenu)}
@@ -368,11 +406,11 @@ const GameRoom = () => {
     let renderComponent;
 
     if (isSettingsActive) {
-        renderComponent = <GameSettings />;
+        renderComponent = GameSettings();
     } else if (isGameCreated && gameRoom) {
-        renderComponent = <Overview />;
+        renderComponent = Overview();
     } else {
-        renderComponent = <RoomChoice />;
+        renderComponent = RoomChoice();
     }
 
     return renderComponent;
