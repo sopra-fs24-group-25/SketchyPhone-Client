@@ -8,21 +8,35 @@
    feel free to play around with these and see what other look you can come up with! :D
 */
 
-$accent: #97ABFF;
-$accentDark: #123597;
-$textColor: white;
-$background: #262632;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,700;1,100&family=Sen:wght@400..800&display=swap');
 
+$accent: #E493B3;
+$accentDark: #b8527b;
+$textColor: white;
+$background: #2626326b;
+
+$error-color: red;
+
+// $background-size: 100% 100%;
+// $background-position: 0px 0px,0px 0px,0px 0px,0px 0px;
+$radial-gradients: radial-gradient(23% 100% at 0% 50%, #EA4AA2FF 0%, #FF000000 100%),radial-gradient(100% 100% at 29% 0%, #A44DBAFF 0%, #FF000000 100%),radial-gradient(70% 70% at 100% 0%, #EA4AA2FF 0%, #FF000000 99%),radial-gradient(150% 150% at 71% 100%, #65BBFDFF 1%, #FF000000 99%);
+
+$fieldTextColor: black;
+$guidebutton-color: #1d1518;
+$button-color: #E493B3;
+$button-text-color: black;
 /* some constants */
 
-$DESKTOP_WIDTH: 1160px;
+$DESKTOP_WIDTH: 100vw;
+$DESKTOP_HEIGHT: 100vh;
 $SMALL_LAPTOPS_WIDTH: 970px;
 $TABLETS_WIDTH: 750px;
 $SMALL_WIDTH: 768px;
 
 /* some standard elements */
 /* fonts */
-$fontDefault: "M PLUS Rounded 1c", sans-serif;
+// $fontDefault: "M PLUS Rounded 1c", sans-serif;
+$fontDefault: "Sen", bold;
 $fontMono: "Roboto Mono", monospace;
 
 /* a standard drop shadow */
@@ -39,4 +53,107 @@ $borderRadius: 0.75em;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@mixin scrollbar{
+  &::-webkit-scrollbar {
+      width: 14px;
+      height: 18px;
+  }
+  &::-webkit-scrollbar-thumb {
+      height: 6px;
+      border: 4px solid rgba(0, 0, 0, 0);
+      background-clip: padding-box;
+      border-radius: 7px;
+      background-color: rgba(0, 0, 0, 0.15);
+      box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+  &::-webkit-scrollbar-button {
+      width: 0;
+      height: 0;
+      display: none;
+  }
+  &::-webkit-scrollbar-corner {
+      background-color: transparent;
+  }
+}
+
+@keyframes shake1 {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+    color: $error-color;
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+    color: $error-color;
+  }
+}
+
+@keyframes shake2 {
+  0%,
+  100% {
+    transform: translateX(0);
+    color: $error-color;
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(10px);
+    color: $error-color;
+  }
+}
+
+@keyframes shake3 {
+  0% {
+    transform: translateX(0);
+    color: $error-color;
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+    color: $error-color;
+  }
 }

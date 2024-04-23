@@ -6,8 +6,11 @@
   }
 
   &.title {
+    user-select: none;
     font-weight: bold;
-    color: $background;
+    padding-left: 20px;
+    padding-top: 20px;
+    color: black;
     text-align: center;
   }
 }

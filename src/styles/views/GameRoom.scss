@@ -1,0 +1,70 @@
+@import "../theme";
+
+.gameroom {
+    &.buttons-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 5px;
+        gap: 20px;
+        width: 30%;
+
+        &.row-flex {
+            width: 75%;
+            flex-direction: row;
+        }
+    }
+
+    &.container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: $DESKTOP_WIDTH;
+        height: $DESKTOP_HEIGHT / 2;
+    }
+
+    &.subcontainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    &.header {
+        padding-top: 40px;
+    }
+
+    &.pin {
+        font-size: x-large;
+        background-color: white;
+        height: 60px;
+        width: 300px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 30px;
+        margin: 0px 0px 20px 0px;
+        p {
+            color: $fieldTextColor;
+        }
+    }
+
+    &.waiting {
+        user-select: none;
+        background-color: $background;
+        text-align: center;
+        border-radius: 1em;
+
+        p {
+            padding: 10px;
+        }
+        &.non-admin {
+            padding: 10px;
+            font-size: large;
+        }
+    }
+}

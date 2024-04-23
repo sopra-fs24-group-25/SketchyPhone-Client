@@ -1,0 +1,33 @@
+@import "../theme";
+
+.avatar-preview {
+    &:hover {
+        scale: 1.1;
+    }
+    &.active {
+        border-color: white;
+        &:hover {
+            border-color: white;
+        }
+    }
+    &.inactive {
+        &:hover {
+            border-color: $accent;
+        }
+    }
+    background-image: url("../../icons/user-svgrepo-com.svg");
+    background-position: center;
+    background-size: cover;
+    -webkit-user-drag: none;
+    cursor: pointer;
+    border: solid;
+    border-width: 5px;
+    border-color: transparent;
+    background-color: $background;
+    height: 50px;
+    width: 50px;
+    border-width: 2px;
+    border-radius: 50%;
+    margin: 5px 5px 5px 5px;
+    transition: all 0.3s ease;
+}

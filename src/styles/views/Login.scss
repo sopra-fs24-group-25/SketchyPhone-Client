@@ -2,8 +2,9 @@
 
 .login {
   &.container {
-    margin-top: 2em;
-    min-height: 300px;
+    padding: 40px;
+    padding-top: 60px;
+    min-height: 400px;
     /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
     @include center;
     flex-direction: column;
@@ -30,19 +31,19 @@
     justify-content: center;
   }
   &.input {
+    user-select: none;
     height: 35px;
     padding-left: 15px;
     margin-left: -4px;
     border: none;
     border-radius: 0.75em;
     margin-bottom: 20px;
-    background: transparentize(white, 0.85);
-    color: $textColor;
+    color: $fieldTextColor;
   }
   &.label {
+    user-select: none;
     color: $textColor;
     margin-bottom: 10px;
-    text-transform: lowercase;
     font-weight: 300;
   }
   &.button-container {

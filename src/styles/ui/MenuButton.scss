@@ -1,0 +1,20 @@
+@import "../theme";
+
+.menu-button{
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+        scale: 1.1;
+    }
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    font-weight: 725;
+    font-size: 30px;
+    text-align: left;
+    opacity: 1;
+    color: black;
+        
+}

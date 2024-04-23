@@ -2,8 +2,17 @@ import React from "react";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {GameGuard} from "../routeProtectors/GameGuard";
 import GameRouter from "./GameRouter";
+import {GameRoomGuard} from "../routeProtectors/GameRoomGuard";
+import GameRoomRouter from "./GameRoomRouter";
+import {GameRoomJoinGuard} from "../routeProtectors/GameRoomJoinGuard";
+import GameJoin from "../../views/GameJoin";
 import {LoginGuard} from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
+import {StartGuard} from "../routeProtectors/StartGuard";
+import Start from "../../views/Start";
+import GameSettings from "../../views/GameSettings";
+import SandboxView from "../../views/SandboxView"
+
 
 /**
  * Main router of your application.
@@ -15,25 +24,39 @@ import Login from "../../views/Login";
  * Documentation about routing in React: https://reactrouter.com/en/main/start/tutorial 
  */
 const AppRouter = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/GameRoom/*" element={<GameRoomGuard/>}>
+                    <Route path="/GameRoom/*" element={<GameRoomRouter base="/GameRoom"/>} />
+                </Route>
 
-        <Route path="/game/*" element={<GameGuard />}>
-          <Route path="/game/*" element={<GameRouter base="/game"/>} />
-        </Route>
+                <Route path="/game/*" element={<GameGuard />}>
+                    <Route path="/game/*" element={<GameRouter base="/game"/>} />
+                </Route>
 
-        <Route path="/login" element={<LoginGuard />}>
-          <Route path="/login" element={<Login/>} />
-        </Route>
+                <Route path="/login" element={<LoginGuard />}>
+                    <Route path="/login" element={<Login/>} />
+                </Route>
 
-        <Route path="/" element={
-          <Navigate to="/game" replace />
-        }/>
+                <Route path="/" element={<StartGuard />}>
+                    <Route path="/" element={<Start/>} />
+                </Route>
 
-      </Routes>
-    </BrowserRouter>
-  );
+                <Route path="/sandboxview" element={<SandboxView />}>
+                </Route>
+
+                <Route path="/join" element={<GameRoomJoinGuard />}>
+                    <Route path="/join" element={<GameJoin/>} />
+                </Route>
+
+                <Route path="/" element={
+                    <Navigate to="/game" replace />
+                }/>
+
+            </Routes>
+        </BrowserRouter>
+    );
 };
 
 /*

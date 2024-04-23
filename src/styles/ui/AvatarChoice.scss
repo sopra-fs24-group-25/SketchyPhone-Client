@@ -1,0 +1,30 @@
+@import "../theme";
+
+.avatar-container {
+    width: 600px;
+    height: 300px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: $background;
+    padding: 10px;
+    border-radius: 5%/10%;
+    justify-content: flex-start;
+    overflow-y: scroll;
+
+    @include scrollbar;
+
+
+}
+.avatar {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    background-color: transparent;
+    height: 70px;
+    width: 250px;
+    margin-left:auto;
+    overflow: hidden;
+}
