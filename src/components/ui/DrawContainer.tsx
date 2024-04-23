@@ -207,8 +207,7 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     };
 
     async function onSubmit() {
-        allowDraw = false;
-        
+        allowDraw = false;       
     }
 
     async function onTimerEnd() {

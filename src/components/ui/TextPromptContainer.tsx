@@ -27,6 +27,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 
     async function sendTextPrompt() {
         try {
+            // TODO Change these to props
             // Send text here
             const user = new User(JSON.parse(sessionStorage.getItem("user")));
             const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
@@ -37,16 +38,18 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             // Get last gamesession (will always be the current)
             const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
 
-            // for the very first text prompts -> insert 777 as previousDrawingId (from server documentation)
             const requestHeader = { "Authorization":  user.token, "X-User-ID": user.id };
 
             // If we have a previous drawing id
-            const previousDrawingId = (drawing === null) ? 777 : drawing.drawingId;
+            // for the very first text prompts -> insert 777 as previousDrawingId (from server documentation)W
+            const previousDrawingId = (isInitialPrompt) ? 777 : drawing.drawingId;
 
 
             // Create new textprompt object and assign content
             const textPrompt = new TextPrompt();
+            // Set data
             textPrompt.content = textPromptContent;
+            textPrompt.previousDrawingId = previousDrawingId;
 
             const requestBody = JSON.stringify(textPrompt);
             
@@ -54,11 +57,9 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             const response = api.post(url, requestBody, { headers: requestHeader });
 
             // Some logging
-            console.log(drawing);
-            console.log(previousDrawingId);
             console.log(requestBody);
             console.log(url);
-            console.log(response);
+            console.log(requestHeader);
 
             textPromptContent;
             console.log("sending text prompt to server");

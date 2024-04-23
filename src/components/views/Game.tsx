@@ -6,15 +6,16 @@ import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
-import {PhoneLogo} from "../ui/PhoneLogo";
+import { PhoneLogo } from "../ui/PhoneLogo";
 import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
-import { User } from "types";
 import { DrawContainer } from "components/ui/DrawContainer";
 import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import DrawingPrompt from "models/DrawingPrompt";
+import User from "../../models/User"
+import GameSession from "../../models/GameSession"
 
 const Player = ({ user }: { user: User }) => (
     <div className="player container">
@@ -34,6 +35,16 @@ const Game = () => {
     const [currentTask, setCurrentTask] = useState<String>("Text Prompt");
     const [isInitialPrompt, setIsInitialPrompt] = useState<boolean>(true);
 
+    useEffect(() => {
+        if (currentTask === "Drawing") { // Can never be initial prompt
+            fetchPrompt();
+        }
+        else if (currentTask === "Text Prompt" && !isInitialPrompt) {
+            fetchDrawing();
+        }
+    }
+        , [currentTask])
+
     // For testing
     const testDrawingPrompt1 = new DrawingPrompt();
     testDrawingPrompt1.creatorId = 1;
@@ -41,7 +52,7 @@ const Game = () => {
 
     var currentDrawing;
     if (isInitialPrompt) {
-        currentDrawing = <PhoneLogo/>
+        currentDrawing = <PhoneLogo />
     } else {
         currentDrawing = testDrawingPrompt1;
     }
@@ -51,19 +62,41 @@ const Game = () => {
     }
 
     const fetchDrawing = async () => {
-        const gameID = sessionStorage.getItem("gameID");
-        const userID = sessionStorage.getItem("userID");
-        const response = await api.get(`/games/${gameID}/drawings/${userID}`)
+        // Send text here
+        const user = new User(JSON.parse(sessionStorage.getItem("user")));
+        const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+
+        // Get last gamesession (will always be the current)
+        const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+
+        const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
+        const response = await api.get(`/games/${gameSessionId}/drawings/${user.id}`, null, { headers: requestHeader });
 
         return (
-            <img src={response.data} style={{userSelect:"none", "-webkit-user-drag":"none"}}/>
+            <img src={response.data} style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
         )
     }
 
     const fetchPrompt = async () => {
-        const gameID = sessionStorage.getItem("gameID");
-        const userID = sessionStorage.getItem("userID");
-        const response = await api.get(`/games/${gameID}/prompts/${userID}`)
+        // Send text here
+        const user = new User(JSON.parse(sessionStorage.getItem("user")));
+        const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+
+        console.log(user);
+        console.log(gameSession);
+
+        // Get last gamesession (will always be the current)
+        const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+
+        const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
+        const url = `/games/${gameSessionId}/prompts/${user.id}`
+        console.log(requestHeader);
+        console.log(url);
+
+        const response = await api.get(url, {}, { headers: requestHeader });
+
+        console.log("received prompt:")
+        console.log(response.data);
 
         return (
             //prompt
@@ -104,8 +137,8 @@ const Game = () => {
                 <DrawContainer
                     height={400}
                     width={600}
-                    textPrompt = "A dog eating a tasty banana" // Just for testing
-                    textPromptId = {1} // Just for testing
+                    textPrompt="A dog eating a tasty banana" // Just for testing
+                    textPromptId={1} // Just for testing
                     timerDuration={20}
                     setNextTask={setCurrentTask}
                     setInitial={setIsInitialPrompt}>

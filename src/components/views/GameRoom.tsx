@@ -78,7 +78,7 @@ const GameRoom = () => {
             let interval = setInterval(() => {
                 fetchGameRoomUsers();
 
-            }, 1000); // Set interval to 1 second
+            }, 500); // Set interval to 0.5 seconds
 
             return () => clearInterval(interval);
         } else {
@@ -109,7 +109,7 @@ const GameRoom = () => {
         setUsers(fetchedUsers);
     }
 
-    async function createGame() {
+    async function createGame() { // ADMIN METHOD
         if (!thisUser) {
             return;
         }
@@ -117,6 +117,7 @@ const GameRoom = () => {
             const name = thisUser.name;
             const password = "password"; // PLACEHOLDER
             const requestBody = JSON.stringify({ name, password });
+
             var thisgameroom;
             if (gameRoom) {
                 thisgameroom = gameRoom;
@@ -150,7 +151,7 @@ const GameRoom = () => {
         }
     }
 
-    // Send to server to start game
+    // Send to server to start game ADMIN METHOD
     async function startGame() {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };

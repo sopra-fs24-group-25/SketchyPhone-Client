@@ -29,7 +29,6 @@ const PresentationContainer = (props) => {
                         <div key={element.creator} className="presentation subContainer">
                             <UserPreview></UserPreview>
                             <PresentationText
-                                // key={element.creator}
                                 textPrompt={element}
                             ></PresentationText>
                         </div>
