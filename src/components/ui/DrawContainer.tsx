@@ -15,7 +15,7 @@ import DrawingPrompt from "../../models/DrawingPrompt";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
+export const DrawContainer = ({ height, width, user, gameSession, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -42,10 +42,6 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
     let allowDraw = true;
 
     let drawRect = false;
-
-    let prevImageData;
-    let submitImageData;
-    let clearImage;
 
     let initialized = false;
 
@@ -94,10 +90,6 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 
     async function sendImage() {
         try {
-            // Send text here
-            const user = new User(JSON.parse(sessionStorage.getItem("user")));
-            const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
-
             // Get last gamesession (will always be the current)
             const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
 
@@ -108,7 +100,6 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 
             const requestBody = {drawingBase64: base64Canvas};
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
-            console.log(requestBody);
 
             const url = `/games/${gameSessionId}/drawings/${user.id}/${previousTextPromptId}`;
             const response = await api.post(url, requestBody, { headers: requestHeader });
@@ -332,6 +323,8 @@ export const DrawContainer = ({ height, width, textPrompt, textPromptId, timerDu
 DrawContainer.propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
+    user: PropTypes.object.isRequired,
+    gameSession: PropTypes.object.isRequired,
     textPrompt: PropTypes.string,
     textPromptId: PropTypes.number,
     timerDuration: PropTypes.number,

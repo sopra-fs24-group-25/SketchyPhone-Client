@@ -10,7 +10,7 @@ import TextPrompt from "models/TextPrompt";
 import User from "../../models/User"
 import GameSession from "../../models/GameSession"
 
-export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, setNextTask }) => {
+export const TextPromptContainer = ({ drawing, user, gameSession, isInitialPrompt, timerDuration, setNextTask }) => {
 
     const [textPromptContent, setTextPromptContent] = useState<String>("");
     const [promptTooLong, setPromptTooLong] = useState<Boolean>(false);
@@ -27,14 +27,6 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 
     async function sendTextPrompt() {
         try {
-            // TODO Change these to props
-            // Send text here
-            const user = new User(JSON.parse(sessionStorage.getItem("user")));
-            const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
-
-            // console.log(gameSession.gameSessions[gameSession.gameSessions.length -1].gameSessionId);
-            console.log(user);
-
             // Get last gamesession (will always be the current)
             const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
 
@@ -61,7 +53,6 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             console.log(url);
             console.log(requestHeader);
 
-            textPromptContent;
             console.log("sending text prompt to server");
         }
         catch (error) {
@@ -73,9 +64,6 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 
     async function onSubmit() {
         await sendTextPrompt();
-
-        // Lets wait for 2 seconds
-        //await new Promise((resolve) => setTimeout(resolve, 2000));
 
         setNextTask("Drawing");
     }
@@ -95,8 +83,6 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             setPromptTooLong(false);
             setTextPromptContent(t.target.value);
         }
-        // console.log("field", t.target.value);
-        // console.log("prompt", textPromptContent);
     }
 
     return (
@@ -150,7 +136,9 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
 }
 
 TextPromptContainer.propTypes = {
-    drawing: PropTypes.object,
+    drawing: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    gameSession: PropTypes.object.isRequired,
     isInitialPrompt: PropTypes.bool,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,
