@@ -51,6 +51,7 @@
     &.invalid {
       animation: shake2 0.4s ease-in-out 0s 1;
       color: $error-color;
+      background-color: $error-field-color;
     }
   }
   &.label {

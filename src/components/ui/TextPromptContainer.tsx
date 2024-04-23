@@ -105,9 +105,7 @@ export const TextPromptContainer = ({ drawing, isInitialPrompt, timerDuration, s
             >
                 It&apos;s time to guess what this drawing is about
             </div>
-            <div className="prompt drawing"
-                style={{ backgroundColor: `${isInitialPrompt ? "transparent" : "white"}` }}
-            >
+            <div className={`prompt drawing ${isInitialPrompt ? "first" : ""}`}>
                 <div className="prompt field">
                     {isInitialPrompt ? drawing : (drawing !== null && <img
                         src={`data:image/png; base64, ${drawing.encodedImage}`}

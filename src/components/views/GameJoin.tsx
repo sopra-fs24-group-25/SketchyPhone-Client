@@ -103,7 +103,6 @@ const GameJoin = () => {
     }
 
     const checkRoomAvailability = async () => {
-        setView("waitingRoomView");
         var status;
         var numChecks = 4;
         while (numChecks >= 0) {
@@ -156,8 +155,9 @@ const GameJoin = () => {
 
                     return;
                 } else {
-                    console.log("nothing in error")
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                    console.log("nothing in error");
+                    setView("pinView");
+                    throw new Error;
                 }
             }
         }
@@ -279,10 +279,10 @@ const GameJoin = () => {
                     placeholder="Game PIN"
                     value={pin}
                     onChange={(p: string) => setPin(p)}
-                    disabled={pinInvalid ? true : false}
+                    disabled={pinInvalid}
                 ></JoinField>
                 <Button
-                    disabled={pin === "" ? true : false}
+                    disabled={!pin || pinInvalid}
                     width="50%"
                     onClick={() => validatePin()}>
                     Continue
@@ -302,7 +302,7 @@ const GameJoin = () => {
                     onChange={(n: string) => setNickname(n)}
                 ></JoinField>
                 <Button
-                    disabled={nickname === "" ? true : false}
+                    disabled={!nickname}
                     width="50%"
                     onClick={() => validateNickname()}>
                     Continue
@@ -324,7 +324,7 @@ const GameJoin = () => {
                     choose={(id) => chooseAvatar(id)}>
                 </AvatarChoice>
                 <Button
-                    disabled={avatar === null ? true : false}
+                    disabled={!avatar}
                     width="50%"
                     onClick={() => validateAvatar()}>
                     Continue

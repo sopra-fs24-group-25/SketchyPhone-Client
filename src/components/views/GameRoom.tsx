@@ -87,7 +87,6 @@ const GameRoom = () => {
 
         setIsGameCreated(gameRoom !== null);
 
-
     }, [gameRoom, isGameCreated, users, thisUser])
 
     const toggleMenu = () => {

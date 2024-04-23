@@ -21,6 +21,7 @@
   }
   &.open {
     transform: translate3d(0vw, 0, 0);
+    box-shadow: $dropShadow;
   }
 }
 .screen-layer {

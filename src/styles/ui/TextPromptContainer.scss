@@ -65,7 +65,11 @@
         align-items: center;
         background-color: white;
         border-radius: 30px;
-        
+        box-shadow: $dropShadow;
+        &.first {
+            background-color: transparent;
+            box-shadow: none;
+        }
     }
     &.textPrompt {
         user-select: none;

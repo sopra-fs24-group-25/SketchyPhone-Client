@@ -15,6 +15,7 @@
     @include scrollbar;
 }
 .user {
+    user-select: none;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -35,7 +36,7 @@
     max-width: 200px;
 }
 .admin {
-    color: blue;
+    color: purple;
     font-weight: bold;
     text-transform: uppercase;
 }

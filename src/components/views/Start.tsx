@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { api, handleError } from "helpers/api";
-import User from "models/User";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "components/ui/Button";
 import { GuideButton } from "components/ui/GuideButton";
 import "styles/views/Start.scss";
@@ -10,16 +8,13 @@ import PropTypes from "prop-types";
 import Guide from "./Guide.json";
 import Header from "./Header";
 
-/*
-It is possible to add multiple components inside a single file,
-however be sure not to clutter your files with an endless amount!
-As a rule of thumb, use one file per component and only add small,
-specific components that belong to the main one in the same file.
- */
 
 const GuideField = (props) => {
     return (
-        <div className="start guide">
+        <div className="start guide"
+            onClick={() => props.onClick()}
+            style={props.index !== 5 ? {cursor: "pointer"} : null}
+        >
             <h2>Quick Guide to the Game</h2>
             <h1>{props.index}.</h1>
             <h2 style={{"textAlign": "center"}}>{Guide[`${props.index}`]}</h2>
@@ -35,35 +30,46 @@ GuideField.propTypes = {
 };
 
 const Start = () => {
+
     const navigate = useNavigate();
     const [guide, setGuide] = useState<number>(1);
-    const [toggle, setToggle] = useState<number>(1);
 
     const doLogin = (): void => {
-        navigate("/login");
+        navigate("/login", { state: {isSignUp: false}});
     };
 
     const doPlayGuest = (): void => {
-        navigate("/GameRoom");
+        navigate("/gameRoom");
     };
 
     const doSignUp = (): void => {
-        navigate("/signup");
+        navigate("/login", { state: {isSignUp: true}});
     };
 
-    const handleGuide = (i: number): void => {
-        setGuide(i);
+    const getGuideButtons = () => {
+        const array = [1, 2, 3, 4, 5];
+        
+        return array.map((n) => (
+            <GuideButton
+                key={n}
+                className={guide === n ? "active" : "inactive"}
+                onClick={() => setGuide(n)}
+            ></GuideButton>
+        ));
     }
 
-    const handleToggle = (i: number): void => {
-        setToggle(i);
+    const nextGuide = () => {
+        if (guide === 5) {
+            return;
+        }
+        setGuide(guide + 1);
     }
 
     return (
         <div className="start container">
             <Header></Header>
             <BaseContainer>
-                <div className="start subcontainer">
+                <div className="start sub-container">
                     <div className="start box">
                         <h2>
                             Log in to save results!
@@ -83,7 +89,7 @@ const Start = () => {
                         <div className="start button-container">
                             <Button
                                 width="100%"
-                                onClick={() => doLogin()}
+                                onClick={() => doSignUp()}
                             >
                                 Sign up
                             </Button>
@@ -95,33 +101,12 @@ const Start = () => {
                     </div>
                     <div className="start box">
                         <div className="guide-container">
-                            <GuideField index={guide}></GuideField>
+                            <GuideField
+                                index={guide}
+                                onClick={() => nextGuide()}>
+                            </GuideField>
                             <div className="start guide-container">
-                                <GuideButton
-                                    className={guide === 1 ? "active" : "inactive"}
-                                    onClick={() => handleGuide(1)}
-                                >
-                                </GuideButton>
-                                <GuideButton
-                                    className={guide === 2 ? "active" : "inactive"}
-                                    onClick={() => handleGuide(2)}
-                                >
-                                </GuideButton>
-                                <GuideButton
-                                    className={guide === 3 ? "active" : "inactive"}
-                                    onClick={() => handleGuide(3)}
-                                >
-                                </GuideButton>
-                                <GuideButton
-                                    className={guide === 4 ? "active" : "inactive"}
-                                    onClick={() => handleGuide(4)}
-                                >
-                                </GuideButton>
-                                <GuideButton
-                                    className={guide === 5 ? "active" : "inactive"}
-                                    onClick={() => handleGuide(5)}
-                                >
-                                </GuideButton>
+                                {getGuideButtons()}
                             </div>
                         </div>
                     </div>
@@ -131,7 +116,5 @@ const Start = () => {
     );
 };
 
-/**
- * You can get access to the history object's properties via the useLocation, useNavigate, useParams, ... hooks.
- */
+
 export default Start;

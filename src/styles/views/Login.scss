@@ -1,11 +1,15 @@
 @import "../theme";
 
 .login {
+  &.header {
+    padding-top: 2em;
+    min-height: 400px;
+    flex-direction: column;
+  }
   &.container {
     padding: 40px;
     padding-top: 60px;
     min-height: 400px;
-    /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
     @include center;
     flex-direction: column;
   }
@@ -13,13 +17,11 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 60%;
     max-width: 30em;
-    height: 20em;
+    min-height: 20em;
     font-size: 16px;
     font-weight: 300;
-    padding-left: 37px;
-    padding-right: 37px;
+    padding: 40px;
     border-radius: 0.75em;
     background-color: $background;
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -29,26 +31,70 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    &:disabled {
+      user-select: none;
+      background-color: white;
+      color: white;
+    }
   }
   &.input {
+    width: 20em;
+    font-size: large;
+    font-weight: 500;
+    max-width: 30em;
     user-select: none;
     height: 35px;
     padding-left: 15px;
-    margin-left: -4px;
     border: none;
     border-radius: 0.75em;
     margin-bottom: 20px;
     color: $fieldTextColor;
+    &.invalid {
+      animation: shake2 0.4s ease-in-out 0s 1;
+      color: $error-color;
+      background-color: $error-field-color;
+    }
   }
   &.label {
     user-select: none;
     color: $textColor;
     margin-bottom: 10px;
-    font-weight: 300;
+    font-size: large;
+    font-weight: 500;
   }
   &.button-container {
     display: flex;
     justify-content: center;
     margin-top: 2em;
   }
+  &.sign-in-link {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      scale: 1.1;
+    }
+    &.locked {
+      &:hover {
+        cursor: default;
+        scale: 1.0;
+      }
+    }
+  }
+}
+.password-field {
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  margin: 10px;
+  right: 0px;
+  align-items: center;
+  cursor: pointer;
 }

@@ -7,6 +7,7 @@
     &.drawCanvas{
         background-color: white;
         border-radius: 20px;
+        box-shadow: $dropShadow;
     }
 
     &.container {
@@ -30,6 +31,7 @@
         border-radius:20px;
         gap: 5px;
         align-items: center;
+        box-shadow: $dropShadow;
     }
 
     &.textPrompt{

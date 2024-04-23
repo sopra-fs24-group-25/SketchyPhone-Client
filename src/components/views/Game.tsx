@@ -43,7 +43,7 @@ const Game = () => {
             fetchDrawing();
         }
     }
-        , [currentTask])
+    , [currentTask])
 
     // For testing
     const testDrawingPrompt1 = new DrawingPrompt();
