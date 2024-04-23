@@ -92,10 +92,6 @@ const GameRoom = () => {
                         }
                     }
                 }
-
-
-
-
             }, 500); // Set interval to 0.5 seconds
 
             return () => clearInterval(interval);
