@@ -16,7 +16,8 @@ import "styles/ui/ChubbyGuy.scss";
 import User from "models/User";
 import GameRoomDetails from "models/GameRoom";
 import GameSession from "models/GameSession";
-import Game from "../../models/Game"
+import Game from "../../models/Game";
+import GameSettings from "../../models/GameSettings";
 
 const JoinField = (props) => {
     return (
@@ -48,6 +49,7 @@ const GameRoom = () => {
     const location = useLocation();
 
     const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(location.state ? location.state.gameRoom : null);
+    const [gameSessions, setGameSessions] = useState<GameSession[]>(null);
 
     // Need to do it like this
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
@@ -78,6 +80,22 @@ const GameRoom = () => {
             let interval = setInterval(() => {
                 fetchGameRoomUsers();
 
+                // Some continuous polling for clients
+                if (!isAdmin && isGameCreated) {
+                    fetchGameSettings();
+                    fetchGameSessions();
+
+                    // A gamesession has started
+                    if (gameSessions !== null) {
+                        if (gameSessions[0][0] !== undefined && gameSessions[0][0].gameSessionId !== null) {                 
+                            // navigate("/game");
+                        }
+                    }
+                }
+
+
+
+
             }, 500); // Set interval to 0.5 seconds
 
             return () => clearInterval(interval);
@@ -94,19 +112,49 @@ const GameRoom = () => {
         setOpenMenu(!openMenu);
     }
 
+    async function fetchGameSessions() {
+        try {
+            const url = `/games/${gameRoom.gameId}/sessions`;
+            const response = await api.get(url)
+            const fetchedGameSessions = new Array<GameSession>(new GameSession(response.data));
+            if (fetchedGameSessions) {
+                setGameSessions(fetchedGameSessions);
+            }
+        }
+        catch (error) {
+            console.log("Error while fetching gamesessions: " + error);
+        }
+    }
+
     async function fetchGameRoomUsers() {
+        try {
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+
+            const response = await api.get(`/gameRooms/${gameRoom.gameId}/users`, { headers: headers })
+
+            let fetchedUsers = new Array<User>(response.data)[0];
+
+            setUsers(fetchedUsers);
+        }
+        catch (error) {
+            console.log("Error while fetching users: " + error);
+        }
         if (gameRoom === null || isSettingsActive) {
             return;
         }
 
-        const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+    }
 
-        // add try catch
-        const response = await api.get(`/gameRooms/${gameRoom.gameId}/users`, { headers: headers })
+    async function fetchGameSettings() {
+        try {
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const response = await api.get(`/gameRooms/${gameRoom.gameId}/settings`, { headers: headers })
 
-        let fetchedUsers = new Array<User>(response.data)[0];
-
-        setUsers(fetchedUsers);
+            const gameSettings = new GameSettings(response.data);
+        }
+        catch (error) {
+            console.log("Error while fetching game settings: " + error);
+        }
     }
 
     async function createGame() { // ADMIN METHOD
@@ -115,7 +163,7 @@ const GameRoom = () => {
         }
         try {
             const name = thisUser.name;
-            const password = "password"; // PLACEHOLDER
+            const password = "password"; // PLACEHOLDER for guest user
             const requestBody = JSON.stringify({ name, password });
 
             var thisgameroom;
@@ -128,6 +176,7 @@ const GameRoom = () => {
 
                 // Create new gameRoomDetails
                 thisgameroom = new GameRoomDetails(response.data);
+
                 setIsAdmin(true);
             }
             // Set default settings values on game creation
@@ -138,6 +187,7 @@ const GameRoom = () => {
             // Store user and gameroom to sessionstorage
             sessionStorage.setItem("user", JSON.stringify(thisgameroom.users[0]));
             sessionStorage.setItem("gameRoom", JSON.stringify(thisgameroom));
+
 
             setUsers(thisgameroom.users);
             setThisUser(thisgameroom.users[0]);
@@ -286,10 +336,12 @@ const GameRoom = () => {
         );
     }
 
-    async function sendGameSettings() {
+    async function sendGameSettings(gameSettings) {
         try {
-            const requestBody = { gameSettingsId: gameRoom.gameSettingsId, enableTextToSpeech: isEnabledTTS, gameSpeed: gameSpeed, numCycles: numCycles };
+            const requestBody = JSON.stringify(gameSettings);
             const response = await api.put(`/gameRooms/${gameRoom.gameId}/settings`, requestBody);
+
+            // Here we can also save the games settings id to the game settings
             console.log(response);
 
 
@@ -309,7 +361,7 @@ const GameRoom = () => {
         }
     }
 
-    function GameSettings() {
+    function GameSettingsView() {
         const onSettingsSave = async () => {
             // First send data to server
 
@@ -318,11 +370,17 @@ const GameRoom = () => {
             sessionStorage.setItem("gameSpeed", gameSpeed);
             sessionStorage.setItem("isEnabledTTS", isEnabledTTS);
 
-            console.log(isEnabledTTS);
-            console.log(numCycles);
-            console.log(gameSpeed);
+            // create gameSettings object to be used and stored
+            const gameSettings = new GameSettings();
+            gameSettings.gameSpeed = gameSpeed;
+            gameSettings.numCycles = numCycles;
+            gameSettings.enableTextToSpeech = isEnabledTTS;
 
-            await sendGameSettings();
+            sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings));
+
+            console.log(gameSettings);
+
+            await sendGameSettings(gameSettings);
         }
 
         return (
@@ -405,7 +463,7 @@ const GameRoom = () => {
     let renderComponent;
 
     if (isSettingsActive) {
-        renderComponent = GameSettings();
+        renderComponent = GameSettingsView();
     } else if (isGameCreated && gameRoom) {
         renderComponent = Overview();
     } else {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
@@ -35,7 +35,13 @@ const Game = () => {
     const [currentTask, setCurrentTask] = useState<String>("Text Prompt");
     const [isInitialPrompt, setIsInitialPrompt] = useState<boolean>(true);
 
+    // Two main objects we need for the application logic
+    const user = useRef(new User(JSON.parse(sessionStorage.getItem("user"))));
+    const gameSession = useRef(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
+
     useEffect(() => {
+        console.log(user);
+        console.log(gameSession);
         if (currentTask === "Drawing") { // Can never be initial prompt
             fetchPrompt();
         }
@@ -44,6 +50,10 @@ const Game = () => {
         }
     }
         , [currentTask])
+
+    useEffect(() => {
+
+    })
 
     // For testing
     const testDrawingPrompt1 = new DrawingPrompt();
@@ -62,41 +72,38 @@ const Game = () => {
     }
 
     const fetchDrawing = async () => {
-        // Send text here
-        const user = new User(JSON.parse(sessionStorage.getItem("user")));
-        const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+        try {
+            // Get last gamesession (will always be the current)
+            const gameSessionId = gameSession.current.gameSessions[gameSession.current.gameSessions.length - 1].gameSessionId;
 
-        // Get last gamesession (will always be the current)
-        const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+            const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.id };
+            const response = await api.get(`/games/${gameSessionId}/drawings/${user.current.id}`, null, { headers: requestHeader });
 
-        const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
-        const response = await api.get(`/games/${gameSessionId}/drawings/${user.id}`, null, { headers: requestHeader });
+            return (
+                <img src={response.data} style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
+            )
+        }
+        catch (error) {
+            console.log("Unable to fetch drawing: " + error)
 
-        return (
-            <img src={response.data} style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
-        )
+        }
+
     }
 
     const fetchPrompt = async () => {
-        // Send text here
-        const user = new User(JSON.parse(sessionStorage.getItem("user")));
-        const gameSession = new GameSession(JSON.parse(sessionStorage.getItem("gameSession")));
+        try {
+            // Get last gamesession (will always be the current)
+            const gameSessionId = gameSession.current.gameSessions[gameSession.current.gameSessions.length - 1].gameSessionId;
 
-        console.log(user);
-        console.log(gameSession);
+            const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.id };
+            const url = `/games/${gameSessionId}/prompts/${user.current.id}`
 
-        // Get last gamesession (will always be the current)
-        const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+            const response = await api.get(url, {}, { headers: requestHeader });
+        }
+        catch (error) {
+            console.log("Unable to fetch prompt: " + error)
+        }
 
-        const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
-        const url = `/games/${gameSessionId}/prompts/${user.id}`
-        console.log(requestHeader);
-        console.log(url);
-
-        const response = await api.get(url, {}, { headers: requestHeader });
-
-        console.log("received prompt:")
-        console.log(response.data);
 
         return (
             //prompt
@@ -117,6 +124,8 @@ const Game = () => {
                 </div>
                 <TextPromptContainer
                     drawing={currentDrawing}
+                    user={user.current}
+                    gameSession={gameSession.current}
                     isInitialPrompt={isInitialPrompt}
                     timerDuration={20}
                     setNextTask={setCurrentTask}>
@@ -137,6 +146,8 @@ const Game = () => {
                 <DrawContainer
                     height={400}
                     width={600}
+                    user={user.current}
+                    gameSession={gameSession.current}
                     textPrompt="A dog eating a tasty banana" // Just for testing
                     textPromptId={1} // Just for testing
                     timerDuration={20}
