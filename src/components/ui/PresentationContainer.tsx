@@ -26,7 +26,7 @@ const PresentationContainer = (props) => {
             {props.presentationContents.map((element) => {
                 if (element instanceof TextPrompt) {
                     return (
-                        <div key={element.creator} className = "presentation subContainer">
+                        <div key={element.creator} className="presentation subContainer">
                             <UserPreview></UserPreview>
                             <PresentationText
                                 // key={element.creator}
@@ -37,7 +37,7 @@ const PresentationContainer = (props) => {
                     )
                 } else if (element instanceof DrawingPrompt) {
                     return (
-                        <div key={element.drawingId} className = "presentation subContainer">
+                        <div key={element.drawingId} className="presentation subContainer">
                             <PresentationDrawing
                                 // key={element.drawingId}
                                 drawingPrompt={element}
@@ -51,21 +51,21 @@ const PresentationContainer = (props) => {
             <div className="presentation separator">
                 <hr className="presentation separator leftalign"
                     style={{
-                        background: 'black',
-                        color: 'black',
-                        borderColor: 'black',
-                        height: '2px',
-                        width: '40%'
+                        background: "black",
+                        color: "black",
+                        borderColor: "black",
+                        height: "2px",
+                        width: "40%"
                     }}
                 />
                 <p>DONE</p>
                 <hr className="presentation separator rightalign"
                     style={{
-                        background: 'black',
-                        color: 'black',
-                        borderColor: 'black',
-                        height: '2px',
-                        width: '40%'
+                        background: "black",
+                        color: "black",
+                        borderColor: "black",
+                        height: "2px",
+                        width: "40%"
                     }}
                 />
             </div>
@@ -79,13 +79,9 @@ const PresentationContainer = (props) => {
     )
 }
 
-
-
 PresentationContainer.propTypes = {
     // The array passed in is already in order and contains either textPrompts or drawingPrompts
     presentationContents: PropTypes.array
 }
-
-
 
 export default PresentationContainer;

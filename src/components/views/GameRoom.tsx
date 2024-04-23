@@ -73,7 +73,6 @@ const GameRoom = () => {
 
     // const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
-
     useEffect(() => {
         if (isGameCreated) {
             let interval = setInterval(() => {
@@ -125,7 +124,7 @@ const GameRoom = () => {
                 const response = await api.post("/gameRooms/create", requestBody);
 
                 const game = new Game(response.data);
-    
+
                 // Create new gameRoomDetails
                 thisgameroom = new GameRoomDetails(response.data);
                 setIsAdmin(true);
@@ -200,7 +199,6 @@ const GameRoom = () => {
         navigate("/join")
     }
 
-
     // Function to return the basic choices for connection to a room
     function RoomChoice() {
 
@@ -268,7 +266,7 @@ const GameRoom = () => {
                                     width="50%"
                                     onClick={() => startGame()}
                                 >Start Game</Button>
-                            : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>}
+                                : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>}
                             <Button
                                 width="50%"
                                 onClick={() => exitRoom()}
@@ -278,7 +276,7 @@ const GameRoom = () => {
                                     width="50%"
                                     onClick={() => setIsSettingsActive(true)}
                                 >Settings</Button>
-                            : null}
+                                : null}
                         </div>
                     </div>
                 </div>
@@ -395,7 +393,7 @@ const GameRoom = () => {
                             Save
                         </Button>
                     </div>
-                    
+
 
                 </div>
                 {Menu(openMenu, toggleMenu)}

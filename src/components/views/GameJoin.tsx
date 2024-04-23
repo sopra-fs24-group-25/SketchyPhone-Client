@@ -198,8 +198,6 @@ const GameJoin = () => {
             //     alert(`Something happened while creating the user: ${error}`)
             // }
 
-
-
             setAvatar(null);
 
             //fetch avatars GET avatars
