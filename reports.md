@@ -111,3 +111,6 @@ Xindi Liu
 - Implemented logic to handle user reconnection upon disconnection.
 - Enhanced the GameService to dynamically remove game rooms when they become inactive and have fewer than three users.
 - Updated the build.gradle file to include dependencies required for WebSocket functionality.
+
+Victor Cruz da Silva
+- Adapted some features and wrote tests. #64, #40, #3, #91, #68, #1, #51, #52, #92, #4, #35, #38
