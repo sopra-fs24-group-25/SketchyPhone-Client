@@ -9,7 +9,7 @@ export const UserOverviewContainer = props => (
             <div className="usercontainer user" key={item.name}>
                 <UserPreview ></UserPreview>
                 <div>
-                    {props.showUserNames && <p className ="username">{item.name}</p>}
+                    {props.showUserNames && <p className ="username">{item.nickname}</p>}
                     {item.role === "admin" && <p className="admin">admin</p>}
                 </div>
 

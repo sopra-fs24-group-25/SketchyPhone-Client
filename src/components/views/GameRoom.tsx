@@ -14,7 +14,6 @@ import "styles/views/GameRoom.scss";
 import "styles/views/GameSettings.scss" // Merge into one later
 import "styles/ui/ChubbyGuy.scss";
 import User from "models/User";
-import GameRoomDetails from "models/GameRoom";
 import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
@@ -48,8 +47,7 @@ const GameRoom = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [gameRoom, setGameRoom] = useState<typeof GameRoomDetails>(location.state ? location.state.gameRoom : null);
-    const [gameSessions, setGameSessions] = useState<GameSession[]>(null);
+    const [game, setGame] = useState<Game>(location.state ? location.state.gameRoom : null);
 
     // Need to do it like this
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
@@ -83,14 +81,13 @@ const GameRoom = () => {
                 // Some continuous polling for clients
                 if (!isAdmin && isGameCreated) {
                     fetchGameSettings();
-                    fetchGameSessions();
+                    fetchGameUpdate();
 
                     // A gamesession has started
-                    if (gameSessions !== null) {
-                        if (gameSessions[0][0] !== undefined && gameSessions[0][0].gameSessionId !== null) {                 
-                            // navigate("/game");
-                        }
+                    if(game.status === "IN_PLAY"){
+                        navigate("/game");
                     }
+                    
                 }
             }, 500); // Set interval to 0.5 seconds
 
@@ -99,22 +96,25 @@ const GameRoom = () => {
             createGame();
         }
 
-        setIsGameCreated(gameRoom !== null);
+        setIsGameCreated(game !== null);
 
-    }, [gameRoom, isGameCreated, users, thisUser])
+    }, [game, isGameCreated, users, thisUser])
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
     }
 
-    async function fetchGameSessions() {
+    async function fetchGameUpdate() {
         try {
-            const url = `/games/${gameRoom.gameId}/sessions`;
-            const response = await api.get(url)
-            const fetchedGameSessions = new Array<GameSession>(new GameSession(response.data));
-            if (fetchedGameSessions) {
-                setGameSessions(fetchedGameSessions);
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const url = `/games/${game.gameId}`;
+            const response = await api.get(url, {headers: headers})
+            const fetchedGameUpdate = new Game(response.data);
+            if (fetchedGameUpdate) {
+                setGame(fetchedGameUpdate);
             }
+
+            console.log(fetchedGameUpdate);
         }
         catch (error) {
             console.log("Error while fetching gamesessions: " + error);
@@ -125,7 +125,7 @@ const GameRoom = () => {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
 
-            const response = await api.get(`/gameRooms/${gameRoom.gameId}/users`, { headers: headers })
+            const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: headers })
 
             let fetchedUsers = new Array<User>(response.data)[0];
 
@@ -134,7 +134,7 @@ const GameRoom = () => {
         catch (error) {
             console.log("Error while fetching users: " + error);
         }
-        if (gameRoom === null || isSettingsActive) {
+        if (game === null || isSettingsActive) {
             return;
         }
 
@@ -143,7 +143,7 @@ const GameRoom = () => {
     async function fetchGameSettings() {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
-            const response = await api.get(`/gameRooms/${gameRoom.gameId}/settings`, { headers: headers })
+            const response = await api.get(`/gameRooms/${game.gameId}/settings`, { headers: headers })
 
             const gameSettings = new GameSettings(response.data);
         }
@@ -157,20 +157,20 @@ const GameRoom = () => {
             return;
         }
         try {
-            const name = thisUser.name;
+            const nickname = thisUser.nickname;
             const password = "password"; // PLACEHOLDER for guest user
-            const requestBody = JSON.stringify({ name, password });
+            const requestBody = JSON.stringify({ nickname, password });
 
             var thisgameroom;
-            if (gameRoom) {
-                thisgameroom = gameRoom;
+            if (game) {
+                thisgameroom = game;
             } else {
                 const response = await api.post("/gameRooms/create", requestBody);
 
                 const game = new Game(response.data);
 
                 // Create new gameRoomDetails
-                thisgameroom = new GameRoomDetails(response.data);
+                thisgameroom = new Game(response.data);
 
                 setIsAdmin(true);
             }
@@ -186,7 +186,7 @@ const GameRoom = () => {
 
             setUsers(thisgameroom.users);
             setThisUser(thisgameroom.users[0]);
-            setGameRoom({ ...thisgameroom });
+            setGame({ ...thisgameroom });
             setIsGameCreated(true);
         }
         catch (error) {
@@ -200,7 +200,7 @@ const GameRoom = () => {
     async function startGame() {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
-            const response = await api.post(`/games/${gameRoom.gameId}/start`, null, { headers: headers })
+            const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
             console.log(gameSession);
@@ -223,9 +223,9 @@ const GameRoom = () => {
     const exitRoom = async () => {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
-            await api.delete(`/games/${gameRoom.gameId}/leave/${thisUser.id}`, { headers: headers });
+            await api.delete(`/games/${game.gameId}/leave/${thisUser.id}`, { headers: headers });
             setIsAdmin(false);
-            setGameRoom(null);
+            setGame(null);
             setIsGameCreated(false);
             setUsers(null);
             setThisUser(null);
@@ -293,7 +293,7 @@ const GameRoom = () => {
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
                         <div className="gameroom pin">
-                            <p>Game PIN: {gameRoom["gamePin"]}</p>
+                            <p>Game PIN: {game["gamePin"]}</p>
                         </div>
                         <div className="gameroom waiting">
                             <p>Waiting for players...</p>
@@ -334,7 +334,7 @@ const GameRoom = () => {
     async function sendGameSettings(gameSettings) {
         try {
             const requestBody = JSON.stringify(gameSettings);
-            const response = await api.put(`/gameRooms/${gameRoom.gameId}/settings`, requestBody);
+            const response = await api.put(`/gameRooms/${game.gameId}/settings`, requestBody);
 
             // Here we can also save the games settings id to the game settings
             console.log(response);
@@ -459,7 +459,7 @@ const GameRoom = () => {
 
     if (isSettingsActive) {
         renderComponent = GameSettingsView();
-    } else if (isGameCreated && gameRoom) {
+    } else if (isGameCreated && game) {
         renderComponent = Overview();
     } else {
         renderComponent = RoomChoice();

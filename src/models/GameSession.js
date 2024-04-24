@@ -13,6 +13,7 @@ class GameSession extends Game {
         this.status = null;
         this.usersInSession = null;
         this.roundCounter = null;
+        this.currentIndex = null;
         Object.assign(this, data);
     }
 }

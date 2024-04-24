@@ -11,8 +11,7 @@ import PropTypes from "prop-types";
 import "styles/views/GameRoom.scss";
 import "styles/views/GameJoin.scss";
 import User from "models/User";
-import GameRoom from "models/GameRoom";
-import Game from "./Game";
+import Game from "models/Game";
 import { AvatarChoice } from "components/ui/AvatarChoice";
 import Avatar from "models/Avatar";
 import { resolveTypeReferenceDirective } from "typescript";
@@ -47,8 +46,7 @@ const GameJoin = () => {
     const location = useLocation();
 
     const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
-    const [name, setName] = useState<string>("noah");
-    const [gameRoom, setGameRoom] = useState<typeof GameRoom>(null);
+    const [game, setGame] = useState<Game>(null);
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
     const [nickname, setNickname] = useState<string>("");
@@ -66,7 +64,7 @@ const GameJoin = () => {
     const goBack = (): void => {
         //does not work anymore, enters a newly created room when exiting
         setCountdownNumber(0);
-        setGameRoom(null);
+        setGame(null);
         setIsGameCreator(false);
         setPin("");
         sessionStorage.removeItem("numCycles");
@@ -108,10 +106,10 @@ const GameJoin = () => {
         while (numChecks >= 0) {
             numChecks -= 1;
             try {
-                const requestBody = { "name": nickname, "password": "defaultPassword" }
+                const requestBody = { "nickname": nickname, "password": "defaultPassword" }
                 const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
-                const room = new GameRoom(response.data);
-                sessionStorage.setItem("gameroomToken", room.token);
+                const room = new Game(response.data);
+                sessionStorage.setItem("gameroomToken", room.gameToken);
                 if (room.status === "OPEN") {
                     console.log("room open");
                     setView("openRoomView");
@@ -179,7 +177,7 @@ const GameJoin = () => {
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
-            const user = new User({"name": nickname, "password": "defaultPassword"})
+            const user = new User({"nickname": nickname, "password": "defaultPassword"})
             sessionStorage.setItem("user", JSON.stringify(user));
 
             // CURRENTLY CONFLICT WITH /gameRooms/create, user gets created twice

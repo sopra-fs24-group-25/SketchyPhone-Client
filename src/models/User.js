@@ -3,21 +3,18 @@
  */
 class User {
     constructor(data = {}) {
+        this.textPrompts = null;
         this.id = null;
-        this.name = null;
+        this.nickname = null;
         this.creationDateTime = null;
-        this.loggedIn = null; //should be status instead
+        this.status = null;
         this.persistent = null;
-        this.email = null; //probably should be username instead
+        this.email = null;
         this.password = null;
-        this.avatar = null;
-        this.role = null; //should be isAdmin instead
-
-        //missing in UML
-        this.username = null; //should replace email
-        this.token = null; //missing completely in UML
-        this.status = null; //should replace loggedIn
-        this.isAdmin = null; //should replace role
+        this.avatarId = null;
+        this.role = null; 
+        this.token = null; 
+        this.gameRoom = null;
         Object.assign(this, data);
     }
 }
