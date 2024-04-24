@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { api, handleError } from "helpers/api";
-import { Spinner } from "components/ui/Spinner";
-import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
@@ -13,33 +10,55 @@ import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
 import { DrawContainer } from "components/ui/DrawContainer";
 import { TextPromptContainer } from "components/ui/TextPromptContainer";
-import DrawingPrompt from "models/DrawingPrompt";
 import User from "../../models/User"
 import GameSession from "../../models/GameSession"
+import GameObject from "../../models/Game"; // renaming required bcs component has same name
+import TextPrompt from "../../models/TextPrompt";
+import DrawingPrompt from "models/DrawingPrompt";
 
 const Game = () => {
 
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
     const [currentTask, setCurrentTask] = useState<String>("Text Prompt");
     const [isInitialPrompt, setIsInitialPrompt] = useState<boolean>(true);
+    const [isReadyForTask, setIsReadyForTask] = useState<boolean>(isInitialPrompt);
 
-    // Two main objects we need for the application logic
+    // What the user will be prompted with
+    const receivedTextPrompt = useRef<TextPrompt>(null);
+    const receivedDrawingPrompt = useRef<DrawingPrompt>(null);
+    const receivedPreviousTextPrompt = useRef<TextPrompt>(null);
+    const receivedPreviousDrawingPrompt = useRef<DrawingPrompt>(null);
+
+    // main objects we need for the application logic
     const user = useRef(new User(JSON.parse(sessionStorage.getItem("user"))));
     const gameSession = useRef(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
+    const [gameObject, setGameObject] = useState<GameObject>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
 
     useEffect(() => {
-        console.log(user);
-        console.log(gameSession);
         if (currentTask === "Drawing") { // Can never be initial prompt
-            fetchPrompt();
+            if (receivedTextPrompt.current === null && receivedDrawingPrompt !== receivedPreviousDrawingPrompt) {
+                setCurrentTask("Waiting");
+                fetchPrompt();
+            }
+            setCurrentTask("Drawing");
         }
         else if (currentTask === "Text Prompt" && !isInitialPrompt) {
-            fetchDrawing();
+            if(receivedDrawingPrompt.current === null && receivedTextPrompt !== receivedPreviousTextPrompt){
+                setCurrentTask("Waiting");
+                fetchDrawing();
+            }
+            setCurrentTask("Text Prompt");
         }
     }
-    , [currentTask])
+        , [currentTask])
 
+    // Useeffect for continuous polling
     useEffect(() => {
+        let interval = setInterval(() => {
+            fetchGameUpdate(user.current, gameObject);
+        }, 500); // Set interval to 0.5 seconds
+
+        return () => clearInterval(interval);
 
     })
 
@@ -59,13 +78,38 @@ const Game = () => {
         setOpenMenu(!openMenu);
     }
 
+    // Duplicate code
+    async function fetchGameUpdate(user: User, game: GameObject) {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
+            const url = `/games/${game.gameId}`;
+            const response = await api.get(url, { headers: requestHeader })
+            const fetchedGameUpdate = new GameObject(response.data);
+
+            if (fetchedGameUpdate) {
+                setGameObject(fetchedGameUpdate);
+            }
+        }
+        catch (error) {
+            console.log("Error while fetching gamesessions: " + error);
+        }
+    }
+
     const fetchDrawing = async () => {
         try {
             // Get last gamesession (will always be the current)
-            const gameSessionId = gameSession.current.gameSessions[gameSession.current.gameSessions.length - 1].gameSessionId;
+            let currentGameSessions = gameObject.gameSessions;
+            let idx = currentGameSessions.length - 1;
+            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
             const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.id };
-            const response = await api.get(`/games/${gameSessionId}/drawings/${user.current.id}`, null, { headers: requestHeader });
+            const response = await api.get(`/games/${currentGameSessionId}/drawings/${user.current.id}`, { headers: requestHeader });
+
+            if (response.data) {
+                // set receiveddrawingprompt
+                receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
+                receivedDrawingPrompt.current = new DrawingPrompt(response.data);
+            }
 
             return (
                 <img src={response.data} style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
@@ -81,12 +125,22 @@ const Game = () => {
     const fetchPrompt = async () => {
         try {
             // Get last gamesession (will always be the current)
-            const gameSessionId = gameSession.current.gameSessions[gameSession.current.gameSessions.length - 1].gameSessionId;
+            let currentGameSessions = gameObject.gameSessions;
+            let idx = currentGameSessions.length - 1;
+            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
             const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.id };
-            const url = `/games/${gameSessionId}/prompts/${user.current.id}`
+            const url = `/games/${currentGameSessionId}/prompts/${user.current.id}`;
 
-            const response = await api.get(url, {}, { headers: requestHeader });
+            const response = await api.get(url, { headers: requestHeader });
+            console.log(response);
+
+            if (response.data) {
+                // set receivedtextprompt
+                receivedPreviousTextPrompt.current = receivedTextPrompt.current;
+                receivedTextPrompt.current = new TextPrompt(response.data);
+            }
+
         }
         catch (error) {
             console.log("Unable to fetch prompt: " + error)
@@ -99,7 +153,7 @@ const Game = () => {
         )
     }
 
-    if (currentTask === "Text Prompt") {
+    if (currentTask === "Text Prompt" && isReadyForTask) {
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -111,9 +165,9 @@ const Game = () => {
                 <div className={"join container-mid"}>
                 </div>
                 <TextPromptContainer
-                    drawing={currentDrawing}
+                    drawing={receivedDrawingPrompt.current === null ? currentDrawing : receivedDrawingPrompt.current}
                     user={user.current}
-                    gameSession={gameSession.current}
+                    game={gameObject}
                     isInitialPrompt={isInitialPrompt}
                     timerDuration={20}
                     setNextTask={setCurrentTask}>
@@ -122,7 +176,7 @@ const Game = () => {
             </BaseContainer>
         );
     }
-    if (currentTask === "Drawing") {
+    if (currentTask === "Drawing" && isReadyForTask) {
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -135,8 +189,8 @@ const Game = () => {
                     height={400}
                     width={600}
                     user={user.current}
-                    gameSession={gameSession.current}
-                    textPrompt="A dog eating a tasty banana" // Just for testing
+                    game={gameObject}
+                    textPrompt={receivedPreviousTextPrompt.current === null ? "" : receivedTextPrompt.current} // Just for testing
                     textPromptId={1} // Just for testing
                     timerDuration={20}
                     setNextTask={setCurrentTask}
@@ -145,6 +199,21 @@ const Game = () => {
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );
+    }
+    if (currentTask === "Waiting") {
+        return (
+            <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
+                </div>
+                <h>
+                    Waitng
+                </h>
+            </BaseContainer>
+        )
     }
 };
 
