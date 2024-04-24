@@ -47,6 +47,7 @@ const GameRoom = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Naming inconsistency for gameRoom
     const [game, setGame] = useState<Game>(location.state ? location.state.gameRoom : null);
 
     // Need to do it like this
@@ -169,7 +170,7 @@ const GameRoom = () => {
 
                 const game = new Game(response.data);
 
-                // Create new gameRoomDetails
+                // Create new game object
                 thisgameroom = new Game(response.data);
 
                 setIsAdmin(true);

@@ -5,7 +5,6 @@ import "../../styles/ui/MenuButton.scss";
 import "../../styles/ui/BackButton.scss";
 import "../../styles/ui/MenuContainer.scss";
 import { BackButton } from "components/ui/BackButton";
-//import "styles/views/GameRoom.scss";
 
 const Menu = (openMenu, toggleMenu) => {
 
@@ -23,7 +22,7 @@ const Menu = (openMenu, toggleMenu) => {
 
     const logout = (): void => {
         localStorage.removeItem("token");
-        sessionStorage.removeItem("GameRoomToken");
+        sessionStorage.removeItem("gameRoomToken");
         navigate("/");
     };
 

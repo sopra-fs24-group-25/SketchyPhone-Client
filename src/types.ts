@@ -4,12 +4,3 @@ export type User = {
   isAdmin: boolean;
   id: number;
 };
-
-export type GameRoom = {
-  admin: number;
-  gameId: number;
-  gamePin: number;
-  gameToken: string;
-  status: string;
-  users: [User]
-}
