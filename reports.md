@@ -114,3 +114,4 @@ Xindi Liu
 
 Victor Cruz da Silva
 - Adapted some features and wrote tests. #64, #40, #3, #91, #68, #1, #51, #52, #92, #4, #35, #38
+- Adapted code to work with Frontend.  #35, #36, #37, #79, #4, #5, #6 
