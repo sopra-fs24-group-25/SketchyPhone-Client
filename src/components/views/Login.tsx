@@ -61,7 +61,7 @@ const Login = () => {
 
     const doLogin = async () => { //needs to handle login and sign-up in future (or separate in two functions)
         try {
-            const requestBody = JSON.stringify({ name: username, password });
+            const requestBody = JSON.stringify({ nickname: username, password });
             const response = await api.post("/users", requestBody); //will change in future: post /login
 
             // Get the returned user and update a new object.

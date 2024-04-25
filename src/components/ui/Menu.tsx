@@ -21,8 +21,7 @@ const Menu = (openMenu, toggleMenu) => {
     }
 
     const logout = (): void => {
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("gameRoomToken");
+        sessionStorage.clear();
         navigate("/");
     };
 

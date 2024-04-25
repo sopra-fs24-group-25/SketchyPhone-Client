@@ -12,7 +12,7 @@ import "styles/views/GameRoom.scss";
 import "styles/views/GameJoin.scss";
 import User from "models/User";
 import Game from "models/Game";
-import { AvatarChoice } from "components/ui/AvatarChoice";
+import AvatarChoice from "components/ui/AvatarChoice";
 import Avatar from "models/Avatar";
 import { resolveTypeReferenceDirective } from "typescript";
 
@@ -50,12 +50,12 @@ const GameJoin = () => {
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
     const [nickname, setNickname] = useState<string>("");
-    const [avatar, setAvatar] = useState<number>(null);
+    const [avatarId, setAvatarId] = useState<number>(null);
     const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
     const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
@@ -76,7 +76,7 @@ const GameJoin = () => {
     };
 
     const chooseAvatar = (index: number) => {
-        setAvatar(index);
+        setAvatarId(index);
         avatarSelection.forEach(function (a) {
             if (a.id === index) {
                 a.selected = "active";
@@ -110,6 +110,7 @@ const GameJoin = () => {
                 const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
                 const room = new Game(response.data);
                 sessionStorage.setItem("gameroomToken", room.gameToken);
+
                 if (room.status === "OPEN") {
                     console.log("room open");
                     setView("openRoomView");
@@ -177,39 +178,46 @@ const GameJoin = () => {
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
-            const user = new User({"nickname": nickname, "password": "defaultPassword"})
-            sessionStorage.setItem("user", JSON.stringify(user));
+            var updatedUser = {...user, nickname};
+            var response;
+            if (updatedUser.id) {
+                try {
+                    response = await api.put(`/users/${user.id}`, updatedUser);
+                }
+                catch {
+                    response = await api.post("/users", updatedUser);
+                }
+            } else {
+                response = await api.post("/users", updatedUser);
+            }
+            var fullUser = new User(response.data);
+            setUser(fullUser);
+            sessionStorage.setItem("user", JSON.stringify(fullUser));
 
-            // CURRENTLY CONFLICT WITH /gameRooms/create, user gets created twice
-            // // Post to users to create user
-            // const requestBody = JSON.stringify(user);
-            // try{
-            //     const response = await api.post("/users", requestBody);
-            //     console.log(response.data);
-
-            //     const userCreatedResponse = new User(response.data);
-
-            //     sessionStorage.setItem("user", JSON.stringify(userCreatedResponse));
-
-            // }
-            // catch(error){
-            //     alert(`Something happened while creating the user: ${error}`)
-            // }
-
-            setAvatar(null);
+            setAvatarId(null);
 
             //fetch avatars GET avatars
-            const response = true//await api.post(`/gameRooms/join/${pin}`);
+            response = true//await api.post(`/gameRooms/join/${pin}`);
             if (response === true) { // fix later with correct server behavior
                 const fetchedAvatars = Array(
                     new Avatar({ id: 1 }),
                     new Avatar({ id: 2 }),
-                    new Avatar({ id: 300 })
+                    new Avatar({ id: 3 }),
+                    new Avatar({ id: 4 }),
+                    new Avatar({ id: 6 }),
+                    new Avatar({ id: 8 }),
+                    new Avatar({ id: 12 }),
+                    new Avatar({ id: 9 }),
+                    new Avatar({ id: 87 }),
+                    new Avatar({ id: 412 }),
+                    new Avatar({ id: 6424 }),
+                    new Avatar({ id: 844 }),
+                    new Avatar({ id: 123 }),
+                    new Avatar({ id: 921 }),
                 );//await api.get(`/users/${UserId}`) //implement correct request
                 setAvatarSelection(fetchedAvatars);
                 setView("avatarView");
             }
-            //console.log(response.data);
         }
         catch (error) {
             alert(
@@ -221,7 +229,24 @@ const GameJoin = () => {
     const validateAvatar = async () => {
         try {
             // MISSING validate
-            isGameCreator ? navigate("/gameRoom") : setView("pinView")
+            var updatedUser = {...user, avatarId}; //avatarId not available on server yet
+            var response;
+            if (updatedUser.id) {
+                try {
+                    response = await api.put(`/users/${user.id}`, updatedUser);
+                }
+                catch {
+                    response = await api.post("/users", updatedUser);
+                }
+            } else {
+                response = await api.post("/users", updatedUser);
+            }
+            var fullUser = new User(response.data);
+            setUser(fullUser);
+            sessionStorage.setItem("user", JSON.stringify(fullUser));
+
+            
+            isGameCreator ? navigate("/gameRoom", { state: { isGameCreator: isGameCreator } }) : setView("pinView");
             
         }
         catch (error) {
@@ -232,6 +257,7 @@ const GameJoin = () => {
     }
 
     const drawAvatar = async () => {
+        console.log("drawing avatar");
         try {
             const response = true//await api.post(`/gameRooms/join/${pin}`);
             if (response === true) { // fix later with correct server behavior
@@ -286,7 +312,7 @@ const GameJoin = () => {
                     Continue
                 </Button>
             </div>,
-            () => goBack()
+            () => setView("avatarView")
         );
     }
 
@@ -314,15 +340,15 @@ const GameJoin = () => {
         return baseView(
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join label">Choose avatar</div>
-                <text className="start sign-in-link"
+                <div className="start sign-in-link"
                     onClick={() => drawAvatar()}>
-                    or personalize your own avatar!</text>
+                    or personalize your own avatar!</div>
                 <AvatarChoice
                     avatarList={avatarSelection}
                     choose={(id) => chooseAvatar(id)}>
                 </AvatarChoice>
                 <Button
-                    disabled={!avatar}
+                    disabled={!avatarId}
                     width="50%"
                     onClick={() => validateAvatar()}>
                     Continue

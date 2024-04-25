@@ -4,16 +4,16 @@ import { AvatarPreview } from "./AvatarPreview";
 import "styles/ui/AvatarChoice.scss"
 import Avatar from "models/Avatar";
 
-export const AvatarChoice = props => (
+const AvatarChoice = (props) => (
     <div className={`avatar-container ${props.className}`}>
         {props.avatarList.map((item: Avatar) => (
-            <div className = "avatar-container avatar" key={item.id}>
+            <div className = "avatar" key={item.id}>
                 <AvatarPreview
+                    style={{ backgroundImage: `url("/avatars/avatar${item.id % 6 + 1}.svg")` }}
                     className={item.selected}
                     onClick={() => props.choose(item.id)}
                 >
                 </AvatarPreview>
-                {item.selected}
             </div>
         ))}
     </div>
@@ -24,3 +24,5 @@ AvatarChoice.propTypes = {
     avatarList: PropTypes.array,
     choose: PropTypes.func
 };
+
+export default AvatarChoice;

@@ -7,7 +7,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     background-color: rgba(255, 255, 255, 0.308);
-    padding: 10px;
+    padding: 20px;
     border-radius: 30px;
     justify-content: flex-start;
     overflow-y: scroll;
@@ -21,22 +21,29 @@
     justify-content: flex-start;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 5px;
+    gap: 15px;
+    padding: 10px;
     background-color: transparent;
     height: 70px;
     width: 50%;
-    overflow:hidden;
-    // text-overflow: ellipsis;
-    // white-space: nowrap;
+    font-size: large;
+    font-weight: 500;
+    overflow: hidden;
 }
-.username{
-    overflow:hidden;
+.username {
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 200px;
-}
-.admin {
-    color: purple;
-    font-weight: bold;
-    text-transform: uppercase;
+    max-width: 180px;
+    width: fit-content;
+    text-shadow: $dropShadow;
+    height: 25px;
+    &.admin {
+        position: relative;
+        top: 1px;
+        color: purple;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-shadow: $dropShadow;
+    }
 }

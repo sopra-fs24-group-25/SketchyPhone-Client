@@ -2,26 +2,27 @@
 
 .avatar-container {
     width: 600px;
-    height: 300px;
+    height: 400px;
+    min-width: 500px;
+    min-height: 300px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     background-color: $background;
-    padding: 10px;
-    border-radius: 5%/10%;
+    padding: 50px;
+    border-radius: 2em;
     justify-content: flex-start;
     overflow-y: scroll;
     @include scrollbar;
+    align-content: space-evenly;
 }
 .avatar {
-    display:flex;
+    display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
     background-color: transparent;
-    height: 70px;
-    width: 250px;
-    margin-left:auto;
-    overflow: hidden;
+    height: 100px;
+    width: 100px;
+    margin: 10px;
 }

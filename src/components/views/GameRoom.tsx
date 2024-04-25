@@ -54,7 +54,7 @@ const GameRoom = () => {
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const [users, setUsers] = useState<Array<User>>(null);
-    const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+    const [isAdmin, setIsAdmin] = useState<Boolean>(location.state ? location.state.isGameCreator : false);
 
     // Conditional rendering flags
     const [isGameCreated, setIsGameCreated] = useState(location.state ? location.state.isGameCreated : false);
@@ -75,6 +75,7 @@ const GameRoom = () => {
     // const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
     useEffect(() => {
+        console.log(game, users, isGameCreated);
         if (isGameCreated) {
             let interval = setInterval(() => {
                 fetchGameRoomUsers();
@@ -94,7 +95,9 @@ const GameRoom = () => {
 
             return () => clearInterval(interval);
         } else {
-            createGame();
+            if (isAdmin) {
+                createGame();
+            }
         }
 
         setIsGameCreated(game !== null);
@@ -114,8 +117,7 @@ const GameRoom = () => {
             if (fetchedGameUpdate) {
                 setGame(fetchedGameUpdate);
             }
-
-            console.log(fetchedGameUpdate);
+            //console.log(fetchedGameUpdate);
         }
         catch (error) {
             console.log("Error while fetching gamesessions: " + error);
@@ -126,11 +128,13 @@ const GameRoom = () => {
         try {
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
 
+            console.log(thisUser);
             const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: headers })
 
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
+            console.log(fetchedUsers);
         }
         catch (error) {
             console.log("Error while fetching users: " + error);
@@ -154,9 +158,6 @@ const GameRoom = () => {
     }
 
     async function createGame() { // ADMIN METHOD
-        if (!thisUser) {
-            return;
-        }
         try {
             const nickname = thisUser.nickname;
             const password = "password"; // PLACEHOLDER for guest user
@@ -192,7 +193,7 @@ const GameRoom = () => {
         }
         catch (error) {
             alert(
-                `Something went wrong: \n${handleError(error)}`
+                `Error while attempting to create game: \n${handleError(error)}`
             );
         }
     }
@@ -229,14 +230,15 @@ const GameRoom = () => {
             setGame(null);
             setIsGameCreated(false);
             setUsers(null);
-            setThisUser(null);
+            setThisUser(new User());
+            sessionStorage.setItem("user", JSON.stringify(new User()));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
             sessionStorage.removeItem("isEnabledTTS");
             sessionStorage.removeItem("gameRoom");
             sessionStorage.removeItem("gameroomToken");
             navigate("/gameRoom");
-            console.log("out");
+            console.log("exited room");
         } catch (error) {
             alert(`Could not exit:\n ${handleError(error)}`);
         }
@@ -256,7 +258,10 @@ const GameRoom = () => {
         return (
             <BaseContainer>
                 <div className="gameroom header">
-                    <BurgerMenu onClick={() => setOpenMenu(!openMenu)}></BurgerMenu>
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
                 </div>
                 <div className="gameroom container">
                     <BackButton disabled={true} onClick={() => navigate("/")}></BackButton>
@@ -304,7 +309,7 @@ const GameRoom = () => {
 
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
-                            userList={users}
+                            userList={users ? users : []}
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">

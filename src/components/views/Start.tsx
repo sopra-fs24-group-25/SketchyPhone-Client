@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { api, handleError } from "helpers/api";
 import { useNavigate } from "react-router-dom";
 import { Button } from "components/ui/Button";
 import { GuideButton } from "components/ui/GuideButton";
 import "styles/views/Start.scss";
 import BaseContainer from "components/ui/BaseContainer";
+import User from "models/User";
 import PropTypes from "prop-types";
 import Guide from "./Guide.json";
 import Header from "./Header";
@@ -38,7 +40,10 @@ const Start = () => {
         navigate("/login", { state: {isSignUp: false}});
     };
 
-    const doPlayGuest = (): void => {
+    const doPlayGuest = async () => {
+        const response = await api.post("/users", { "nickname": "guest" });
+        const guest = new User(response.data);
+        sessionStorage.setItem("user", JSON.stringify(guest));
         navigate("/gameRoom");
     };
 
