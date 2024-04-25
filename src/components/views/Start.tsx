@@ -7,7 +7,6 @@ import "styles/views/Start.scss";
 import BaseContainer from "components/ui/BaseContainer";
 import User from "models/User";
 import PropTypes from "prop-types";
-import Guide from "./Guide.json";
 import Header from "./Header";
 
 
@@ -31,6 +30,14 @@ GuideField.propTypes = {
     index: PropTypes.number
 };
 
+const Guide = {
+    "1": "Calling is better! Invite your friends to a voice call.",
+    "2": "Each player must write a quirky sentence for others to draw.",
+    "3": "You will receive someone's bizarre sentence to draw.",
+    "4": "Try to describe someone's crazy drawing.",
+    "5": "Watch the hilarious results of your Sketchy Phone game."
+}
+
 const Start = () => {
 
     const navigate = useNavigate();
@@ -41,9 +48,6 @@ const Start = () => {
     };
 
     const doPlayGuest = async () => {
-        const response = await api.post("/users", { "nickname": "guest" });
-        const guest = new User(response.data);
-        sessionStorage.setItem("user", JSON.stringify(guest));
         navigate("/gameRoom");
     };
 
