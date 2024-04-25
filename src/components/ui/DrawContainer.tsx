@@ -90,7 +90,8 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     async function sendImage() {
         if (submitted) {
-            console.log("Already successfully submitted")
+            console.log("Already successfully submitted");
+
             return;
         }
         try {

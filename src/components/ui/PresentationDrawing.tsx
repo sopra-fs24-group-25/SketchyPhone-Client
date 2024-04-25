@@ -19,7 +19,7 @@ const PresentationDrawing = (props) => {
             <p className = "presentation username rightalign">{props.drawingPrompt.creator.nickname}</p>
             <img
                 className="presentation drawing"
-                src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll(`"`, "")}`}
+                src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
             ></img>
         </div>
 

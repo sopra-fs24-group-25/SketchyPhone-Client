@@ -30,6 +30,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     async function sendTextPrompt() {
         if(submitted){
             console.log("Already successfully submitted");
+            
             return;
         }
         try {
@@ -103,7 +104,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             <div className={`prompt drawing ${isInitialPrompt ? "first" : ""}`}>
                 <div className="prompt field">
                     {isInitialPrompt ? drawing : (drawing !== null && <img
-                        src={`data:image/png; base64, ${drawing.encodedImage.replaceAll(`"`, "")}`}
+                        src={`data:image/png; base64, ${drawing.encodedImage.replaceAll("\"", "")}`}
                         style={{userSelect:"none", "-webkit-user-drag":"none"}}
                     ></img>)}
 

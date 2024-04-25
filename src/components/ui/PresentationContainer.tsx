@@ -23,11 +23,18 @@ import Header from "../views/Header";
 
 const PresentationContainer = ({ presentationContents }) => {
 
+    const navigate = useNavigate();
+
     const containerRef = useRef(null);
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
+    }
+
+    const exitGame = () => {
+        sessionStorage.clear();
+        navigate("/gameRoom");
     }
 
     const synth = window.speechSynthesis;
@@ -132,6 +139,12 @@ const PresentationContainer = ({ presentationContents }) => {
                     width='20%'
                 >
                     See Results
+                </Button>
+                <Button className="presentation resultsButton"
+                    width='20%'
+                    onClick={() => exitGame()}
+                >
+                    End game
                 </Button>
             </div >
             {Menu(openMenu, toggleMenu)}
