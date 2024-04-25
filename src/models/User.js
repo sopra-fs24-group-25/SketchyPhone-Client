@@ -4,7 +4,7 @@
 class User {
     constructor(data = {}) {
         this.textPrompts = null;
-        this.id = null;
+        this.userId = null;
         this.nickname = null;
         this.creationDateTime = null;
         this.status = null;

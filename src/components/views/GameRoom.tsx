@@ -17,6 +17,7 @@ import User from "models/User";
 import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
+import { sortAndDeduplicateDiagnostics } from "typescript";
 
 const JoinField = (props) => {
     return (
@@ -75,7 +76,6 @@ const GameRoom = () => {
     // const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
 
     useEffect(() => {
-        console.log(game, users, isGameCreated);
         if (isGameCreated) {
             let interval = setInterval(() => {
                 fetchGameRoomUsers();
@@ -110,14 +110,14 @@ const GameRoom = () => {
 
     async function fetchGameUpdate() {
         try {
-            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const url = `/games/${game.gameId}`;
-            const response = await api.get(url, {headers: headers})
+            const response = await api.get(url, {headers: requestHeader})
             const fetchedGameUpdate = new Game(response.data);
             if (fetchedGameUpdate) {
                 setGame(fetchedGameUpdate);
+                sessionStorage.setItem("gameRoom", JSON.stringify(fetchedGameUpdate)); // Store to sessionstorage
             }
-            //console.log(fetchedGameUpdate);
         }
         catch (error) {
             console.log("Error while fetching gamesessions: " + error);
@@ -126,15 +126,13 @@ const GameRoom = () => {
 
     async function fetchGameRoomUsers() {
         try {
-            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
 
-            console.log(thisUser);
-            const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: headers })
+            const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: requestHeader })
 
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
-            console.log(fetchedUsers);
         }
         catch (error) {
             console.log("Error while fetching users: " + error);
@@ -147,8 +145,8 @@ const GameRoom = () => {
 
     async function fetchGameSettings() {
         try {
-            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
-            const response = await api.get(`/gameRooms/${game.gameId}/settings`, { headers: headers })
+            const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
+            const response = await api.get(`/gameRooms/${game.gameId}/settings`, { headers: requestHeader })
 
             const gameSettings = new GameSettings(response.data);
         }
@@ -158,22 +156,18 @@ const GameRoom = () => {
     }
 
     async function createGame() { // ADMIN METHOD
+        console.log("Attempting to create game")
         try {
-            const nickname = thisUser.nickname;
-            //const password = "password"; // PLACEHOLDER for guest user
-            const requestBody = { nickname }//, password };
-
             var thisgameroom;
             if (game) {
                 thisgameroom = game;
             } else {
-                const response = await api.post("/gameRooms/create", requestBody);
+                const response = await api.post(`/gameRooms/create/${thisUser.userId}`);
 
                 const game = new Game(response.data);
 
                 // Create new game object
                 thisgameroom = new Game(response.data);
-
                 setIsAdmin(true);
             }
             // Set default settings values on game creation
@@ -187,7 +181,7 @@ const GameRoom = () => {
 
 
             setUsers(thisgameroom.users);
-            setThisUser(thisgameroom.users[0]);
+            // setThisUser(thisgameroom.users[0]); // Not needed anymore as we already get the full object from gamejoin
             setGame({ ...thisgameroom });
             setIsGameCreated(true);
         }
@@ -201,14 +195,14 @@ const GameRoom = () => {
     // Send to server to start game ADMIN METHOD
     async function startGame() {
         try {
-            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
             console.log(gameSession);
 
             // check if user is admin and navigate to start
-            if (gameSession !== null && gameSession.admin === thisUser.id) {
+            if (gameSession !== null && gameSession.admin === thisUser.userId) {
                 console.log("storing gamesession");
                 console.log(gameSession);
                 sessionStorage.setItem("gameSession", JSON.stringify(gameSession));
@@ -224,8 +218,8 @@ const GameRoom = () => {
 
     const exitRoom = async () => {
         try {
-            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.id };
-            await api.delete(`/games/${game.gameId}/leave/${thisUser.id}`, { headers: headers });
+            const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
+            await api.delete(`/games/${game.gameId}/leave/${thisUser.userId}`, { headers: headers });
             setIsAdmin(false);
             setGame(null);
             setIsGameCreated(false);

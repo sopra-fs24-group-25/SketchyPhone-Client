@@ -14,6 +14,7 @@ class GameSession extends Game {
         this.usersInSession = null;
         this.roundCounter = null;
         this.currentIndex = null;
+        this.gameLoopStatus = null;
         Object.assign(this, data);
     }
 }

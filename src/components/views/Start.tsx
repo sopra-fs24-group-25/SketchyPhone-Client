@@ -41,6 +41,7 @@ const Start = () => {
     };
 
     const doPlayGuest = async () => {
+        // Is this smart?
         const response = await api.post("/users", { "nickname": "guest" });
         const guest = new User(response.data);
         sessionStorage.setItem("user", JSON.stringify(guest));

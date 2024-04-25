@@ -17,7 +17,7 @@ const PresentationText = (props) => {
     return (
         <div className = "presentation textContainer">
             <p className="presentation username leftalign">
-                {props.textPrompt.creator}</p>
+                {props.textPrompt.creator.nickname}</p>
             <p className = "presentation text">
                 {props.textPrompt.content}</p>
         </div>

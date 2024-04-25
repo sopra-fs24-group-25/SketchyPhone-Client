@@ -20,13 +20,15 @@ import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import UserPreview from "./UserPreview";
 
 
-const PresentationContainer = (props) => {
+const PresentationContainer = (presentationContents) => {
+    console.log("HERE WE ARE");
+    console.log(presentationContents)
     return (
         <div className="presentation container">
-            {props.presentationContents.map((element) => {
+            {presentationContents.map((element) => {
                 if (element instanceof TextPrompt) {
                     return (
-                        <div key={element.creator} className="presentation subContainer">
+                        <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
                             <UserPreview></UserPreview>
                             <PresentationText
                                 textPrompt={element}
@@ -36,7 +38,7 @@ const PresentationContainer = (props) => {
                     )
                 } else if (element instanceof DrawingPrompt) {
                     return (
-                        <div key={element.drawingId} className="presentation subContainer">
+                        <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
                             <PresentationDrawing
                                 // key={element.drawingId}
                                 drawingPrompt={element}

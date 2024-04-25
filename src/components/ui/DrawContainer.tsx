@@ -4,10 +4,7 @@ import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { api, handleError } from "helpers/api";
-import GameSession from "../../models/GameSession"
-import User from "../../models/User";
-import DrawingPrompt from "../../models/DrawingPrompt";
-
+import GameLoopStatus from "../../helpers/gameLoopStatus"
 
 // Default draw container
 
@@ -15,7 +12,7 @@ import DrawingPrompt from "../../models/DrawingPrompt";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, user, game, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
+export const DrawContainer = ({ height, width, user, game, textPrompt, timerDuration, setNextTask, setInitial }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -44,6 +41,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
     let drawRect = false;
 
     let initialized = false;
+
+    let submitted = false;
+
 
     const onMouseDown = (e) => {
         // Check if in range
@@ -89,6 +89,10 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
     }
 
     async function sendImage() {
+        if (submitted) {
+            console.log("Already successfully submitted")
+            return;
+        }
         try {
             // Get last gamesession (will always be the current)
             let currentGameSessions = game.gameSessions;
@@ -96,16 +100,20 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
             let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
             // If we have a previous drawing id
-            const previousTextPromptId = textPromptId;
+            const previousTextPromptId = textPrompt.textPromptId;
 
-            const base64Canvas = canvas.current.toDataURL("image/jpeg").split(";base64,")[1];
+            const base64Canvas = canvas.current.toDataURL("image/png").split(";base64,")[1];
 
-            const requestBody = {drawingBase64: base64Canvas};
-            const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
+            const requestBody = base64Canvas;
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
 
-            const url = `/games/${currentGameSessionId}/drawings/${user.id}/${previousTextPromptId}`;
+            const url = `/games/${currentGameSessionId}/drawings/${user.userId}/${previousTextPromptId}`;
+            console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
-            console.log(response);
+
+            if (response.status === 201) {
+                submitted = true;
+            }
 
         }
         catch (error) {
@@ -150,7 +158,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
 
 
     function initialize() {
-        console.log("initializing");
         canvas.current = document.getElementById("canvas");
 
         if (canvas.current !== null) {
@@ -200,14 +207,18 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
     };
 
     async function onSubmit() {
-        allowDraw = false;       
+        allowDraw = false;
+        await sendImage();
+        setInitial(false);
+        submitted = true;
+        setNextTask(GameLoopStatus.TEXTPROMPT);
+        // Also set button to deactivated
     }
 
     async function onTimerEnd() {
-        await onSubmit();
-        await sendImage();
-        setInitial(false);
-        setNextTask("Text Prompt");
+        if (!submitted) {
+            await onSubmit();
+        }
     }
 
     // Draw function where actual drawing is performed with context
@@ -286,7 +297,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, textPromp
     return (
         <div>
             <div className="drawContainer" >
-                <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt}</h>
+                <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</h>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
                         <input type="color" defaultValue={defaultColor}></input>
@@ -327,8 +338,7 @@ DrawContainer.propTypes = {
     width: PropTypes.number.isRequired,
     user: PropTypes.object.isRequired,
     game: PropTypes.object.isRequired,
-    textPrompt: PropTypes.string,
-    textPromptId: PropTypes.number,
+    textPrompt: PropTypes.object,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,
     setInitial: PropTypes.func,

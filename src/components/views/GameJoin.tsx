@@ -106,11 +106,11 @@ const GameJoin = () => {
         while (numChecks >= 0) {
             numChecks -= 1;
             try {
-                const requestBody = { nickname }//, "password": "defaultPassword" }
-                const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
+                const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+                const response = await api.post(`/gameRooms/join/${pin}/${user.userId}`, null, {headers: requestHeader});
                 const room = new Game(response.data);
                 sessionStorage.setItem("gameroomToken", room.gameToken);
-
+                sessionStorage.setItem("gameRoom", JSON.stringify(room));
                 if (room.status === "OPEN") {
                     console.log("room open");
                     setView("openRoomView");
@@ -178,7 +178,7 @@ const GameJoin = () => {
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
-            var updatedUser = {...user, nickname};
+            var updatedUser = { ...user, nickname };
             var response;
             if (updatedUser.id) {
                 try {
@@ -229,11 +229,11 @@ const GameJoin = () => {
     const validateAvatar = async () => {
         try {
             // MISSING validate
-            var updatedUser = {...user, avatarId}; //avatarId not available on server yet
+            var updatedUser = { ...user, avatarId }; //avatarId not available on server yet
             var response;
             if (updatedUser.id) {
                 try {
-                    response = await api.put(`/users/${user.id}`, updatedUser);
+                    response = await api.put(`/users/${user.userId}`, updatedUser);
                 }
                 catch {
                     response = await api.post("/users", updatedUser);
@@ -245,9 +245,8 @@ const GameJoin = () => {
             setUser(fullUser);
             sessionStorage.setItem("user", JSON.stringify(fullUser));
 
-            
             isGameCreator ? navigate("/gameRoom", { state: { isGameCreator: isGameCreator } }) : setView("pinView");
-            
+
         }
         catch (error) {
             alert(

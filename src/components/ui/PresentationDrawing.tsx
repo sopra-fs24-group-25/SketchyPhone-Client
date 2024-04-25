@@ -16,10 +16,10 @@ import DrawingPrompt from "models/DrawingPrompt"
 const PresentationDrawing = (props) => {
     return (
         <div className="presentation drawingContainer">
-            <p className = "presentation username rightalign">{props.drawingPrompt.creatorId}</p>
+            <p className = "presentation username rightalign">{props.drawingPrompt.creator.nickname}</p>
             <img
                 className="presentation drawing"
-                src={`data:image/png; base64, ${props.drawingPrompt.encodedImage}`}
+                src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll(`"`, "")}`}
             ></img>
         </div>
 

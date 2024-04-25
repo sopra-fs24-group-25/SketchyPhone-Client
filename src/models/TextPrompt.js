@@ -11,6 +11,7 @@ class TextPrompt {
         this.previousDrawingId = null;
         this.nextDrawingId = null;
         this.round = null;
+        this.textPromptId = null;
         Object.assign(this, data);
     }
 }

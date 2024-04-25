@@ -9,11 +9,13 @@ import PropTypes from "prop-types";
 import TextPrompt from "models/TextPrompt";
 import User from "../../models/User"
 import GameSession from "../../models/GameSession"
+import GameLoopStatus from "../../helpers/gameLoopStatus"
 
 export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, timerDuration, setNextTask }) => {
 
     const [textPromptContent, setTextPromptContent] = useState<String>("");
     const [promptTooLong, setPromptTooLong] = useState<Boolean>(false);
+    let submitted = false;
 
     const maxChars = 50;
 
@@ -26,13 +28,17 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     //fetch drawing, if first time, draw PhoneLogo
 
     async function sendTextPrompt() {
+        if(submitted){
+            console.log("Already successfully submitted");
+            return;
+        }
         try {
             // Get last gamesession (will always be the current)
             let currentGameSessions = game.gameSessions;
             let idx = currentGameSessions.length - 1;
             let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
-            const requestHeader = { "Authorization":  user.token, "X-User-ID": user.id };
+            const requestHeader = { "Authorization":  user.token, "X-User-ID": user.userId };
 
             // If we have a previous drawing id
             // for the very first text prompts -> insert 777 as previousDrawingId (from server documentation)W
@@ -47,8 +53,13 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
 
             const requestBody = JSON.stringify(textPrompt);
             
-            const url = `/games/${currentGameSessionId}/prompts/${user.id}/${previousDrawingId}`;
+            const url = `/games/${currentGameSessionId}/prompts/${user.userId}/${previousDrawingId}`;
+            console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
+
+            if(response.status === 201){
+                submitted = true;
+            }
 
             console.log("sending text prompt to server");
             console.log(response);
@@ -63,7 +74,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     async function onSubmit() {
         await sendTextPrompt();
 
-        setNextTask("Drawing");
+        setNextTask(GameLoopStatus.DRAWING);
     }
 
     const timerProps = {
@@ -92,7 +103,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             <div className={`prompt drawing ${isInitialPrompt ? "first" : ""}`}>
                 <div className="prompt field">
                     {isInitialPrompt ? drawing : (drawing !== null && <img
-                        src={`data:image/png; base64, ${drawing.encodedImage}`}
+                        src={`data:image/png; base64, ${drawing.encodedImage.replaceAll(`"`, "")}`}
                         style={{userSelect:"none", "-webkit-user-drag":"none"}}
                     ></img>)}
 
