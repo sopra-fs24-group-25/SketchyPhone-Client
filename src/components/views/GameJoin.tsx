@@ -106,7 +106,7 @@ const GameJoin = () => {
         while (numChecks >= 0) {
             numChecks -= 1;
             try {
-                const requestBody = { "nickname": nickname, "password": "defaultPassword" }
+                const requestBody = { nickname }//, "password": "defaultPassword" }
                 const response = await api.post(`/gameRooms/join/${pin}`, requestBody);
                 const room = new Game(response.data);
                 sessionStorage.setItem("gameroomToken", room.gameToken);

@@ -160,8 +160,8 @@ const GameRoom = () => {
     async function createGame() { // ADMIN METHOD
         try {
             const nickname = thisUser.nickname;
-            const password = "password"; // PLACEHOLDER for guest user
-            const requestBody = JSON.stringify({ nickname, password });
+            //const password = "password"; // PLACEHOLDER for guest user
+            const requestBody = { nickname }//, password };
 
             var thisgameroom;
             if (game) {
