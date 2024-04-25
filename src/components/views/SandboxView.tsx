@@ -258,13 +258,30 @@ const SandboxView = () => {
             return new DrawingPrompt(element);
         }
     });
-    console.log(newArray)
+
+
+    function TextToSpeech(text) {
+        const synth = window.speechSynthesis;
+        var speakThis = new SpeechSynthesisUtterance(text);
+        console.log(synth.getVoices())
+
+        speakThis.rate = 1;
+        speakThis.pitch = 1;
+        speakThis.voice = synth.getVoices()[4]
+        speakThis.lang = "pl-PL";
+        synth.cancel();
+        synth.speak(speakThis);
+    }
+
     const testTextPrompt1 = new TextPrompt();
     testTextPrompt1.creator = "Noah";
-    testTextPrompt1.content = "A very long and intricate test text prompt";
+    testTextPrompt1.content = "Ic hab voll in house gegaggeld sadface";
+    TextToSpeech(testTextPrompt1.content);
+
     const testTextPrompt2 = new TextPrompt();
     testTextPrompt2.creator = "Bietei";
     testTextPrompt2.content = "Another test text prompt";
+
 
     const testDrawingPrompt1 = new DrawingPrompt();
     testDrawingPrompt1.creatorId = 1;
@@ -277,6 +294,10 @@ const SandboxView = () => {
             <PresentationContainer
                 presentationContents={newArray}
             ></PresentationContainer>
+            <Button
+            onClick = {() => TextToSpeech(testTextPrompt1.content)}>
+                CLICK TO SPEAK
+            </Button>
         </div>
 
     )

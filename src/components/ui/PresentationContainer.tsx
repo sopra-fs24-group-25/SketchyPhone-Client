@@ -20,51 +20,79 @@ import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import UserPreview from "./UserPreview";
 
 
-const PresentationContainer = ({presentationContents}) => {
+const PresentationContainer = ({ presentationContents }) => {
     const containerRef = useRef(null);
+
+    const synth = window.speechSynthesis;
+
+    function TextToSpeech(text) {
+        const synth = window.speechSynthesis;
+        var speakThis = new SpeechSynthesisUtterance(text);
+
+        speakThis.rate = 1;
+        speakThis.pitch = 1;
+        speakThis.voice = synth.getVoices()[4]
+        speakThis.lang = "pl-PL";
+        synth.cancel();
+        synth.speak(speakThis);
+    }
+
 
     useEffect(() => {
         // Scroll to the bottom when the component initially renders
         containerRef.current.scrollTop = containerRef.current.scrollHeight;
-      }, []);
+    }, []);
 
-      useEffect(() => {
+    useEffect(() => {
         // Calculate the difference in height before and after the update
         const prevHeight = containerRef.current.scrollHeight;
-        
+
         // Calculate the new scroll position
         const newHeight = containerRef.current.scrollHeight;
         const scrollDifference = newHeight - prevHeight;
-    
+
         // Adjust the scroll position to maintain the bottom alignment
         containerRef.current.scrollTop += scrollDifference;
-      }, [presentationContents]);
+
+        // get last element and speak if textprompt
+        const lastElement = presentationContents[presentationContents.length - 1];
+        if (lastElement instanceof TextPrompt) {
+            TextToSpeech(lastElement.content);
+        }
+
+    }, [presentationContents]);
 
     return (
-        <div ref = {containerRef} className="presentation container">
+        <div ref={containerRef} className="presentation container">
             {presentationContents.map((element) => {
                 if (element instanceof TextPrompt) {
                     return (
                         <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
+                            <Button
+                                style = {{margin: "20px"}}
+                                onClick={() => TextToSpeech(element.content)}>
+                                Speak
+                            </Button>
                             <UserPreview></UserPreview>
                             <PresentationText
                                 textPrompt={element}
                             ></PresentationText>
+
                         </div>
 
-                    )
-                } else if (element instanceof DrawingPrompt) {
-                    return (
-                        <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
-                            <PresentationDrawing
-                                // key={element.drawingId}
-                                drawingPrompt={element}
-                            ></PresentationDrawing>
-                            <UserPreview></UserPreview>
-                        </div>
+    )
+} else if (element instanceof DrawingPrompt) {
+    return (
+        <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
+            <PresentationDrawing
+                // key={element.drawingId}
+                drawingPrompt={element}
+            ></PresentationDrawing>
+            <UserPreview></UserPreview>
+        </div>
 
-                    )
-                }
+    )
+}
             })}
             <div className="presentation separator">
                 <hr className="presentation separator leftalign"
@@ -93,7 +121,7 @@ const PresentationContainer = ({presentationContents}) => {
                 See Results
             </Button>
 
-        </div>
+        </div >
     )
 }
 
