@@ -23,7 +23,7 @@ const SandboxView = () => {
     const response = [
         {
             "textPromptId": 1,
-            "content": "ya",
+            "content": "A funny looking dog with a round hat on a tree. With curious looking eyes in a house of seven people",
             "creator": {
                 "userId": 3,
                 "nickname": "egadfa",
@@ -267,7 +267,7 @@ const SandboxView = () => {
 
         speakThis.rate = 1;
         speakThis.pitch = 1;
-        speakThis.voice = synth.getVoices()[4]
+        speakThis.voice = synth.getVoices()[50]
         speakThis.lang = "pl-PL";
         synth.cancel();
         synth.speak(speakThis);
@@ -295,13 +295,12 @@ const SandboxView = () => {
                 presentationContents={newArray}
             ></PresentationContainer>
             <Button
-            onClick = {() => TextToSpeech(testTextPrompt1.content)}>
+                onClick = {() => TextToSpeech(testTextPrompt1.content)}
+            >
                 CLICK TO SPEAK
             </Button>
         </div>
-
     )
-
 }
 
 export default SandboxView;

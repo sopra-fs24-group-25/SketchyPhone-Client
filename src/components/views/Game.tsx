@@ -18,6 +18,7 @@ import DrawingPrompt from "models/DrawingPrompt";
 import GameLoopStatus from "../../helpers/gameLoopStatus"
 import PresentationContainer from "components/ui/PresentationContainer";
 import { Button } from "components/ui/Button";
+import { Spinner } from "components/ui/Spinner";
 
 const Game = () => {
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
@@ -60,8 +61,7 @@ const Game = () => {
             }
         }
 
-    }
-        , [currentTask, gameSession.current, presentationElements])
+    }, [currentTask, gameSession.current, presentationElements])
 
     // Useeffect for continuous polling
     useEffect(() => {
@@ -249,7 +249,6 @@ const Game = () => {
                     timerDuration={20}
                     setNextTask={setCurrentTask}>
                 </TextPromptContainer>
-                {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );
     });
@@ -284,16 +283,19 @@ const Game = () => {
 
     const WaitingView = React.memo(() => {
         return (
-            <BaseContainer>
+            <BaseContainer style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
                 <div className="gameroom header">
                     <BurgerMenu
                         onClick={() => setOpenMenu(!openMenu)}
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-                <h>
-                    WAITING FOR PLAYERS TO FINISH THEIR TASKS
-                </h>
+                {Menu(openMenu, toggleMenu)}
+                <div className="gameroom between-tasks">
+                    Waiting for players to finish their tasks...
+                </div>
+                <Spinner></Spinner>
+                
             </BaseContainer>
         )
     });
@@ -303,6 +305,7 @@ const Game = () => {
     const PresentationView = React.memo(() => {
         let elementsToShow = presentationElements ? presentationElements.slice(0, presentationIndex + 1) : null; // End not included thats why + 1
         console.log(elementsToShow);
+
         return (
             <BaseContainer>
                 <PresentationContainer
@@ -321,19 +324,25 @@ const Game = () => {
     const renderComponent = useMemo(() => {
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
             console.log("PRESENTING")
+
             return <PresentationView />;
         }
         if (!isReadyForTask.current) {
+
             return <WaitingView />;
         }
         if (currentTask === GameLoopStatus.TEXTPROMPT) {
+
             return <TextPromptView />;
         }
         if (currentTask === GameLoopStatus.DRAWING) {
+
             return <DrawView />;
         }
+
         return null;
     }, [currentTask, isReadyForTask.current, presentationElements, presentationIndex]);
+    
     return renderComponent;
 };
 

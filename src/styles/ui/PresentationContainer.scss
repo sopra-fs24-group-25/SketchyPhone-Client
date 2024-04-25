@@ -1,17 +1,24 @@
 @import "../theme";
 
 .presentation {
+    user-select: none;
     &.text {
         background-color: white;
+        color: black;
         text-align: center;
         width: fit-content;
-        border-radius: 10px;
-        font-size: large;
-        padding: 10px;
+        border-radius: 2em;
+        font-size: x-large;
+        font-weight: 600;
+        padding: 20px;
+        box-shadow: $dropShadow;
     }
 
     &.username {
-        font-style: italic;
+        color: black;
+        font-size: large;
+        font-weight: 600;
+        text-shadow: $dropShadow;
         
         &.leftalign{
             text-align: start;
@@ -28,14 +35,19 @@
     }
 
     &.drawingContainer {
+        background-color: white;
+        border-radius: 2em;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        margin-right: 20px;
         margin-left: auto;
         padding: 20px;
+        box-shadow: $dropShadow;
     }
 
     &.drawing {
+        -webkit-user-drag: none;
         border-radius: 20px;
         max-height: 256px;
     }
@@ -43,11 +55,14 @@
     &.container {
         display: flex;
         flex-direction: column;
-        background-color: rgba(255, 255, 255, 0.555);
-        border-radius: 20px;
-        margin: 20px;
+        background-color: $display-box-color;
+        border-radius: 2em;
+        margin: 40px;
         max-height: 40em;
-        min-width: 80em;
+        min-height: 30em;
+        min-width: 50em;
+        height: $DESKTOP_HEIGHT / 2;
+        width: $DESKTOP_WIDTH / 2;
         overflow: scroll;
         @include scrollbar;
     }
@@ -61,13 +76,13 @@
     }
 
     &.separator{
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include center;
     }
 
     &.resultsButton{
+        @include center;
+        padding: 20px;
         margin: 20px;
-        margin-left:auto;
+        margin-left: auto;
     }
 }

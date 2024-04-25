@@ -18,10 +18,17 @@ import DrawingPrompt from "models/DrawingPrompt";
 import { DrawContainer } from "components/ui/DrawContainer";
 import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import UserPreview from "./UserPreview";
+import Header from "../views/Header";
 
 
 const PresentationContainer = ({ presentationContents }) => {
+
     const containerRef = useRef(null);
+    const [openMenu, setOpenMenu] = useState<Boolean>(false);
+
+    const toggleMenu = () => {
+        setOpenMenu(!openMenu);
+    }
 
     const synth = window.speechSynthesis;
 
@@ -31,7 +38,7 @@ const PresentationContainer = ({ presentationContents }) => {
 
         speakThis.rate = 1;
         speakThis.pitch = 1;
-        speakThis.voice = synth.getVoices()[4]
+        speakThis.voice = synth.getVoices()[50]
         speakThis.lang = "pl-PL";
         synth.cancel();
         synth.speak(speakThis);
@@ -62,66 +69,73 @@ const PresentationContainer = ({ presentationContents }) => {
 
     }, [presentationContents]);
 
-    return (
-        <div ref={containerRef} className="presentation container">
-            {presentationContents.map((element) => {
-                if (element instanceof TextPrompt) {
-                    return (
-                        <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
-                            <Button
-                                style = {{margin: "20px"}}
-                                onClick={() => TextToSpeech(element.content)}>
-                                Speak
-                            </Button>
-                            <UserPreview></UserPreview>
-                            <PresentationText
-                                textPrompt={element}
-                            ></PresentationText>
-
-                        </div>
-
-    )
-} else if (element instanceof DrawingPrompt) {
-    return (
-        <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
-            <PresentationDrawing
-                // key={element.drawingId}
-                drawingPrompt={element}
-            ></PresentationDrawing>
-            <UserPreview></UserPreview>
-        </div>
-
-    )
-}
-            })}
-            <div className="presentation separator">
-                <hr className="presentation separator leftalign"
-                    style={{
-                        background: "black",
-                        color: "black",
-                        borderColor: "black",
-                        height: "2px",
-                        width: "40%"
-                    }}
-                />
-                <p>DONE</p>
-                <hr className="presentation separator rightalign"
-                    style={{
-                        background: "black",
-                        color: "black",
-                        borderColor: "black",
-                        height: "2px",
-                        width: "40%"
-                    }}
-                />
+    function presentTextPrompt(element) {
+        return (
+            <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
+                <Button
+                    style = {{margin: "20px"}}
+                    onClick={() => TextToSpeech(element.content)}>
+                    Speak
+                </Button>
+                <UserPreview></UserPreview>
+                <PresentationText
+                    textPrompt={element}
+                ></PresentationText>
             </div>
-            <Button className="presentation resultsButton"
-                width='20%'
-            >
-                See Results
-            </Button>
+        )
+    }
 
-        </div >
+    function presentDrawing(element) {
+        return (
+            <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
+                <PresentationDrawing
+                    // key={element.drawingId}
+                    drawingPrompt={element}
+                ></PresentationDrawing>
+                <UserPreview></UserPreview>
+            </div>
+        )
+    }
+
+    return (
+        <BaseContainer style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <div ref={containerRef} className="presentation container">
+                {presentationContents.map((element) => {
+                    if (element instanceof TextPrompt) {
+                        return presentTextPrompt(element);
+                    } else if (element instanceof DrawingPrompt) {
+                        return presentDrawing(element);
+                    }
+                })}
+                <div className="presentation separator">
+                    <hr className="presentation separator leftalign"
+                        style={{
+                            background: "black",
+                            color: "black",
+                            borderColor: "black",
+                            height: "2px",
+                            width: "40%"
+                        }}
+                    />
+                    <p>DONE</p>
+                    <hr className="presentation separator rightalign"
+                        style={{
+                            background: "black",
+                            color: "black",
+                            borderColor: "black",
+                            height: "2px",
+                            width: "40%"
+                        }}
+                    />
+                </div>
+                <Button className="presentation resultsButton"
+                    width='20%'
+                >
+                    See Results
+                </Button>
+            </div >
+            {Menu(openMenu, toggleMenu)}
+        </BaseContainer>
     )
 }
 
