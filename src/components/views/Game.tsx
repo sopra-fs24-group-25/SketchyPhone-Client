@@ -17,6 +17,7 @@ import TextPrompt from "../../models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
 import GameLoopStatus from "../../helpers/gameLoopStatus"
 import PresentationContainer from "components/ui/PresentationContainer";
+import { Button } from "components/ui/Button";
 
 const Game = () => {
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
@@ -32,12 +33,13 @@ const Game = () => {
     const receivedPreviousDrawingPrompt = useRef<DrawingPrompt>(null);
 
     // main objects we need for the application logic
-    const user = useRef(new User(JSON.parse(sessionStorage.getItem("user"))));
-    const gameSession = useRef(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
+    const user = useRef<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
+    const gameSession = useRef<GameSession>(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
     const [gameObject, setGameObject] = useState<GameObject>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
+    const [presentationIndex, setPresentationIndex] = useState<Number>(-1);
 
     // Initialize to empty array
-    const [presentationElements, setPresentationElements] = useState<[]>(null);
+    const [presentationElements, setPresentationElements] = useState(null);
 
     useEffect(() => {
         if (prevTask.current !== gameSession.current.gameLoopStatus) {
@@ -54,6 +56,7 @@ const Game = () => {
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements === null) {
                 fetchPresentationElements(user.current, gameObject);
+                fetchPresentationIndex(user.current, gameObject);
             }
         }
 
@@ -65,6 +68,10 @@ const Game = () => {
         let interval = setInterval(() => {
             fetchGameUpdate(user.current, gameObject);
             isReadyForTask.current = (gameSession.current.gameLoopStatus === currentTask);
+
+            if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
+                fetchPresentationIndex(user.current, gameObject);
+            }
         }, 500); // Set interval to 0.5 seconds
 
         return () => clearInterval(interval);
@@ -87,13 +94,27 @@ const Game = () => {
         setOpenMenu(!openMenu);
     }
 
-    async function incrementRound(user: User, game: GameObject) {
+    async function fetchPresentationIndex(user: User, game: GameObject) {
         try {
-            const response = await api.put(`/games/${game.gameId}/nextround`);
-            console.log(response);
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${game.gameId}/presentation/next`;
+            const response = await api.get(url, { headers: requestHeader })
+            setPresentationIndex(Number(response.data));
+            console.log(Number(response.data));
         }
         catch (error) {
-            console.log("Error while incrementing round counter: " + error);
+            console.log("Error while fetching presentation index: " + error);
+        }
+    }
+
+    async function incrementPresentationIndex(user: User, game: GameObject) {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${game.gameId}/presentation/next`;
+            const response = await api.put(url, null, { headers: requestHeader })
+        }
+        catch (error) {
+            console.log("Error while incrementing presentation index: " + error);
         }
     }
 
@@ -110,7 +131,7 @@ const Game = () => {
                 } else {
                     return new DrawingPrompt(element);
                 }
-            });            
+            });
             if (fetchedPresentationElements) {
                 setPresentationElements(fetchedPresentationElements);
             }
@@ -280,11 +301,19 @@ const Game = () => {
     WaitingView.displayName = "WaitingView";
 
     const PresentationView = React.memo(() => {
-        console.log(presentationElements);
+        let elementsToShow = presentationElements ? presentationElements.slice(0, presentationIndex + 1) : null; // End not included thats why + 1
+        console.log(elementsToShow);
         return (
-            <PresentationContainer
-                presentationContents={presentationElements}
-            ></PresentationContainer>)
+            <BaseContainer>
+                <PresentationContainer
+                    presentationContents={elementsToShow}
+                ></PresentationContainer>
+
+                {(user.current.role === "admin" &&
+                    <Button
+                        onClick={() => incrementPresentationIndex(user.current, gameObject)}
+                    >Next</Button>)}
+            </BaseContainer>)
     });
 
     PresentationView.displayName = "PresentationView";
@@ -304,7 +333,7 @@ const Game = () => {
             return <DrawView />;
         }
         return null;
-    }, [currentTask, isReadyForTask.current, presentationElements]);
+    }, [currentTask, isReadyForTask.current, presentationElements, presentationIndex]);
     return renderComponent;
 };
 

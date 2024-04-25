@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
@@ -20,11 +20,28 @@ import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import UserPreview from "./UserPreview";
 
 
-const PresentationContainer = (presentationContents) => {
-    console.log("HERE WE ARE");
-    console.log(presentationContents)
+const PresentationContainer = ({presentationContents}) => {
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        // Scroll to the bottom when the component initially renders
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      }, []);
+
+      useEffect(() => {
+        // Calculate the difference in height before and after the update
+        const prevHeight = containerRef.current.scrollHeight;
+        
+        // Calculate the new scroll position
+        const newHeight = containerRef.current.scrollHeight;
+        const scrollDifference = newHeight - prevHeight;
+    
+        // Adjust the scroll position to maintain the bottom alignment
+        containerRef.current.scrollTop += scrollDifference;
+      }, [presentationContents]);
+
     return (
-        <div className="presentation container">
+        <div ref = {containerRef} className="presentation container">
             {presentationContents.map((element) => {
                 if (element instanceof TextPrompt) {
                     return (
