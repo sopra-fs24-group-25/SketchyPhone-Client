@@ -131,3 +131,11 @@ Noé Matumona
 - work on avatar selection
 - changed mechanism of account creation according to team discussions (for guest, preparation for future persistent accounts)
 - general cleanup and various visual improvements
+
+Noah Isaak
+
+- Created presentation container and subelements #9, #13
+- Attached many server functionalities
+- Lots of refactoring and minor changes throughout the code
+- More stuff I forgot
+
