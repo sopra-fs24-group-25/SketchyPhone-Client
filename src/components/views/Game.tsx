@@ -50,7 +50,7 @@ const Game = () => {
             setCurrentTask("Text Prompt");
         }
     }
-        , [currentTask])
+    , [currentTask])
 
     // Useeffect for continuous polling
     useEffect(() => {
