@@ -125,6 +125,7 @@ Noé Matumona
 - work on redirecting to next task #25
 - auto-redirecting to room #10
 - merge into main #50
+- started work on dynamically updating UI #41
 - login and sign-up revamp
 - small improvements on start
 - work on avatar selection
