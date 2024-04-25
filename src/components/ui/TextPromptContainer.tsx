@@ -10,7 +10,7 @@ import TextPrompt from "models/TextPrompt";
 import User from "../../models/User"
 import GameSession from "../../models/GameSession"
 
-export const TextPromptContainer = ({ drawing, user, gameSession, isInitialPrompt, timerDuration, setNextTask }) => {
+export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, timerDuration, setNextTask }) => {
 
     const [textPromptContent, setTextPromptContent] = useState<String>("");
     const [promptTooLong, setPromptTooLong] = useState<Boolean>(false);
@@ -28,7 +28,9 @@ export const TextPromptContainer = ({ drawing, user, gameSession, isInitialPromp
     async function sendTextPrompt() {
         try {
             // Get last gamesession (will always be the current)
-            const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+            let currentGameSessions = game.gameSessions;
+            let idx = currentGameSessions.length - 1;
+            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
             const requestHeader = { "Authorization":  user.token, "X-User-ID": user.id };
 
@@ -45,15 +47,11 @@ export const TextPromptContainer = ({ drawing, user, gameSession, isInitialPromp
 
             const requestBody = JSON.stringify(textPrompt);
             
-            const url = `/games/${gameSessionId}/prompts/${user.id}/${previousDrawingId}`;
-            const response = api.post(url, requestBody, { headers: requestHeader });
-
-            // Some logging
-            console.log(requestBody);
-            console.log(url);
-            console.log(requestHeader);
+            const url = `/games/${currentGameSessionId}/prompts/${user.id}/${previousDrawingId}`;
+            const response = await api.post(url, requestBody, { headers: requestHeader });
 
             console.log("sending text prompt to server");
+            console.log(response);
         }
         catch (error) {
             alert(
@@ -138,7 +136,7 @@ export const TextPromptContainer = ({ drawing, user, gameSession, isInitialPromp
 TextPromptContainer.propTypes = {
     drawing: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
-    gameSession: PropTypes.object.isRequired,
+    game: PropTypes.object.isRequired,
     isInitialPrompt: PropTypes.bool,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,

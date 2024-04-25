@@ -15,7 +15,7 @@ import DrawingPrompt from "../../models/DrawingPrompt";
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, user, gameSession, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
+export const DrawContainer = ({ height, width, user, game, textPrompt, textPromptId, timerDuration, setNextTask, setInitial }) => {
 
     const defaultColor = "#000000";
     const defaultBackgroundColor = "#FFFFFF"
@@ -91,7 +91,9 @@ export const DrawContainer = ({ height, width, user, gameSession, textPrompt, te
     async function sendImage() {
         try {
             // Get last gamesession (will always be the current)
-            const gameSessionId = gameSession.gameSessions[gameSession.gameSessions.length - 1].gameSessionId;
+            let currentGameSessions = game.gameSessions;
+            let idx = currentGameSessions.length - 1;
+            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
             // If we have a previous drawing id
             const previousTextPromptId = textPromptId;
@@ -101,7 +103,7 @@ export const DrawContainer = ({ height, width, user, gameSession, textPrompt, te
             const requestBody = {drawingBase64: base64Canvas};
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.id };
 
-            const url = `/games/${gameSessionId}/drawings/${user.id}/${previousTextPromptId}`;
+            const url = `/games/${currentGameSessionId}/drawings/${user.id}/${previousTextPromptId}`;
             const response = await api.post(url, requestBody, { headers: requestHeader });
             console.log(response);
 
@@ -324,7 +326,7 @@ DrawContainer.propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     user: PropTypes.object.isRequired,
-    gameSession: PropTypes.object.isRequired,
+    game: PropTypes.object.isRequired,
     textPrompt: PropTypes.string,
     textPromptId: PropTypes.number,
     timerDuration: PropTypes.number,
