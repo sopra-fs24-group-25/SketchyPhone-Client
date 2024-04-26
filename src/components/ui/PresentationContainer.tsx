@@ -85,7 +85,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     Speak
                 </Button> */}
                 <UserPreview
-                    id={element.creator.userId}
+                    id={element.creator.avatarId}
                 ></UserPreview>
                 <PresentationText
                     textPrompt={element}
@@ -102,7 +102,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     drawingPrompt={element}
                 ></PresentationDrawing>
                 <UserPreview
-                    id={element.creator.userId}
+                    id={element.creator.avatarId}
                 ></UserPreview>
             </div>
         )
