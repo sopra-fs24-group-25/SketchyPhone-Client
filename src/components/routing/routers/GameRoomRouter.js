@@ -2,7 +2,6 @@ import React from "react";
 import {Navigate, Route, Routes} from "react-router-dom";
 import GameRoom from "../../views/GameRoom";
 import GameJoin from "../../views/GameJoin";
-import GameSettings from "../../views/GameSettings";
 import PropTypes from "prop-types";
 
 const GameRoomRouter = () => {

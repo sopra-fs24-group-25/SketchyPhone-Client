@@ -10,7 +10,6 @@ import {LoginGuard} from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
 import {StartGuard} from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
-import GameSettings from "../../views/GameSettings";
 import SandboxView from "../../views/SandboxView"
 
 

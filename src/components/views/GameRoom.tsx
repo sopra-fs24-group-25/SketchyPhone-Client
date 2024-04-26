@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
@@ -18,6 +18,7 @@ import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
 import { sortAndDeduplicateDiagnostics } from "typescript";
+import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 
 const JoinField = (props) => {
     return (
@@ -65,15 +66,17 @@ const GameRoom = () => {
 
     // Default settings
     const defaultNumCycles = 3;
-    const defaultGameSpeed = 1;
+    const defaultGameSpeed = GameSpeedEnum.NORMAL.inSeconds;
     const defaultIsEnabledTTS = true;
 
-    // Settings states
-    const [numCycles, setNumCycles] = useState(defaultNumCycles); // will default to first option when null
-    const [gameSpeed, setGameSpeed] = useState(defaultGameSpeed);
-    const [isEnabledTTS, setIsEnabledTTS] = useState(defaultIsEnabledTTS); // Need to parse it otherwise will stay true for any string
+    const [numCycles, setNumCycles] = useState<Number>(defaultNumCycles);
+    const [gameSpeed, setGameSpeed] = useState<Number>(defaultGameSpeed);
+    const [isEnabledTTS, setIsEnabledTTS] = useState<Boolean>(defaultIsEnabledTTS);
 
-    // const [isAdmin, setIsAdmin] = useState(true); // Should change to false by default just for testing
+    // Store defaultGameSettings
+    const gameSettings = useRef<GameSettings>(new GameSettings({ numCycles: defaultNumCycles, gameSpeed: defaultGameSpeed, enableTextToSpeech: defaultIsEnabledTTS }));
+    sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings.current));
+
 
     useEffect(() => {
         if (isGameCreated) {
@@ -86,12 +89,13 @@ const GameRoom = () => {
                     fetchGameUpdate();
 
                     // A gamesession has started
-                    if(game.status === "IN_PLAY"){
+                    if (game.status === "IN_PLAY") {
+                        console.log("start game detected");
                         navigate("/game");
                     }
-                    
+
                 }
-            }, 500); // Set interval to 0.5 seconds
+            }, 250); // Set interval to 0.25 seconds
 
             return () => clearInterval(interval);
         } else {
@@ -112,7 +116,7 @@ const GameRoom = () => {
         try {
             const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const url = `/games/${game.gameId}`;
-            const response = await api.get(url, {headers: requestHeader})
+            const response = await api.get(url, { headers: requestHeader })
             const fetchedGameUpdate = new Game(response.data);
             if (fetchedGameUpdate) {
                 setGame(fetchedGameUpdate);
@@ -148,7 +152,11 @@ const GameRoom = () => {
             const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const response = await api.get(`/gameRooms/${game.gameId}/settings`, { headers: requestHeader })
 
-            const gameSettings = new GameSettings(response.data);
+            const fetchedGameSettings = new GameSettings(response.data);
+            if (fetchedGameSettings) {
+                gameSettings.current = fetchedGameSettings;
+                sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings.current));
+            }
         }
         catch (error) {
             console.log("Error while fetching game settings: " + error);
@@ -192,20 +200,30 @@ const GameRoom = () => {
         }
     }
 
+    async function onClickGameStart() {
+        console.log(gameSettings.current);
+        await sendGameSettings(gameSettings.current);
+        await startGame();
+    }
     // Send to server to start game ADMIN METHOD
     async function startGame() {
         try {
+            console.log("starting game")
             const headers = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
-            console.log(gameSession);
 
             // check if user is admin and navigate to start
             if (gameSession !== null && gameSession.admin === thisUser.userId) {
-                console.log("storing gamesession");
-                console.log(gameSession);
-                sessionStorage.setItem("gameSession", JSON.stringify(gameSession));
+                // Store the gameSession as gameRoom
+                sessionStorage.setItem("gameRoom", JSON.stringify(gameSession));
+
+                // We store the newly created gameSession
+                let currentGameSessions = gameSession.gameSessions;
+                let idx = currentGameSessions.length - 1;
+                let currentGameSession = currentGameSessions[idx];
+                sessionStorage.setItem("gameSession", JSON.stringify(currentGameSession));
                 navigate("/game");
             }
         }
@@ -231,6 +249,7 @@ const GameRoom = () => {
             sessionStorage.removeItem("isEnabledTTS");
             sessionStorage.removeItem("gameRoom");
             sessionStorage.removeItem("gameroomToken");
+            sessionStorage.removeItem("gameSettings");
             navigate("/gameRoom");
             console.log("exited room");
         } catch (error) {
@@ -310,7 +329,7 @@ const GameRoom = () => {
                             {isAdmin ?
                                 <Button
                                     width="50%"
-                                    onClick={() => startGame()}
+                                    onClick={() => onClickGameStart()}
                                 >Start Game</Button>
                                 : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>}
                             <Button
@@ -358,24 +377,19 @@ const GameRoom = () => {
 
     function GameSettingsView() {
         const onSettingsSave = async () => {
-            // First send data to server
-
-            // Store to sessionstorage
-            sessionStorage.setItem("numCycles", numCycles);
-            sessionStorage.setItem("gameSpeed", gameSpeed);
-            sessionStorage.setItem("isEnabledTTS", isEnabledTTS);
-
             // create gameSettings object to be used and stored
-            const gameSettings = new GameSettings();
-            gameSettings.gameSpeed = gameSpeed;
-            gameSettings.numCycles = numCycles;
-            gameSettings.enableTextToSpeech = isEnabledTTS;
+            const newGameSettings = new GameSettings();
+            newGameSettings.gameSpeed = gameSpeed;
+            newGameSettings.numCycles = numCycles;
+            newGameSettings.enableTextToSpeech = isEnabledTTS;
 
-            sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings));
+            gameSettings.current = newGameSettings;
 
-            console.log(gameSettings);
+            sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings.current));
 
-            await sendGameSettings(gameSettings);
+            console.log(gameSettings.current);
+
+            await sendGameSettings(gameSettings.current);
         }
 
         return (
@@ -418,9 +432,9 @@ const GameRoom = () => {
                                 id="gameSpeed"
                                 onChange={(e) => setGameSpeed(e.target.value)}
                             >
-                                <option value={2}>normal</option>
-                                <option value={1}>relaxed</option>
-                                <option value={3}>quick</option>
+                                <option value={Number(GameSpeedEnum.NORMAL.inSeconds)}>{GameSpeedEnum.NORMAL.name}</option>
+                                <option value={Number(GameSpeedEnum.RELAXED.inSeconds)}>{GameSpeedEnum.RELAXED.name}</option>
+                                <option value={Number(GameSpeedEnum.QUICK.inSeconds)}>{GameSpeedEnum.QUICK.name}</option>
                             </select>
                         </div>
                         <div className="settings option">

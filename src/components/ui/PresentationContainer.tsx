@@ -79,11 +79,11 @@ const PresentationContainer = ({ presentationContents }) => {
     function presentTextPrompt(element) {
         return (
             <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
-                <Button
+                {/* <Button
                     style = {{margin: "20px"}}
                     onClick={() => TextToSpeech(element.content)}>
                     Speak
-                </Button>
+                </Button> */}
                 <UserPreview></UserPreview>
                 <PresentationText
                     textPrompt={element}
