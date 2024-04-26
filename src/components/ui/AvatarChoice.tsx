@@ -7,7 +7,8 @@ import Avatar from "models/Avatar";
 const AvatarChoice = (props) => (
     <div className={`avatar-container ${props.className}`}>
         {props.avatarList.map((item: Avatar) => (
-            <div className="avatar" key={item.id}>
+            <div className = "avatar" key={item.id}>
+                {console.log(`url("${process.env.PUBLIC_URL}/avatars/avatar${item.id % 6 + 1}.svg")`)}
                 <AvatarPreview
                     style={{ backgroundImage: `url("${process.env.PUBLIC_URL}/avatars/avatar${item.id % 6 + 1}.svg")` }}
                     className={item.selected}

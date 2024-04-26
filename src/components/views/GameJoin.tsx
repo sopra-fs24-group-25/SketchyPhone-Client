@@ -262,11 +262,12 @@ const GameJoin = () => {
             if (response === true) { // fix later with correct server behavior
                 //navigate("/game") // temporary
             }
+            throw new Error;
             //console.log(response.data);
         }
         catch (error) {
             alert(
-                `Something went wrong during joining: \n${handleError(error)}`
+                "Feature available soon"
             );
         }
     }
