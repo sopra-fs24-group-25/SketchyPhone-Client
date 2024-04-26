@@ -19,12 +19,12 @@
         font-size: large;
         font-weight: 600;
         text-shadow: $dropShadow;
-        
-        &.leftalign{
+
+        &.leftalign {
             text-align: start;
         }
 
-        &.rightalign{
+        &.rightalign {
             text-align: end;
         }
     }
@@ -58,31 +58,32 @@
         background-color: $display-box-color;
         border-radius: 2em;
         margin: 40px;
-        max-height: 40em;
-        min-height: 30em;
-        min-width: 50em;
+        max-height: 50em;
+        min-height: 40em;
+        min-width: 60em;
         height: $DESKTOP_HEIGHT / 2;
         width: $DESKTOP_WIDTH / 2;
         overflow: scroll;
         @include scrollbar;
     }
 
-    &.subContainer{
+    &.subContainer {
         margin: 20px;
         display: flex;
         flex-direction: row;
         align-items: center;
-
     }
 
-    &.separator{
+    &.separator {
         @include center;
     }
 
-    &.resultsButton{
+    &.buttonsContainer {
         @include center;
-        padding: 20px;
-        margin: 20px;
-        margin-left: auto;
+
+        &.presentationButton {
+            padding: 20px;
+            margin: 20px;
+        }
     }
 }

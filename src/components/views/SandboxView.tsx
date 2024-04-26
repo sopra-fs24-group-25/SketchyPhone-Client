@@ -270,7 +270,7 @@ const SandboxView = () => {
         speakThis.voice = synth.getVoices()[50]
         speakThis.lang = "pl-PL";
         synth.cancel();
-        synth.speak(speakThis);
+        // synth.speak(speakThis);
     }
 
     const testTextPrompt1 = new TextPrompt();
@@ -295,10 +295,20 @@ const SandboxView = () => {
                 presentationContents={newArray}
             ></PresentationContainer>
             <Button
-                onClick = {() => TextToSpeech(testTextPrompt1.content)}
+                onClick={() => TextToSpeech(testTextPrompt1.content)}
             >
                 CLICK TO SPEAK
             </Button>
+            <DrawContainer
+                height={400}
+                width={600}
+                user= {null}
+                game= {null}
+                textPrompt={"YEAH"}
+                timerDuration= {100}
+                setNextTask={() => console.log("nexttask")}
+                setInitial={() => console.log("setInitial")}>
+            </DrawContainer>
         </div>
     )
 }

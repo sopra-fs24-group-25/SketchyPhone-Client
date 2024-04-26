@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
 
-    &.drawCanvas{
+    &.drawCanvas {
         background-color: white;
         border-radius: 20px;
         box-shadow: $dropShadow;
@@ -26,26 +26,26 @@
         display: flex;
         flex-direction: column;
         padding: 20px;
-        margin:0 20px 0 0px;
+        margin: 0 20px 0 0px;
         background-color: rgba(255, 255, 255, 0.281);
-        border-radius:20px;
+        border-radius: 20px;
         gap: 5px;
         align-items: center;
         box-shadow: $dropShadow;
     }
 
-    &.textPrompt{
+    &.textPrompt {
         user-select: none;
         font-size: x-large;
         font-weight: 600;
         text-align: center;
-        margin:20px;
+        margin: 20px;
     }
 
-    input[type="color"]{
+    input[type="color"] {
         border-style: none;
         background-color: transparent;
-        &:hover{
+        &:hover {
             scale: 1.1;
         }
     }
@@ -53,11 +53,12 @@
     button {
         border-style: none;
         border-radius: 10px;
+        border-width: 2px;
         width: 100%;
-        &:hover{
+        &:hover {
             background-color: $accent;
         }
-        &:active{
+        &:active {
             background-color: $accentDark;
         }
     }
@@ -67,9 +68,7 @@
         text-align: center;
     }
 
-    &.timer{
-        margin:0 0px 0 20px;
+    &.timer {
+        margin: 0 0px 0 20px;
     }
-
-    
 }
