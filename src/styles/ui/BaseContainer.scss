@@ -3,7 +3,7 @@
 .base-container {
   margin-left: auto;
   margin-right: auto;
-  margin-top: $DESKTOP_HEIGHT / 20;
+  padding-top: $DESKTOP_HEIGHT / 10;
   max-width: $DESKTOP_WIDTH;
   max-height: $DESKTOP_HEIGHT;
   color: $textColor;

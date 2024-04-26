@@ -13,11 +13,17 @@ const Menu = (openMenu, toggleMenu) => {
     const openProfile = () => {
         //navigate("/profile");
         console.log("To profile");
+        alert(
+            "Feature available soon"
+        );
     }
 
     const openHistory = () => {
         //navigate("/history");
         console.log("To history");
+        alert(
+            "Feature available soon"
+        );
     }
 
     const logout = (): void => {

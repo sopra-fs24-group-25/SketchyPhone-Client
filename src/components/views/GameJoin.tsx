@@ -266,8 +266,8 @@ const GameJoin = () => {
 
     function baseView(content, goPlace, placement = "mid", visible = true) {
         return (
-            <BaseContainer className = "join baseView">
-                <div className="join header">
+            <BaseContainer>
+                <div className="gameroom header">
                     <BurgerMenu
                         onClick={() => setOpenMenu(!openMenu)}
                         disabled={openMenu}>
@@ -289,7 +289,7 @@ const GameJoin = () => {
 
     function pinView() {
         return baseView(
-            <div className="join buttons-container">
+            <div className="gameroom buttons-container">
                 <JoinField
                     label="Insert game PIN"
                     placeholder="Game PIN"
@@ -310,7 +310,7 @@ const GameJoin = () => {
 
     function nicknameView() {
         return baseView(
-            <div className="join buttons-container">
+            <div className="gameroom buttons-container">
                 <JoinField
                     label="Set nickname"
                     placeholder="Nickname"
@@ -330,7 +330,7 @@ const GameJoin = () => {
 
     function avatarView() {
         return baseView(
-            <div className="join buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join label">Choose avatar</div>
                 <div className="start sign-in-link"
                     onClick={() => drawAvatar()}>
@@ -353,7 +353,7 @@ const GameJoin = () => {
 
     function waitingRoomView() {
         return baseView(
-            <div className="join buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Waiting room...</div>
                 <Spinner></Spinner>
                 <text>
@@ -366,7 +366,7 @@ const GameJoin = () => {
 
     function unavailableRoomView() {
         return baseView(
-            <div className="join buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Room currently unavailable...</div>
                 <text>
                     The game room is no longer active. Please return and insert a new game PIN to start a new session.
@@ -382,7 +382,7 @@ const GameJoin = () => {
 
     function openRoomView() {
         return baseView(
-            <div className="join buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Joining room...</div>
                 <Spinner></Spinner>
                 <text>
