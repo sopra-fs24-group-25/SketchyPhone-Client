@@ -43,7 +43,7 @@ const Game = () => {
 
     // The naming might be ambiguous as gamesession extends gameobject
     const [gameObject, setGameObject] = useState<GameSession>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
-    const [presentationIndex, setPresentationIndex] = useState<Number>(-1);
+    const [presentationIndex, setPresentationIndex] = useState<Number>(0);
 
     const gameSettings = useRef(JSON.parse(sessionStorage.getItem("gameSettings")));
 
@@ -73,7 +73,7 @@ const Game = () => {
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements === null) {
                 fetchPresentationElements(user.current, gameSession.current);
-                fetchPresentationIndex(user.current, gameObject);
+                fetchPresentationIndex(user.current, gameSession.current);
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
                 fetchDrawing();
@@ -98,7 +98,7 @@ const Game = () => {
             isReadyForTask.current = (gameSession.current.gameLoopStatus === currentTask);
 
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
-                fetchPresentationIndex(user.current, gameObject);
+                fetchPresentationIndex(user.current, gameSession.current);
             }
         }, 250); // Set interval to 0.25 seconds
 
@@ -119,7 +119,7 @@ const Game = () => {
     async function fetchPresentationIndex(user: User, game: GameObject) {
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
-            const url = `/games/${game.gameId}/presentation/next`;
+            const url = `/games/${game.gameSessionId}/presentation/next`;
             const response = await api.get(url, { headers: requestHeader })
             setPresentationIndex(Number(response.data));
         }
@@ -356,6 +356,8 @@ const Game = () => {
         let startIndex = 0;
         let endIndex = presentationIndex;
         let lastElementToShow = presentationElements[presentationIndex]
+        console.log(presentationElements);
+        console.log(presentationIndex)
 
         // If element has no predecessor we show a new subsequence
         if (lastElementToShow instanceof TextPrompt && lastElementToShow.previousDrawingId === 777) {
