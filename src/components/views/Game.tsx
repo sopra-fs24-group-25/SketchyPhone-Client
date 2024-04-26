@@ -372,8 +372,8 @@ const Game = () => {
                 <PresentationContainer
                     presentationContents={elementsToShow}
                     isAdmin={user.current.role === "admin"}
-                    onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current.next)}
-                    onClickNextRound={() => startNewRound(user.current, gameSession.current.next)}
+                    onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
+                    onClickNextRound={() => startNewRound(user.current, gameSession.current)}
                 ></PresentationContainer>
             </BaseContainer>)
     });
