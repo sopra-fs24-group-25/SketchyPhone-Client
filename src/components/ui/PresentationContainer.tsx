@@ -84,7 +84,9 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     onClick={() => TextToSpeech(element.content)}>
                     Speak
                 </Button> */}
-                <UserPreview></UserPreview>
+                <UserPreview
+                    id={element.creator.userId}
+                ></UserPreview>
                 <PresentationText
                     textPrompt={element}
                 ></PresentationText>
@@ -99,7 +101,9 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     // key={element.drawingId}
                     drawingPrompt={element}
                 ></PresentationDrawing>
-                <UserPreview></UserPreview>
+                <UserPreview
+                    id={element.creator.userId}
+                ></UserPreview>
             </div>
         )
     }
