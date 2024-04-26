@@ -139,10 +139,10 @@ const Game = () => {
         }
     }
 
-    async function startNewRound(user: User, game: GameSession) {
+    async function startNewRound(user: User, game: GameObject) {
         try {
             const headers = { "Authorization": user.token, "X-User-ID": user.userId };
-            const response = await api.post(`/games/${game.gameSessionId}/start`, null, { headers: headers })
+            const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
             // console.log(gameSession);
@@ -224,6 +224,7 @@ const Game = () => {
                 receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
                 const newDrawingPrompt = new DrawingPrompt(response.data);
                 receivedDrawingPrompt.current = newDrawingPrompt;
+                console.log(receivedDrawingPrompt.current);
             }
 
             return (
@@ -254,6 +255,8 @@ const Game = () => {
                 receivedPreviousTextPrompt.current = receivedTextPrompt.current;
                 const newTextPrompt = new TextPrompt(response.data);
                 receivedTextPrompt.current = newTextPrompt;
+                console.log(receivedTextPrompt.current);
+
             }
 
         }
@@ -373,7 +376,7 @@ const Game = () => {
                     presentationContents={elementsToShow}
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
-                    onClickNextRound={() => startNewRound(user.current, gameSession.current)}
+                    onClickNextRound={() => startNewRound(user.current, gameObject)}
                 ></PresentationContainer>
             </BaseContainer>)
     });
