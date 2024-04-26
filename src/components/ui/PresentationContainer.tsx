@@ -173,7 +173,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 PresentationContainer.propTypes = {
     // The array passed in is already in order and contains either textPrompts or drawingPrompts
     presentationContents: PropTypes.array,
-    isAdmin: PropTypes.boolean,
+    isAdmin: PropTypes.bool,
     onClickIncrement: PropTypes.func,
     onClickNextRound: PropTypes.func
 }
