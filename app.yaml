@@ -14,6 +14,9 @@ handlers:
   - url: /(.*\.(json|ico))$
     static_files: build/\1
     upload: build/.*\.(json|ico)$
+  - url: /public/(.*\.(png|jpg|jpeg|gif|svg))$  # Add a new handler for images in the public folder
+    static_files: public/\1
+    upload: public/(.*\.(png|jpg|jpeg|gif|svg))$
   - url: /
     static_files: build/index.html
     upload: build/index.html
