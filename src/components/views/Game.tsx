@@ -49,6 +49,7 @@ const Game = () => {
 
     // Initialize to empty array
     const [presentationElements, setPresentationElements] = useState(null);
+    const startIndex = useRef(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -356,18 +357,15 @@ const Game = () => {
     WaitingView.displayName = "WaitingView";
 
     const PresentationView = React.memo(() => {
-        let startIndex = 0;
         let endIndex = presentationIndex;
         let lastElementToShow = presentationElements[presentationIndex]
-        console.log(presentationElements);
-        console.log(presentationIndex)
 
         // If element has no predecessor we show a new subsequence
-        if (lastElementToShow instanceof TextPrompt && (presentationIndex === presentationElements.length - 1) || lastElementToShow.previousDrawingId === 777) {
-            startIndex = endIndex;
+        if (lastElementToShow instanceof TextPrompt &&  lastElementToShow?.previousDrawingId === 777) {
+            startIndex.current = endIndex;
         }
 
-        let elementsToShow = presentationElements ? presentationElements.slice(startIndex, endIndex + 1) : null; // End not included thats why + 1
+        let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
         console.log(elementsToShow);
 
         return (
