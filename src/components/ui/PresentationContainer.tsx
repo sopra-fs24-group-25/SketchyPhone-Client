@@ -21,7 +21,7 @@ import UserPreview from "./UserPreview";
 import Header from "../views/Header";
 
 
-const PresentationContainer = ({ presentationContents }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound }) => {
 
     const navigate = useNavigate();
 
@@ -105,7 +105,7 @@ const PresentationContainer = ({ presentationContents }) => {
     }
 
     return (
-        <BaseContainer style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <BaseContainer style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div ref={containerRef} className="presentation container">
                 {presentationContents.map((element) => {
                     if (element instanceof TextPrompt) {
@@ -135,17 +135,35 @@ const PresentationContainer = ({ presentationContents }) => {
                         }}
                     />
                 </div>
-                <Button className="presentation resultsButton"
+                {/* NOT IMPLEMENTED YET */}
+                {/* <Button className="presentation presentationButton"
                     width='20%'
                 >
                     See Results
-                </Button>
-                <Button className="presentation resultsButton"
-                    width='20%'
-                    onClick={() => exitGame()}
-                >
-                    End game
-                </Button>
+                </Button> */}
+                <div className="presentation buttonsContainer">
+                    {isAdmin && <Button
+                        onClick={() => onClickIncrement()}
+                        width="20%"
+                        className="presentation buttonsContainer presentationButton"
+                    >
+                        Show next prompt
+                    </Button>}
+                    {isAdmin && <Button
+                        onClick={() => onClickNextRound()}
+                        width="20%"
+                        className="presentation buttonsContainer presentationButton"
+                    >
+                        Start new round
+                    </Button>}
+                    <Button className="presentation buttonsContainer presentationButton"
+                        width="20%"
+                        onClick={() => exitGame()}
+                    >
+                        End game
+                    </Button>
+                </div>
+
             </div >
             {Menu(openMenu, toggleMenu)}
         </BaseContainer>
@@ -154,7 +172,10 @@ const PresentationContainer = ({ presentationContents }) => {
 
 PresentationContainer.propTypes = {
     // The array passed in is already in order and contains either textPrompts or drawingPrompts
-    presentationContents: PropTypes.array
+    presentationContents: PropTypes.array,
+    isAdmin: PropTypes.boolean,
+    onClickIncrement: PropTypes.func,
+    onClickNextRound: PropTypes.func
 }
 
 export default PresentationContainer;

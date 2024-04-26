@@ -19,12 +19,12 @@
         font-size: large;
         font-weight: 600;
         text-shadow: $dropShadow;
-        
-        &.leftalign{
+
+        &.leftalign {
             text-align: start;
         }
 
-        &.rightalign{
+        &.rightalign {
             text-align: end;
         }
     }
@@ -67,22 +67,23 @@
         @include scrollbar;
     }
 
-    &.subContainer{
+    &.subContainer {
         margin: 20px;
         display: flex;
         flex-direction: row;
         align-items: center;
-
     }
 
-    &.separator{
+    &.separator {
         @include center;
     }
 
-    &.resultsButton{
+    &.buttonsContainer {
         @include center;
-        padding: 20px;
-        margin: 20px;
-        margin-left: auto;
+
+        &.presentationButton {
+            padding: 20px;
+            margin: 20px;
+        }
     }
 }

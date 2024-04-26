@@ -20,6 +20,7 @@ import PresentationContainer from "components/ui/PresentationContainer";
 import { Button } from "components/ui/Button";
 import { Spinner } from "components/ui/Spinner";
 import GameSpeedEnum from "../../helpers/gameSpeedEnum"
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Game = () => {
     const [openMenu, setOpenMenu] = useState<Boolean>(false);
@@ -49,6 +50,9 @@ const Game = () => {
     // Initialize to empty array
     const [presentationElements, setPresentationElements] = useState(null);
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     useEffect(() => {
         // Change in gameLoopStatus detected
         if (prevTask.current !== gameSession.current.gameLoopStatus) {
@@ -77,6 +81,12 @@ const Game = () => {
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.DRAWING) {
                 fetchPrompt();
             }
+        }
+
+        // We also check if the room has changed to "OPEN"
+        if(gameObject.status === "OPEN"){
+            // We move to gameroom
+            navigate("/gameRoom", { state: { isGameCreator: false, isGameCreated: true, gameRoom: gameObject } })
         }
 
     }, [currentTask, gameSession.current, presentationElements])
@@ -357,17 +367,10 @@ const Game = () => {
             <BaseContainer>
                 <PresentationContainer
                     presentationContents={elementsToShow}
+                    isAdmin={user.current.role === "admin"}
+                    onClickIncrement={() => incrementPresentationIndex(user.current, gameObject)}
+                    onClickNextRound={() => startNewRound(user.current, gameObject)}
                 ></PresentationContainer>
-
-                {(user.current.role === "admin" &&
-                    <Button
-                        onClick={() => incrementPresentationIndex(user.current, gameObject)}
-                    >Next</Button>)}
-                {(user.current.role === "admin" &&
-                    <Button
-                        onClick={() => startNewRound(user.current, gameObject)}>
-                        New Round
-                    </Button>)}
             </BaseContainer>)
     });
 
