@@ -9,7 +9,7 @@ const AvatarChoice = (props) => (
         {props.avatarList.map((item: Avatar) => (
             <div className = "avatar" key={item.id}>
                 <AvatarPreview
-                    style={{ backgroundImage: `url("/avatars/avatar${item.id % 6 + 1}.svg")` }}
+                    style={{ backgroundImage: `url(process.env.PUBLIC_URL + "/avatar${item.id % 6 + 1}.svg")` }}
                     className={item.selected}
                     onClick={() => props.choose(item.id)}
                 >
