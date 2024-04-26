@@ -4,7 +4,7 @@ import { AvatarPreview } from "./AvatarPreview";
 import "styles/ui/AvatarChoice.scss";
 import Avatar from "models/Avatar";
 
-const AvatarChoice = (props) => (
+const AvatarChoice = props => (
     <div className={`avatar-container ${props.className}`}>
         {props.avatarList.map((item: Avatar) => (
             <div className = "avatar" key={item.id}>
