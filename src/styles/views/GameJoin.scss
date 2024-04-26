@@ -1,76 +1,87 @@
 @import "../theme";
 
 .join {
-  &.container-up {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: $DESKTOP_WIDTH;
-    height: $DESKTOP_HEIGHT / 2.5;
-  }
-  &.container-mid {
-    flex-direction: row;
-    @include center;
-    width: $DESKTOP_WIDTH;
-  }
-  &.form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 60%;
-    max-width: 30em;
-    height: 20em;
-    font-size: 16px;
-    font-weight: 300;
-    padding-left: 37px;
-    padding-right: 37px;
-    border-radius: 0.75em;
-    background-color: $background;
-    box-shadow: $dropShadow;
-  }
-  &.field {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 20em;
-    &:disabled {
-      user-select: none;
+    &.baseView {
+      @include center;
     }
-  }
-  &.input {
-    user-select: none;
-    height: 50px;
-    padding-left: 15px;
-    margin-left: -4px;
-    border: none;
-    border-radius: 2em;
-    margin-bottom: 20px;
-    color: $fieldTextColor;
-    font-size: x-large;
-    font-weight: 600;
-    &.invalid {
-      animation: shake2 0.4s ease-in-out 0s 1;
-      color: $error-color;
-      background-color: $error-field-color;
+    &.container-up {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+        height: fit-content;
     }
-  }
-  &.label {
-    user-select: none;
-    color: $textColor;
-    margin-bottom: 10px;
-    font-weight: 600;
-    font-size: xx-large;
-  }
-  &.title {
-    user-select: none;
-    color: $textColor;
-    margin-bottom: 10px;
-    font-weight: 900;
-    font-size: 3em;
-  }
-  &.button-container {
-    display: flex;
-    justify-content: left;
-    margin-top: 2em;
-  }
+
+    &.container-mid {
+        flex-direction: row;
+        @include center;
+        width: $DESKTOP_WIDTH;
+        gap: 20px;
+    }
+    &.form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 60%;
+        max-width: 30em;
+        height: 20em;
+        font-size: 16px;
+        font-weight: 300;
+        padding-left: 37px;
+        padding-right: 37px;
+        border-radius: 0.75em;
+        background-color: $background;
+        box-shadow: $dropShadow;
+    }
+    &.field {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 20em;
+        &:disabled {
+            user-select: none;
+        }
+    }
+    &.input {
+        user-select: none;
+        height: 50px;
+        padding-left: 15px;
+        margin-left: -4px;
+        border: none;
+        border-radius: 2em;
+        margin-bottom: 20px;
+        color: $fieldTextColor;
+        font-size: x-large;
+        font-weight: 600;
+        &.invalid {
+            animation: shake2 0.4s ease-in-out 0s 1;
+            color: $error-color;
+            background-color: $error-field-color;
+        }
+    }
+    &.label {
+        user-select: none;
+        color: $textColor;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: xx-large;
+    }
+    &.title {
+        user-select: none;
+        color: $textColor;
+        margin-bottom: 10px;
+        font-weight: 900;
+        font-size: 3em;
+    }
+    &.buttons-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &.header {
+        padding-top: 40px;
+    }
 }

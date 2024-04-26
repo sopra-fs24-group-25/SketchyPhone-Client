@@ -11,6 +11,7 @@ body {
   min-height: 100vh;
   font-family: $fontDefault;
   background-image: $radial-gradients;
+  @include center;
 }
 
 input,
