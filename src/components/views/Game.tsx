@@ -52,7 +52,6 @@ const Game = () => {
     useEffect(() => {
         // Change in gameLoopStatus detected
         if (prevTask.current !== gameSession.current.gameLoopStatus) {
-
             // If we were in presentation mode before and it changed to a textprompt -> a new game has started
             if (prevTask.current === GameLoopStatus.PRESENTATION && gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT) {
                 console.log("RESETTING FOR NEW GAME")
@@ -262,7 +261,7 @@ const Game = () => {
 
     const TextPromptView = React.memo(() => {
         const timerDuration = Number(gameSettings.current.gameSpeed);
-        console.log(isInitialPrompt);
+
         var currentDrawing;
         if (isInitialPrompt) {
             currentDrawing = <PhoneLogo />
@@ -347,7 +346,7 @@ const Game = () => {
         let lastElementToShow = presentationElements[presentationIndex]
 
         // If element has no predecessor we show a new subsequence
-        if(lastElementToShow instanceof TextPrompt && lastElementToShow.previousDrawingId === 777){
+        if (lastElementToShow instanceof TextPrompt && lastElementToShow.previousDrawingId === 777) {
             startIndex = endIndex;
         }
 
@@ -381,20 +380,17 @@ const Game = () => {
             return <PresentationView />;
         }
         if (!isReadyForTask.current) {
-
             return <WaitingView />;
         }
-        if (currentTask === GameLoopStatus.TEXTPROMPT) {
-
+        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask) {
             return <TextPromptView />;
         }
-        if (currentTask === GameLoopStatus.DRAWING) {
-
+        if (currentTask === GameLoopStatus.DRAWING && isReadyForTask) {
             return <DrawView />;
         }
 
         return null;
-    }, [currentTask, isReadyForTask.current, presentationElements, presentationIndex]);
+    }, [isReadyForTask.current, presentationElements, presentationIndex]);
 
     return renderComponent;
 };
