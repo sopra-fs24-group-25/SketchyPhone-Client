@@ -204,17 +204,9 @@ const GameJoin = () => {
                     new Avatar({ id: 2 }),
                     new Avatar({ id: 3 }),
                     new Avatar({ id: 4 }),
+                    new Avatar({ id: 5 }),
                     new Avatar({ id: 6 }),
-                    new Avatar({ id: 8 }),
-                    new Avatar({ id: 12 }),
-                    new Avatar({ id: 9 }),
-                    new Avatar({ id: 87 }),
-                    new Avatar({ id: 412 }),
-                    new Avatar({ id: 6424 }),
-                    new Avatar({ id: 844 }),
-                    new Avatar({ id: 123 }),
-                    new Avatar({ id: 921 }),
-                );//await api.get(`/users/${UserId}`) //implement correct request
+                );//implement request for future custom avatars
                 setAvatarSelection(fetchedAvatars);
                 setView("avatarView");
             }

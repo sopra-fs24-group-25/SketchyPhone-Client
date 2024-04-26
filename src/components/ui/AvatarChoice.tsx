@@ -1,16 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { AvatarPreview } from "./AvatarPreview";
-import "styles/ui/AvatarChoice.scss"
+import "styles/ui/AvatarChoice.scss";
 import Avatar from "models/Avatar";
 
 const AvatarChoice = (props) => (
     <div className={`avatar-container ${props.className}`}>
         {props.avatarList.map((item: Avatar) => (
             <div className = "avatar" key={item.id}>
-                {console.log(`url("${process.env.PUBLIC_URL}/avatars/avatar${item.id % 6 + 1}.svg")`)}
                 <AvatarPreview
-                    style={{ backgroundImage: `url("${process.env.PUBLIC_URL}/avatars/avatar${item.id % 6 + 1}.svg")` }}
+                    style={{ backgroundImage: `url("../avatars/avatar${item.id}.svg")` }}
                     className={item.selected}
                     onClick={() => props.choose(item.id)}
                 >

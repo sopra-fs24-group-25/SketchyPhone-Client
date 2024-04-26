@@ -70,6 +70,7 @@
     }
 
     &.between-tasks {
+        user-select: none;
         font-size: x-large;
         background-color: $background;
         color: white;

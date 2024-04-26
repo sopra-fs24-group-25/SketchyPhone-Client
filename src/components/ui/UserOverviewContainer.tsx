@@ -10,7 +10,8 @@ export const UserOverviewContainer = props => (
         {props.userList.map((item) => (
             <div className="user" key={item.nickname}>
                 <UserPreview
-                    style={{ backgroundImage: `url("/avatars/avatar${item.id % 6 + 1}.svg")` }} //temp
+                    style={{ backgroundImage: `url("../avatars/avatar${item.avatarId}.svg")` }}
+                    onClick={() => console.log(`Avatar ID: ${item.avatarId}, future kick functionality`)}
                 >
                 </UserPreview>
                 <div style={{flexDirection: "column", }}>
