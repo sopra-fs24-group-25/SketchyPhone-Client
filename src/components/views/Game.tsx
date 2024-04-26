@@ -116,7 +116,7 @@ const Game = () => {
         setOpenMenu(!openMenu);
     }
 
-    async function fetchPresentationIndex(user: User, game: GameObject) {
+    async function fetchPresentationIndex(user: User, game: GameSession) {
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameSessionId}/presentation/next`;
@@ -128,10 +128,10 @@ const Game = () => {
         }
     }
 
-    async function incrementPresentationIndex(user: User, game: GameObject) {
+    async function incrementPresentationIndex(user: User, game: GameSession) {
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
-            const url = `/games/${game.gameId}/presentation/next`;
+            const url = `/games/${game.gameSessionId}/presentation/next`;
             const response = await api.put(url, null, { headers: requestHeader })
         }
         catch (error) {
@@ -139,10 +139,10 @@ const Game = () => {
         }
     }
 
-    async function startNewRound(user: User, game: GameObject) {
+    async function startNewRound(user: User, game: GameSession) {
         try {
             const headers = { "Authorization": user.token, "X-User-ID": user.userId };
-            const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
+            const response = await api.post(`/games/${game.gameSessionId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
             // console.log(gameSession);
@@ -372,8 +372,8 @@ const Game = () => {
                 <PresentationContainer
                     presentationContents={elementsToShow}
                     isAdmin={user.current.role === "admin"}
-                    onClickIncrement={() => incrementPresentationIndex(user.current, gameObject)}
-                    onClickNextRound={() => startNewRound(user.current, gameObject)}
+                    onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current.next)}
+                    onClickNextRound={() => startNewRound(user.current, gameSession.current.next)}
                 ></PresentationContainer>
             </BaseContainer>)
     });
