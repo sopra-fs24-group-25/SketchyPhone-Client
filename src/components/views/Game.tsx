@@ -278,6 +278,7 @@ const Game = () => {
         } else {
             currentDrawing = fallBackDrawing;
         }
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -304,6 +305,7 @@ const Game = () => {
 
     const DrawView = React.memo(() => {
         const timerDuration = Number(gameSettings.current.gameSpeed);
+        
         return (
             <BaseContainer>
                 <div className="gameroom header">

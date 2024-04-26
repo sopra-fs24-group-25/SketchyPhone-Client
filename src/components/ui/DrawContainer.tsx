@@ -189,6 +189,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
         if (lastLineDrawn + lastEllipseDrawn + lastRectDrawn + lastEraserDrawn === -4) {
             console.log("nothing to undo");
+            
             return
         }
 
