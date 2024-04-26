@@ -363,7 +363,7 @@ const Game = () => {
         console.log(presentationIndex)
 
         // If element has no predecessor we show a new subsequence
-        if (lastElementToShow instanceof TextPrompt && lastElementToShow.previousDrawingId === 777) {
+        if (lastElementToShow instanceof TextPrompt && (presentationIndex === presentationElements.length - 1) || lastElementToShow.previousDrawingId === 777) {
             startIndex = endIndex;
         }
 

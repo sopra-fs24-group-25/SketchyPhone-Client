@@ -189,7 +189,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
         if (lastLineDrawn + lastEllipseDrawn + lastRectDrawn + lastEraserDrawn === -4) {
             console.log("nothing to undo");
-            
+
             return
         }
 
@@ -447,6 +447,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                     ctx.current.lineWidth = eraserElement[2];
                     ctx.current.fill(eraserElement[0]);
                 });
+                ctx.current.globalCompositeOperation = "source-over";
             }
             allActionsArraySorted.push([timeStamp, drawFunction]);
         })
