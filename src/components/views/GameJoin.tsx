@@ -330,7 +330,7 @@ const GameJoin = () => {
 
     function avatarView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container">
                 <div className="join label">Choose avatar</div>
                 <div className="start sign-in-link"
                     onClick={() => drawAvatar()}>

@@ -10,7 +10,7 @@ export const UserOverviewContainer = props => (
         {props.userList.map((item) => (
             <div className="user" key={item.nickname}>
                 <UserPreview
-                    style={{ backgroundImage: `url("../avatars/avatar${item.avatarId}.svg")` }}
+                    id={item.avatarId}
                     onClick={() => console.log(`Avatar ID: ${item.avatarId}, future kick functionality`)}
                 >
                 </UserPreview>

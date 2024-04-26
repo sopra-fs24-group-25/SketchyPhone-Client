@@ -12,4 +12,22 @@
     border-width: 2px;
     border-radius: 50%;
     box-shadow: $dropShadow;
+    &.avatar1 {
+        background-image: url("../../icons/avatars/avatar1.svg");
+    }
+    &.avatar2 {
+        background-image: url("../../icons/avatars/avatar2.svg");
+    }
+    &.avatar3 {
+        background-image: url("../../icons/avatars/avatar3.svg");
+    }
+    &.avatar4 {
+        background-image: url("../../icons/avatars/avatar4.svg");
+    }
+    &.avatar5 {
+        background-image: url("../../icons/avatars/avatar5.svg");
+    }
+    &.avatar6 {
+        background-image: url("../../icons/avatars/avatar6.svg");
+    }
 }
