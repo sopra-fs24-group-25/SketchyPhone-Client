@@ -156,3 +156,7 @@ Noé Matumona
 - added enter key functionality in GameJoin
 - added copy to clipboard functionality to game pin
 - refactoring, visual changes, and cleanup
+
+Noah Isaak
+- Created AudioPlayer class used for various dev tasks #17 #58 #3
+- Minor refactorings
