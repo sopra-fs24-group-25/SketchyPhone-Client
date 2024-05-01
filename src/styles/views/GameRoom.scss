@@ -39,19 +39,29 @@
     }
 
     &.pin {
+        user-select: none;
         font-size: x-large;
         background-color: white;
         height: 60px;
-        width: 300px;
+        width: 320px;
         font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
         border-radius: 30px;
         margin: 0px 0px 20px 0px;
         box-shadow: $dropShadow;
+        transition: 0.4s;
         p {
             color: $fieldTextColor;
+        }
+        &:hover {
+            scale: 1.1;
+        }
+        &.copied {
+            cursor: default;
+            scale: 1.1;
         }
     }
 
@@ -60,6 +70,7 @@
         background-color: $background;
         @include center;
         text-align: center;
+        padding: 5px;
         border-radius: 1em;
         box-shadow: $dropShadow;
         p {

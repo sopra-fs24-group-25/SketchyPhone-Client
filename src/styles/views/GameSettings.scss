@@ -103,6 +103,7 @@ select {
         &:before {
             position: absolute;
             content: "";
+            color: $highlights;
             height: 20px;
             width: 20px;
             left: 5px;
@@ -120,7 +121,7 @@ select {
 
         &:checked {
             + .slider {
-                background-color: purple;
+                background-color: $highlights;
             }
 
             + .slider:before{

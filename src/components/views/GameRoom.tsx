@@ -59,6 +59,7 @@ const GameRoom = () => {
     const [isGameCreated, setIsGameCreated] = useState(location.state ? location.state.isGameCreated : false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
     const [isSettingsSaved, setIsSettingsSaved] = useState(false);
+    const [copyPin, setCopyPin] = useState<boolean>(false);
 
     const [openMenu, setOpenMenu] = useState<boolean>(false);
 
@@ -179,7 +180,6 @@ const GameRoom = () => {
 
 
             setUsers(createdRoom.users);
-            // setThisUser(thisgameroom.users[0]); // Not needed anymore as we already get the full object from gamejoin
             setGame({ ...createdRoom });
             setIsGameCreated(true);
         }
@@ -292,6 +292,26 @@ const GameRoom = () => {
 
     // Users overview
     function Overview() {
+
+        function handleCopyClick() {
+            if (copyPin) {
+                return;
+            }
+            navigator.clipboard.writeText(game["gamePin"])
+                .then(() => {
+                    console.log(`Saved pin ${game["gamePin"]} to clipboard`);
+                    setCopyPin(true);
+                    setTimeout(() => {
+                        setCopyPin(false);
+                    }, 1500);
+                })
+                .catch(error => {
+                    alert(
+                        `Failed to copy: \n${handleError(error)}`
+                    );
+                });
+        }
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -302,15 +322,15 @@ const GameRoom = () => {
                 </div>
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
-                        <div className="gameroom pin">
-                            <p>Game PIN: {game["gamePin"]}</p>
+                        <div className={`gameroom pin ${copyPin ? "copied" : ""}`}
+                            onClick={() => handleCopyClick()}
+                            disabled={copyPin}>
+                            <p>{copyPin ? "Copied Game PIN!" : `Game PIN: ${String(game["gamePin"]).slice(0, 3)} ${String(game["gamePin"]).slice(3)}`}</p>
                         </div>
                         <div className="gameroom waiting">
                             <p>Waiting for players...</p>
                         </div>
-
                     </div>
-
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
                             userList={users ? users : []}
@@ -398,7 +418,6 @@ const GameRoom = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-
                 <div className="settings container">
                     <div className="settings title">Settings</div>
                     {/* TODO: fetch stored values from sessionstorage*/}

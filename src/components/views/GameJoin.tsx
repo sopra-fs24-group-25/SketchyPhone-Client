@@ -281,28 +281,6 @@ const GameJoin = () => {
         );
     }
 
-    function pinView() {
-        return baseView(
-            <div className="gameroom buttons-container"
-                onKeyDown={(e) => (e.keyCode === 13 && pin ? validatePin() : null)}>
-                <JoinField
-                    label="Insert game PIN"
-                    placeholder="Game PIN"
-                    value={pin}
-                    onChange={(p: string) => setPin(p)}
-                    disabled={pinInvalid}
-                ></JoinField>
-                <Button
-                    disabled={!pin || pinInvalid}
-                    width="50%"
-                    onClick={() => validatePin()}>
-                    Continue
-                </Button>
-            </div>,
-            () => setView("avatarView")
-        );
-    }
-
     function nicknameView() {
         return baseView(
             <div className="gameroom buttons-container"
@@ -345,6 +323,28 @@ const GameJoin = () => {
             </div>,
             () => setView("nicknameView"),
             "up"
+        );
+    }
+
+    function pinView() {
+        return baseView(
+            <div className="gameroom buttons-container"
+                onKeyDown={(e) => (e.keyCode === 13 && pin ? validatePin() : null)}>
+                <JoinField
+                    label="Insert game PIN"
+                    placeholder="Game PIN"
+                    value={pin}
+                    onChange={(p: string) => setPin(p)}
+                    disabled={pinInvalid}
+                ></JoinField>
+                <Button
+                    disabled={!pin || pinInvalid}
+                    width="50%"
+                    onClick={() => validatePin()}>
+                    Continue
+                </Button>
+            </div>,
+            () => setView("avatarView")
         );
     }
 

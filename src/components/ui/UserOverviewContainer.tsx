@@ -11,10 +11,10 @@ export const UserOverviewContainer = props => (
             <div className="user" key={item.nickname}>
                 <UserPreview
                     id={item.avatarId}
-                    onClick={() => console.log(`Avatar ID: ${item.avatarId}, future kick functionality`)}
+                    onClick={() => console.log(`Avatar ID: ${item.avatarId}\nUser ID: ${item.userId}\nNickname: ${item.nickname}\npossible future kick functionality`)}
                 >
                 </UserPreview>
-                <div style={{flexDirection: "column", }}>
+                <div style={{flexDirection: "column" }}>
                     {item.role === "admin" &&
                         <div
                             style={{
@@ -32,7 +32,6 @@ export const UserOverviewContainer = props => (
                     }
                     {props.showUserNames && <div className ="username">{item.nickname}</div>}
                 </div>
-
             </div>
         ))}
     </div>
