@@ -139,3 +139,11 @@ Noah Isaak
 - Lots of refactoring and minor changes throughout the code
 - More stuff I forgot
 
+## 29.04 - 05.05
+
+Victor Cruz da Silva
+
+- Added way to save number of votes on a text prompt / drawing. #125
+- Added put mappings and service methods to incease the number of votes on a text prompt / drawing. #126
+- Added put mappings and service methods to decrease the number of votes on a text prompt / drawing. #127
+- Added tests to cover new functionality.
