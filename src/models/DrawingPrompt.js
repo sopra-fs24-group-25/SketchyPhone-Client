@@ -13,6 +13,7 @@ class DrawingPrompt {
         this.gameSessionId = null;
         this.assignedTo = null;
         this.round = null;
+        this.votes = null;
         Object.assign(this, data);
     }
 }

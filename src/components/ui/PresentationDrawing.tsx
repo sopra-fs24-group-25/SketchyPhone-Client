@@ -1,34 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { api, handleError } from "helpers/api";
-import { Spinner } from "components/ui/Spinner";
-import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
-import BaseContainer from "components/ui/BaseContainer";
-import { BackButton } from "components/ui/BackButton";
-import { BurgerMenu } from "components/ui/BurgerMenu";
-import { PhoneLogo } from "../ui/PhoneLogo";
-import Menu from "components/ui/Menu";
+import React from "react";
 import PropTypes from "prop-types";
 import "styles/ui/PresentationContainer.scss";
-import { User } from "types";
-import DrawingPrompt from "models/DrawingPrompt"
 
 const PresentationDrawing = (props) => {
     return (
         <div className="presentation drawingContainer">
-            <p className = "presentation username rightalign">{props.drawingPrompt.creator.nickname}</p>
+            <div className = "presentation username rightalign">
+                {props.drawingPrompt.creator.nickname}
+            </div>
             <img
                 className="presentation drawing"
+                alt={`Drawing from ${props.drawingPrompt.creator.nickname}`}
                 src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
             ></img>
+            <div
+                className={`presentation voting ${props.drawingPrompt.votes > 0 ? "selected" : ""}`}
+                onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
+            >
+                {`Upvote ${props.drawingPrompt.votes ? props.drawingPrompt.votes : ""}`}
+            </div>
         </div>
-
     )
-
 }
 
 PresentationDrawing.propTypes = {
-    drawingPrompt: PropTypes.object
+    drawingPrompt: PropTypes.object,
+    doVote: PropTypes.func
 }
 
 export default PresentationDrawing;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button } from "components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
@@ -17,12 +17,12 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 
     const containerRef = useRef(null);
 
+    const [newVote, setNewVote] = useState<number>(0);
+
     const exitGame = () => {
         sessionStorage.clear();
         navigate("/gameRoom");
     }
-
-    const synth = window.speechSynthesis;
 
     function TextToSpeech(text) {
         const synth = window.speechSynthesis;
@@ -59,7 +59,23 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             TextToSpeech(lastElement.content);
         }
 
-    }, [presentationContents]);
+    }, [presentationContents, newVote]);
+
+    function doVoteTextPrompt(textPrompt, creator) {
+        console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
+
+        //for testing, should be a server request to increase/decrease vote count in future
+        textPrompt.votes += 1;
+        setNewVote(newVote + 1);
+    }
+
+    function doVoteDrawing(drawing, creator) {
+        console.log(`Voted for drawing ${drawing.drawingId} from ${creator.nickname}`);
+
+        //for testing, should be a server request to increase/decrease vote count in future
+        drawing.votes += 1;
+        setNewVote(newVote + 1);
+    }
 
     function presentTextPrompt(element) {
         return (
@@ -74,6 +90,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 ></UserPreview>
                 <PresentationText
                     textPrompt={element}
+                    doVote={doVoteTextPrompt}
                 ></PresentationText>
             </div>
         )
@@ -85,6 +102,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 <PresentationDrawing
                     // key={element.drawingId}
                     drawingPrompt={element}
+                    doVote={doVoteDrawing}
                 ></PresentationDrawing>
                 <UserPreview
                     id={element.creator.avatarId}

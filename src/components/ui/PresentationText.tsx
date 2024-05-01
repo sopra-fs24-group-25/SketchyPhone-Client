@@ -1,31 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { api, handleError } from "helpers/api";
-import { Spinner } from "components/ui/Spinner";
-import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
-import BaseContainer from "components/ui/BaseContainer";
-import { BackButton } from "components/ui/BackButton";
-import { BurgerMenu } from "components/ui/BurgerMenu";
-import { PhoneLogo } from "./PhoneLogo";
-import Menu from "components/ui/Menu";
+import React from "react";
 import PropTypes from "prop-types";
 import "styles/ui/PresentationContainer.scss";
-import { User } from "types";
-import TextPrompt from "models/TextPrompt"
 
 const PresentationText = (props) => {
     return (
         <div className = "presentation textContainer">
-            <p className="presentation username leftalign">
-                {props.textPrompt.creator.nickname}</p>
-            <p className = "presentation text">
-                {props.textPrompt.content}</p>
+            <div className="presentation username leftalign">
+                {props.textPrompt.creator.nickname}
+            </div>
+            <div className = "presentation text">
+                {props.textPrompt.content}
+            </div>
+            <div
+                className={`presentation voting ${props.textPrompt.votes > 0 ? "selected" : ""}`}
+                onClick={() => props.doVote(props.textPrompt, props.textPrompt.creator)}
+            >
+                {`Upvote ${props.textPrompt.votes ? props.textPrompt.votes : ""}`}
+            </div>
         </div>
     )
 }
 
 PresentationText.propTypes = {
-    textPrompt: PropTypes.object
+    textPrompt: PropTypes.object,
+    doVote: PropTypes.func
 }
 
 export default PresentationText;

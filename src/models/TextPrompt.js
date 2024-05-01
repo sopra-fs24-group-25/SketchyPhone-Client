@@ -4,6 +4,7 @@
 
 class TextPrompt {
     constructor(data = {}) {
+        this.textPromptId = null;
         this.creator = null;
         this.gameSession = null;
         this.content = null;
@@ -11,7 +12,7 @@ class TextPrompt {
         this.previousDrawingId = null;
         this.nextDrawingId = null;
         this.round = null;
-        this.textPromptId = null;
+        this.votes = null;
         Object.assign(this, data);
     }
 }

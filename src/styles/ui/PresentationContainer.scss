@@ -16,8 +16,9 @@
 
     &.username {
         color: black;
-        font-size: large;
+        font-size: larger;
         font-weight: 600;
+        margin: 5px;
         text-shadow: $dropShadow;
 
         &.leftalign {
@@ -31,25 +32,24 @@
 
     &.textContainer {
         margin-right: auto;
-        padding: 20px;
+        padding-left: 20px;
     }
 
     &.drawingContainer {
-        background-color: white;
         border-radius: 2em;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         margin-right: 20px;
         margin-left: auto;
-        padding: 20px;
-        box-shadow: $dropShadow;
     }
 
     &.drawing {
         -webkit-user-drag: none;
         border-radius: 20px;
         max-height: 256px;
+        background-color: white;
+        box-shadow: $dropShadow;
     }
 
     &.container {
@@ -84,6 +84,18 @@
         &.presentationButton {
             padding: 20px;
             margin: 20px;
+        }
+    }
+
+    &.voting {
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 2em;
+        color: $background;
+        font-size: larger;
+        font-weight: 800;
+        &.selected {
+            color: $highlights;
         }
     }
 }
