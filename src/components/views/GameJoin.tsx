@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { api, handleError } from "helpers/api";
 import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
@@ -14,7 +14,6 @@ import User from "models/User";
 import Game from "models/Game";
 import AvatarChoice from "components/ui/AvatarChoice";
 import Avatar from "models/Avatar";
-import { resolveTypeReferenceDirective } from "typescript";
 
 const JoinField = (props) => {
     return (
@@ -46,14 +45,13 @@ const GameJoin = () => {
     const location = useLocation();
 
     const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
-    const [game, setGame] = useState<Game>(null);
     const [pin, setPin] = useState<string>("");
-    const [pinInvalid, setPinInvalid] = useState<Boolean>(false);
+    const [pinInvalid, setPinInvalid] = useState<boolean>(false);
     const [nickname, setNickname] = useState<string>("");
     const [avatarId, setAvatarId] = useState<number>(null);
     const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
     const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
-    const [openMenu, setOpenMenu] = useState<Boolean>(false);
+    const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
 
@@ -64,7 +62,6 @@ const GameJoin = () => {
     const goBack = (): void => {
         //does not work anymore, enters a newly created room when exiting
         setCountdownNumber(0);
-        setGame(null);
         setIsGameCreator(false);
         setPin("");
         sessionStorage.removeItem("numCycles");
@@ -87,7 +84,7 @@ const GameJoin = () => {
     }
 
     const startCountdown = async (i: number) => {
-        var counter = i;
+        let counter = i;
         while (true) {
             if (counter <= 0) {
                 return;
@@ -100,39 +97,57 @@ const GameJoin = () => {
         }
     }
 
+    async function doRoomOpen(room: Game) {
+        console.log("room open");
+        setView("openRoomView");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: room } });
+    }
+
+    async function doRoomInPlay() {
+        console.log("in waiting room");
+        setView("waitingRoomView");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+
+    async function doRoomClosed() {
+        console.log("room closed");
+        setView("unavailableRoomView");
+        await startCountdown(5);
+        navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
+    }
+
+    async function fetchRoom() {
+        console.log("fetch room");
+        const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+        const response = await api.post(`/gameRooms/join/${pin}/${user.userId}`, null, {headers: requestHeader});
+        const room = new Game(response.data);
+        sessionStorage.setItem("gameroomToken", room.gameToken);
+        sessionStorage.setItem("gameRoom", JSON.stringify(room));
+
+        return room;
+    }
+
     const checkRoomAvailability = async () => {
-        var status;
-        var numChecks = 4;
+        let status;
+        let numChecks = 4; // change number of times (5s interval) it checks before giving up
         while (numChecks >= 0) {
             numChecks -= 1;
             try {
-                const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
-                const response = await api.post(`/gameRooms/join/${pin}/${user.userId}`, null, {headers: requestHeader});
-                const room = new Game(response.data);
-                sessionStorage.setItem("gameroomToken", room.gameToken);
-                sessionStorage.setItem("gameRoom", JSON.stringify(room));
+                const room = await fetchRoom();
                 if (room.status === "OPEN") {
-                    console.log("room open");
-                    setView("openRoomView");
-                    await new Promise((resolve) => setTimeout(resolve, 2000));
-                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: room } });
+                    await doRoomOpen(room);
 
                     return;
-                } else if (room.status === "IN-PLAY" || status === "in play") {
-                    console.log("in waiting room");
-                    setView("waitingRoomView");
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
-                } else if (room.status === "CLOSED" || status === "closed") {
-                    console.log("room closed");
-                    setView("unavailableRoomView");
-                    await startCountdown(5);
-                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
+                } else if (room.status === "IN-PLAY") {
+                    await doRoomInPlay();
+                } else if (room.status === "CLOSED") {
+                    await doRoomClosed();
 
                     return;
                 } else {
                     console.log("not fetched room info yet");
-                    setView("waitingRoomView");
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                    await doRoomInPlay();
                 }
             } catch (error) {
                 console.log("in error")
@@ -142,15 +157,9 @@ const GameJoin = () => {
                 }
                 if (status.includes("in play")) {
                     status = "in play";
-                    console.log("in waiting room");
-                    setView("waitingRoomView");
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
+                    await doRoomInPlay();
                 } else if (status.includes("closed")) {
-                    status = "closed";
-                    console.log("room closed");
-                    setView("unavailableRoomView");
-                    await startCountdown(5);
-                    navigate("/gameRoom", { state: { isGameCreated: false, gameRoom: null } });
+                    await doRoomClosed();
 
                     return;
                 } else {
@@ -175,29 +184,32 @@ const GameJoin = () => {
         }
     }
 
+    async function updateUser(updatedUser) {
+        let response;
+        if (updatedUser.id) {
+            try {
+                response = await api.put(`/users/${user.id}`, updatedUser);
+            }
+            catch {
+                response = await api.post("/users", updatedUser);
+            }
+        } else {
+            response = await api.post("/users", updatedUser);
+        }
+        let fullUser = new User(response.data);
+        setUser(fullUser);
+        sessionStorage.setItem("user", JSON.stringify(fullUser));
+    }
+
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
-            var updatedUser = { ...user, nickname };
-            var response;
-            if (updatedUser.id) {
-                try {
-                    response = await api.put(`/users/${user.id}`, updatedUser);
-                }
-                catch {
-                    response = await api.post("/users", updatedUser);
-                }
-            } else {
-                response = await api.post("/users", updatedUser);
-            }
-            var fullUser = new User(response.data);
-            setUser(fullUser);
-            sessionStorage.setItem("user", JSON.stringify(fullUser));
-
+            let updatedUser = { ...user, nickname };
+            await updateUser(updatedUser);
             setAvatarId(null);
 
             //fetch avatars GET avatars
-            response = true//await api.post(`/gameRooms/join/${pin}`);
+            let response = true//await api.post(`/gameRooms/join/${pin}`);
             if (response === true) { // fix later with correct server behavior
                 const fetchedAvatars = Array(
                     new Avatar({ id: 1 }),
@@ -221,21 +233,8 @@ const GameJoin = () => {
     const validateAvatar = async () => {
         try {
             // MISSING validate
-            var updatedUser = { ...user, avatarId }; //avatarId not available on server yet
-            var response;
-            if (updatedUser.id) {
-                try {
-                    response = await api.put(`/users/${user.userId}`, updatedUser);
-                }
-                catch {
-                    response = await api.post("/users", updatedUser);
-                }
-            } else {
-                response = await api.post("/users", updatedUser);
-            }
-            var fullUser = new User(response.data);
-            setUser(fullUser);
-            sessionStorage.setItem("user", JSON.stringify(fullUser));
+            let updatedUser = { ...user, avatarId };
+            await updateUser(updatedUser);
 
             isGameCreator ? navigate("/gameRoom", { state: { isGameCreator: isGameCreator } }) : setView("pinView");
 
@@ -289,7 +288,8 @@ const GameJoin = () => {
 
     function pinView() {
         return baseView(
-            <div className="gameroom buttons-container">
+            <div className="gameroom buttons-container"
+                onKeyDown={(e) => (e.keyCode === 13 && pin ? validatePin() : null)}>
                 <JoinField
                     label="Insert game PIN"
                     placeholder="Game PIN"
@@ -310,7 +310,8 @@ const GameJoin = () => {
 
     function nicknameView() {
         return baseView(
-            <div className="gameroom buttons-container">
+            <div className="gameroom buttons-container"
+                onKeyDown={(e) => (e.keyCode === 13 && nickname ? validateNickname() : null)}>
                 <JoinField
                     label="Set nickname"
                     placeholder="Nickname"
@@ -330,7 +331,8 @@ const GameJoin = () => {
 
     function avatarView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}
+                onKeyDown={(e) => (e.keyCode === 13 && avatarId ? validateAvatar() : null)}>
                 <div className="join label">Choose avatar</div>
                 <div className="start sign-in-link"
                     onClick={() => drawAvatar()}>

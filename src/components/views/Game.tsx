@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { api, handleError } from "helpers/api";
 import BaseContainer from "components/ui/BaseContainer";
-import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import { PhoneLogo } from "../ui/PhoneLogo";
 import Menu from "components/ui/Menu";
-import PropTypes from "prop-types";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
 import { DrawContainer } from "components/ui/DrawContainer";
@@ -17,15 +15,13 @@ import TextPrompt from "../../models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
 import GameLoopStatus from "../../helpers/gameLoopStatus"
 import PresentationContainer from "components/ui/PresentationContainer";
-import { Button } from "components/ui/Button";
 import { Spinner } from "components/ui/Spinner";
-import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Game = () => {
-    const [openMenu, setOpenMenu] = useState<Boolean>(false);
-    const [currentTask, setCurrentTask] = useState<String>(GameLoopStatus.TEXTPROMPT);
-    const prevTask = useRef<String>(GameLoopStatus.TEXTPROMPT);
+    const [openMenu, setOpenMenu] = useState<boolean>(false);
+    const [currentTask, setCurrentTask] = useState<string>(GameLoopStatus.TEXTPROMPT);
+    const prevTask = useRef<string>(GameLoopStatus.TEXTPROMPT);
     const [isInitialPrompt, setIsInitialPrompt] = useState<boolean>(true);
     const isReadyForTask = useRef<boolean>(isInitialPrompt);
 
@@ -92,7 +88,7 @@ const Game = () => {
 
     }, [currentTask, gameSession.current, presentationElements])
 
-    // Useeffect for continuous polling
+    // UseEffect for continuous polling
     useEffect(() => {
         let interval = setInterval(() => {
             fetchGameUpdate(user.current, gameObject);
@@ -276,7 +272,7 @@ const Game = () => {
     const TextPromptView = React.memo(() => {
         const timerDuration = Number(gameSettings.current.gameSpeed);
 
-        var currentDrawing;
+        let currentDrawing;
         if (isInitialPrompt) {
             currentDrawing = <PhoneLogo />
         } else {
@@ -285,14 +281,6 @@ const Game = () => {
 
         return (
             <BaseContainer>
-                <div className="gameroom header">
-                    <BurgerMenu
-                        onClick={() => setOpenMenu(!openMenu)}
-                        disabled={openMenu}>
-                    </BurgerMenu>
-                </div>
-                <div className={"join container-mid"}>
-                </div>
                 <TextPromptContainer
                     drawing={receivedDrawingPrompt.current === null ? currentDrawing : receivedDrawingPrompt.current}
                     user={user.current}
@@ -313,10 +301,6 @@ const Game = () => {
         return (
             <BaseContainer>
                 <div className="gameroom header">
-                    <BurgerMenu
-                        onClick={() => setOpenMenu(!openMenu)}
-                        disabled={openMenu}>
-                    </BurgerMenu>
                 </div>
                 <DrawContainer
                     height={400}
@@ -328,7 +312,6 @@ const Game = () => {
                     setNextTask={setCurrentTask}
                     setInitial={setIsInitialPrompt}>
                 </DrawContainer>
-                {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         );
     });
@@ -344,12 +327,11 @@ const Game = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-                {Menu(openMenu, toggleMenu)}
                 <div className="gameroom between-tasks">
                     Waiting for players to finish their tasks...
                 </div>
                 <Spinner></Spinner>
-
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer>
         )
     });
@@ -370,12 +352,19 @@ const Game = () => {
 
         return (
             <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
+                </div>
                 <PresentationContainer
                     presentationContents={elementsToShow}
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
                 ></PresentationContainer>
+                {Menu(openMenu, toggleMenu)}
             </BaseContainer>)
     });
 
@@ -398,7 +387,7 @@ const Game = () => {
         }
 
         return null;
-    }, [isReadyForTask.current, presentationElements, presentationIndex]);
+    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu]);
 
     return renderComponent;
 };

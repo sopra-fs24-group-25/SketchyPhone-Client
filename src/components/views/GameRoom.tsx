@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { api, handleError } from "helpers/api";
-import { Spinner } from "components/ui/Spinner";
 import { Button } from "components/ui/Button";
 import { useLocation, useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import { BackButton } from "components/ui/BackButton";
 import { BurgerMenu } from "components/ui/BurgerMenu";
-import { UserPreview } from "components/ui/UserPreview";
 import { UserOverviewContainer } from "components/ui/UserOverviewContainer";
 import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
@@ -17,7 +15,6 @@ import User from "models/User";
 import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
-import { sortAndDeduplicateDiagnostics } from "typescript";
 import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 
 const JoinField = (props) => {
@@ -56,22 +53,23 @@ const GameRoom = () => {
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const [users, setUsers] = useState<Array<User>>(null);
-    const [isAdmin, setIsAdmin] = useState<Boolean>(location.state ? location.state.isGameCreator : false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(location.state ? location.state.isGameCreator : false);
 
     // Conditional rendering flags
     const [isGameCreated, setIsGameCreated] = useState(location.state ? location.state.isGameCreated : false);
     const [isSettingsActive, setIsSettingsActive] = useState(false);
+    const [isSettingsSaved, setIsSettingsSaved] = useState(false);
 
-    const [openMenu, setOpenMenu] = useState<Boolean>(false);
+    const [openMenu, setOpenMenu] = useState<boolean>(false);
 
     // Default settings
     const defaultNumCycles = 3;
     const defaultGameSpeed = GameSpeedEnum.NORMAL.inSeconds;
     const defaultIsEnabledTTS = true;
 
-    const [numCycles, setNumCycles] = useState<Number>(defaultNumCycles);
-    const [gameSpeed, setGameSpeed] = useState<Number>(defaultGameSpeed);
-    const [isEnabledTTS, setIsEnabledTTS] = useState<Boolean>(defaultIsEnabledTTS);
+    const [numCycles, setNumCycles] = useState<number>(defaultNumCycles);
+    const [gameSpeed, setGameSpeed] = useState<number>(defaultGameSpeed);
+    const [isEnabledTTS, setIsEnabledTTS] = useState<boolean>(defaultIsEnabledTTS);
 
     // Store defaultGameSettings
     const gameSettings = useRef<GameSettings>(new GameSettings({ numCycles: defaultNumCycles, gameSpeed: defaultGameSpeed, enableTextToSpeech: defaultIsEnabledTTS }));
@@ -103,7 +101,6 @@ const GameRoom = () => {
                 createGame();
             }
         }
-
         setIsGameCreated(game !== null);
 
     }, [game, isGameCreated, users, thisUser])
@@ -131,9 +128,7 @@ const GameRoom = () => {
     async function fetchGameRoomUsers() {
         try {
             const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
-
             const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: requestHeader })
-
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
@@ -144,7 +139,6 @@ const GameRoom = () => {
         if (game === null || isSettingsActive) {
             return;
         }
-
     }
 
     async function fetchGameSettings() {
@@ -166,16 +160,14 @@ const GameRoom = () => {
     async function createGame() { // ADMIN METHOD
         console.log("Attempting to create game")
         try {
-            var thisgameroom;
+            let createdRoom;
             if (game) {
-                thisgameroom = game;
+                createdRoom = game;
             } else {
                 const response = await api.post(`/gameRooms/create/${thisUser.userId}`);
 
-                const game = new Game(response.data);
-
                 // Create new game object
-                thisgameroom = new Game(response.data);
+                createdRoom = new Game(response.data);
                 setIsAdmin(true);
             }
             // Set default settings values on game creation
@@ -184,13 +176,13 @@ const GameRoom = () => {
             sessionStorage.setItem("isEnabledTTS", defaultIsEnabledTTS ? "True" : "False");
 
             // Store user and gameroom to sessionstorage
-            sessionStorage.setItem("user", JSON.stringify(thisgameroom.users[0]));
-            sessionStorage.setItem("gameRoom", JSON.stringify(thisgameroom));
+            sessionStorage.setItem("user", JSON.stringify(createdRoom.users[0]));
+            sessionStorage.setItem("gameRoom", JSON.stringify(createdRoom));
 
 
-            setUsers(thisgameroom.users);
+            setUsers(createdRoom.users);
             // setThisUser(thisgameroom.users[0]); // Not needed anymore as we already get the full object from gamejoin
-            setGame({ ...thisgameroom });
+            setGame({ ...createdRoom });
             setIsGameCreated(true);
         }
         catch (error) {
@@ -205,6 +197,7 @@ const GameRoom = () => {
         await sendGameSettings(gameSettings.current);
         await startGame();
     }
+
     // Send to server to start game ADMIN METHOD
     async function startGame() {
         try {
@@ -326,12 +319,20 @@ const GameRoom = () => {
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
-                            {isAdmin ?
-                                <Button
-                                    width="50%"
-                                    onClick={() => onClickGameStart()}
-                                >Start Game</Button>
-                                : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>}
+                            {users ? 
+                                (users.length >= 3 ?
+                                    (isAdmin ?
+                                        <Button
+                                            width="50%"
+                                            onClick={() => onClickGameStart()}
+                                            disabled={users.length < 3}
+                                        >Start Game</Button>
+                                        : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>
+                                    )
+                                    : <div className="gameroom waiting non-admin">{3 - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
+                                )
+                                : ""
+                            }
                             <Button
                                 width="50%"
                                 onClick={() => exitRoom()}
@@ -346,7 +347,7 @@ const GameRoom = () => {
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
-            </BaseContainer >
+            </BaseContainer>
         );
     }
 
@@ -358,9 +359,7 @@ const GameRoom = () => {
             // Here we can also save the games settings id to the game settings
             console.log(response);
 
-
-            alert("Settings saved");
-
+            setIsSettingsSaved(false);
             setIsSettingsActive(false);
         } catch (error) {
             console.error(
@@ -376,6 +375,7 @@ const GameRoom = () => {
     }
 
     function GameSettingsView() {
+
         const onSettingsSave = async () => {
             // create gameSettings object to be used and stored
             const newGameSettings = new GameSettings();
@@ -386,9 +386,10 @@ const GameRoom = () => {
             gameSettings.current = newGameSettings;
 
             sessionStorage.setItem("gameSettings", JSON.stringify(gameSettings.current));
+            setIsSettingsSaved(true);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
 
             console.log(gameSettings.current);
-
             await sendGameSettings(gameSettings.current);
         }
 
@@ -403,12 +404,10 @@ const GameRoom = () => {
 
                 <div className="settings container">
                     <div className="settings title">Settings</div>
-
                     {/* TODO: fetch stored values from sessionstorage*/}
                     <div className="settings options-container">
                         <div className="settings option">
                             <label htmlFor="numCycles">Number of cycles:</label>
-
                             <select
                                 name="numCycles"
                                 value={numCycles}
@@ -424,7 +423,6 @@ const GameRoom = () => {
                         </div>
                         <div className="settings option">
                             <label htmlFor="gameSpeed">Time limit per action:</label>
-
                             <select
                                 name="gameSpeed"
                                 value={gameSpeed}
@@ -432,8 +430,8 @@ const GameRoom = () => {
                                 id="gameSpeed"
                                 onChange={(e) => setGameSpeed(e.target.value)}
                             >
-                                <option value={Number(GameSpeedEnum.NORMAL.inSeconds)}>{GameSpeedEnum.NORMAL.name}</option>
                                 <option value={Number(GameSpeedEnum.RELAXED.inSeconds)}>{GameSpeedEnum.RELAXED.name}</option>
+                                <option value={Number(GameSpeedEnum.NORMAL.inSeconds)}>{GameSpeedEnum.NORMAL.name}</option>
                                 <option value={Number(GameSpeedEnum.QUICK.inSeconds)}>{GameSpeedEnum.QUICK.name}</option>
                             </select>
                         </div>
@@ -461,8 +459,7 @@ const GameRoom = () => {
                             Save
                         </Button>
                     </div>
-
-
+                    {isSettingsSaved ? <div className="settings saved">Saved successfully!</div> : ""}
                 </div>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>

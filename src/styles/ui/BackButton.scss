@@ -14,7 +14,7 @@
     transition: all 0.3s ease;
     user-select: none;
     &:hover {
-        transform: scale(1.1);
+        scale: 1.1;
     }
     &:disabled {
         cursor: default;
@@ -23,7 +23,6 @@
 }
 .menu-backbutton {
     margin-top: 10px;
-    opacity: 0.5;
     height: 50px;
     width: 50px;
     border: none;
@@ -37,7 +36,7 @@
     transition: all 0.3s ease;
     user-select: none;
     &:hover {
-        transform: scale(1.1);
+        scale: 1.1;
     }
     &:disabled {
         cursor: default;

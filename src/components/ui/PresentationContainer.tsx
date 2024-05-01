@@ -1,24 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { api, handleError } from "helpers/api";
-import { Spinner } from "components/ui/Spinner";
+import React, { useEffect, useRef } from "react";
 import { Button } from "components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
-import { BackButton } from "components/ui/BackButton";
-import { BurgerMenu } from "components/ui/BurgerMenu";
 import PresentationDrawing from "components/ui/PresentationDrawing";
 import PresentationText from "components/ui/PresentationText";
-import { PhoneLogo } from "../ui/PhoneLogo";
-import Menu from "components/ui/Menu";
 import PropTypes from "prop-types";
 import "styles/ui/PresentationContainer.scss";
-import { User } from "models/user";
 import TextPrompt from "models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
-import { DrawContainer } from "components/ui/DrawContainer";
-import { TextPromptContainer } from "components/ui/TextPromptContainer";
 import UserPreview from "./UserPreview";
-import Header from "../views/Header";
 
 
 const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound }) => {
@@ -26,11 +16,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     const navigate = useNavigate();
 
     const containerRef = useRef(null);
-    const [openMenu, setOpenMenu] = useState<Boolean>(false);
-
-    const toggleMenu = () => {
-        setOpenMenu(!openMenu);
-    }
 
     const exitGame = () => {
         sessionStorage.clear();
@@ -41,7 +26,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 
     function TextToSpeech(text) {
         const synth = window.speechSynthesis;
-        var speakThis = new SpeechSynthesisUtterance(text);
+        let speakThis = new SpeechSynthesisUtterance(text);
 
         speakThis.rate = 1;
         speakThis.pitch = 1;
@@ -169,7 +154,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 </div>
 
             </div >
-            {Menu(openMenu, toggleMenu)}
         </BaseContainer>
     )
 }

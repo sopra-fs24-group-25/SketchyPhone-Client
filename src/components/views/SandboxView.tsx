@@ -262,7 +262,7 @@ const SandboxView = () => {
 
     function TextToSpeech(text) {
         const synth = window.speechSynthesis;
-        var speakThis = new SpeechSynthesisUtterance(text);
+        let speakThis = new SpeechSynthesisUtterance(text);
         console.log(synth.getVoices())
 
         speakThis.rate = 1;

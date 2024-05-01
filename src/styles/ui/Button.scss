@@ -26,5 +26,5 @@
   color: $button-text-color;
   background-color: $button-color;
   transition: all 0.3s ease;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: $buttonShadow;
 }
