@@ -13,8 +13,8 @@ import GameLoopStatus from "../../helpers/gameLoopStatus"
 
 export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, timerDuration, setNextTask }) => {
 
-    const [textPromptContent, setTextPromptContent] = useState<String>("");
-    const [promptTooLong, setPromptTooLong] = useState<Boolean>(false);
+    const [textPromptContent, setTextPromptContent] = useState<string>("");
+    const [promptTooLong, setPromptTooLong] = useState<boolean>(false);
     let submitted = false;
 
     const maxChars = 50;

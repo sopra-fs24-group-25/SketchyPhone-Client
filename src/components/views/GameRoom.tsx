@@ -96,10 +96,8 @@ const GameRoom = () => {
             }, 250); // Set interval to 0.25 seconds
 
             return () => clearInterval(interval);
-        } else {
-            if (isAdmin) {
-                createGame();
-            }
+        } else if (isAdmin) {
+            createGame();
         }
         setIsGameCreated(game !== null);
 
@@ -319,13 +317,12 @@ const GameRoom = () => {
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
-                            {users ? 
+                            {users ?
                                 (users.length >= 3 ?
                                     (isAdmin ?
                                         <Button
                                             width="50%"
                                             onClick={() => onClickGameStart()}
-                                            disabled={users.length < 3}
                                         >Start Game</Button>
                                         : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>
                                     )

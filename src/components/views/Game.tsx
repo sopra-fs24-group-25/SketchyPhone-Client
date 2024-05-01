@@ -39,7 +39,7 @@ const Game = () => {
 
     // The naming might be ambiguous as gamesession extends gameobject
     const [gameObject, setGameObject] = useState<GameSession>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
-    const [presentationIndex, setPresentationIndex] = useState<Number>(0);
+    const [presentationIndex, setPresentationIndex] = useState<number>(0);
 
     const gameSettings = useRef(JSON.parse(sessionStorage.getItem("gameSettings")));
 

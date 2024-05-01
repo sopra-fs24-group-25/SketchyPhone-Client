@@ -42,7 +42,6 @@ FormField.propTypes = {
     value: PropTypes.string,
     type: PropTypes.string,
     onChange: PropTypes.func,
-    showPassword: PropTypes.bool,
     onTogglePasswordVisibility: PropTypes.func,
     buttonEye: PropTypes.object,
     disabled: PropTypes.bool,
@@ -52,12 +51,12 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [username, setUsername] = useState<String>("");
-    const [password, setPassword] = useState<String>("");
-    const [confirmPassword, setConfirmPassword] = useState<String>("");
-    const [showPassword, setShowPassword] = useState<Boolean>(false);
-    const [credentialsInvalid, setCredentialsInvalid] = useState<Boolean>(false);
-    const [isSignUp, setIsSignUp] = useState<Boolean>(location.state.isSignUp);
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [credentialsInvalid, setCredentialsInvalid] = useState<boolean>(false);
+    const [isSignUp, setIsSignUp] = useState<boolean>(location.state.isSignUp);
 
     const doLogin = async () => { //needs to handle login and sign-up in future (or separate in two functions)
         try {

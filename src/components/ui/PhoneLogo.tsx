@@ -5,6 +5,7 @@ export const PhoneLogo = () => {
     return(
         <img
             src={PhoneSVG}
+            alt=""
             style={{
                 userSelect:"none",
                 WebkitUserDrag:"none",

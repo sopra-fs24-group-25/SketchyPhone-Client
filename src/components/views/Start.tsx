@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { api, handleError } from "helpers/api";
 import { useNavigate } from "react-router-dom";
 import { Button } from "components/ui/Button";
 import { GuideButton } from "components/ui/GuideButton";
 import "styles/views/Start.scss";
 import BaseContainer from "components/ui/BaseContainer";
-import User from "models/User";
 import PropTypes from "prop-types";
 import Header from "./Header";
 
@@ -24,8 +22,6 @@ const GuideField = (props) => {
 };
 
 GuideField.propTypes = {
-    label: PropTypes.string,
-    value: PropTypes.string,
     onClick: PropTypes.func,
     index: PropTypes.number
 };

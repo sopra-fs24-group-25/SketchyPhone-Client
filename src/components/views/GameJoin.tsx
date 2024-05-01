@@ -128,9 +128,8 @@ const GameJoin = () => {
         return room;
     }
 
-    const checkRoomAvailability = async () => {
+    const checkRoomAvailability = async (numChecks: number) => {
         let status;
-        let numChecks = 4; // change number of times (5s interval) it checks before giving up
         while (numChecks >= 0) {
             numChecks -= 1;
             try {
@@ -152,16 +151,12 @@ const GameJoin = () => {
             } catch (error) {
                 console.log("in error")
                 status = error.response.data.message;
-                if (numChecks === 0) {
-                    status = "closed";
-                }
-                if (status.includes("in play")) {
-                    status = "in play";
-                    await doRoomInPlay();
-                } else if (status.includes("closed")) {
+                if (status.includes("closed") || numChecks === 0) {
                     await doRoomClosed();
 
                     return;
+                } else if (status.includes("in play")) {
+                    await doRoomInPlay();
                 } else {
                     console.log("nothing in error");
                     setView("pinView");
@@ -173,7 +168,7 @@ const GameJoin = () => {
 
     const validatePin = async () => {
         try {
-            await checkRoomAvailability();
+            await checkRoomAvailability(4); // change number of times (5s interval) it checks before giving up
         } catch (error) {
             setPinInvalid(true);
             await new Promise((resolve) => setTimeout(resolve, 500));
