@@ -9,6 +9,9 @@ import "styles/ui/PresentationContainer.scss";
 import TextPrompt from "models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
+import AudioContextEnum from "../../helpers/audioContextEnum";
+import AudioPlayer from "../../helpers/AudioPlayer";
+import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 
 
 const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound }) => {
@@ -18,6 +21,11 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     const containerRef = useRef(null);
 
     const [newVote, setNewVote] = useState<number>(0);
+
+    // create audioplayer to use
+    const revealAudio = new AudioPlayer(AudioContextEnum.PRESENTATION_REVEAL_DRAWING);
+    const upvoteAudio = new AudioPlayer(AudioContextEnum.UPVOTE);
+    const clickAudio = new AudioPlayer(AudioContextEnum.BUTTON_POP);
 
     const exitGame = () => {
         sessionStorage.clear();
@@ -60,6 +68,22 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         }
 
     }, [presentationContents, newVote]);
+
+    // Useeffect for soundeffect trigger
+    useEffect(() => {
+        const lastElement = presentationContents[presentationContents.length - 1];
+
+        if (lastElement instanceof DrawingPrompt) {
+            // Play audio
+            revealAudio.handlePlay();
+        }
+
+    }, [presentationContents])
+
+    // useeffect for upvote sound
+    useEffect(() => {
+        upvoteAudio.handlePlay();
+    },[newVote])
 
     function doVoteTextPrompt(textPrompt, creator) {
         console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
@@ -150,14 +174,14 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 </Button> */}
                 <div className="presentation buttonsContainer">
                     {isAdmin && <Button
-                        onClick={() => onClickIncrement()}
+                        onClick={() => {onClickIncrement(); clickAudio.handlePlay()}}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
                         Show next prompt
                     </Button>}
                     {isAdmin && <Button
-                        onClick={() => onClickNextRound()}
+                        onClick={() => {onClickNextRound(); clickAudio.handlePlay()}}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
@@ -165,7 +189,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     </Button>}
                     <Button className="presentation buttonsContainer presentationButton"
                         width="20%"
-                        onClick={() => exitGame()}
+                        onClick={() => {exitGame(); clickAudio.handlePlay()}}
                     >
                         End game
                     </Button>

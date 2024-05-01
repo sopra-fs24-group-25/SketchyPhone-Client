@@ -1,10 +1,21 @@
-import React from "react";
+import { React, useRef, useEffect, useState } from "react";
 import { Button } from "components/ui/Button";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
 import PresentationContainer from "components/ui/PresentationContainer";
 import TextPrompt from "models/TextPrompt"
 import DrawingPrompt from "models/DrawingPrompt"
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import AudioContextEnum from "../../helpers/audioContextEnum";
+import AudioPlayer from "../../helpers/AudioPlayer";
+
+const minuteSeconds = 60;
+const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
+const endTime = startTime + 10; // use UNIX timestamp in seconds
+
+const remainingTime = endTime - startTime;
+
+const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
 
 const SandboxView = () => {
 
@@ -277,12 +288,40 @@ const SandboxView = () => {
 
     const testContents = new Array(testTextPrompt1, testDrawingPrompt1, testTextPrompt2);
 
+    const [idx, setIdx] = useState<Number>(0);
+
+    useEffect(() => {
+
+    }, idx)
+
+    let toShow = newArray.slice(0, idx + 1);
+    console.log(idx)
+
+    console.log(toShow);
+
+    const timerProps = {
+        isPlaying: true,
+        size: 60,
+        strokeWidth: 6
+    };
+
     return (
         <div>
+            <CountdownCircleTimer
+                {...timerProps}
+                colors="#000000"
+                duration={10}
+                initialRemainingTime={remainingTime & minuteSeconds}
+                onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
+
+                // Here submit if timer ran out
+                onUpdate={(remainingTime) => (remainingTime === 5 && timerSound.handlePlay())}
+            >
+            </CountdownCircleTimer>
             <PresentationContainer
-                presentationContents={newArray}
+                presentationContents={toShow}
                 isAdmin={true}
-                onClickIncrement={() => console.log("clicked increment")}
+                onClickIncrement={() => (setIdx(idx + 1))}
                 onClickNextRound={() => console.log("clicked next round")}
             ></PresentationContainer>
             <Button
@@ -290,12 +329,12 @@ const SandboxView = () => {
             >
                 CLICK TO SPEAK
             </Button>
-            <PresentationContainer
+            {/* <PresentationContainer
                 presentationContents={newArray}
                 isAdmin={false}
                 onClickIncrement={() => console.log("clicked increment")}
                 onClickNextRound={() => console.log("clicked next round")}
-            ></PresentationContainer>
+            ></PresentationContainer> */}
             {/*<DrawContainer
                 height={400}
                 width={600}

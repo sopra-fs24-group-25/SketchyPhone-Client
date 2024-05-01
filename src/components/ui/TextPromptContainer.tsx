@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api, handleError } from "helpers/api";
 import { PhoneLogo } from "../ui/PhoneLogo";
 import "../../styles/ui/BaseContainer.scss";
@@ -28,9 +28,9 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     //fetch drawing, if first time, draw PhoneLogo
 
     async function sendTextPrompt() {
-        if(submitted){
+        if (submitted) {
             console.log("Already successfully submitted");
-            
+
             return;
         }
         try {
@@ -39,7 +39,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             let idx = currentGameSessions.length - 1;
             let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
-            const requestHeader = { "Authorization":  user.token, "X-User-ID": user.userId };
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
 
             // If we have a previous drawing id
             // for the very first text prompts -> insert 777 as previousDrawingId (from server documentation)W
@@ -53,12 +53,12 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             textPrompt.previousDrawingId = previousDrawingId;
 
             const requestBody = JSON.stringify(textPrompt);
-            
+
             const url = `/games/${currentGameSessionId}/prompts/${user.userId}/${previousDrawingId}`;
             console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
 
-            if(response.status === 201){
+            if (response.status === 201) {
                 submitted = true;
             }
 
@@ -105,7 +105,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
                 <div className="prompt field">
                     {isInitialPrompt ? drawing : (drawing !== null && <img
                         src={`data:image/png; base64, ${drawing.encodedImage.replaceAll("\"", "")}`}
-                        style={{userSelect:"none", "-webkit-user-drag":"none"}}
+                        style={{ userSelect: "none", "-webkit-user-drag": "none" }}
                     ></img>)}
 
                 </div>
