@@ -144,6 +144,15 @@ Noah Isaak
 Victor Cruz da Silva
 
 - Added way to save number of votes on a text prompt / drawing. #125
-- Added put mappings and service methods to incease the number of votes on a text prompt / drawing. #126
+- Added put mappings and service methods to increase the number of votes on a text prompt / drawing. #126
 - Added put mappings and service methods to decrease the number of votes on a text prompt / drawing. #127
 - Added tests to cover new functionality.
+
+Noé Matumona
+
+- preparation for leaderboard #54, #55
+- work on voting system #51, #53
+- added minimum player limit
+- added enter key functionality in GameJoin
+- added copy to clipboard functionality to game pin
+- refactoring, visual changes, and cleanup
