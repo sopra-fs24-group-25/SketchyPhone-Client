@@ -160,3 +160,7 @@ Noé Matumona
 Noah Isaak
 - Created AudioPlayer class used for various dev tasks #17 #58 #3
 - Minor refactorings
+
+Xindi Liu 
+- Implemented History feature
+- Implemented logic to handle persistent user
