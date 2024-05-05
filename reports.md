@@ -162,5 +162,5 @@ Noah Isaak
 - Minor refactorings
 
 Xindi Liu 
-- Implemented History feature
-- Implemented logic to handle persistent user
+- Implemented History feature #6
+- Implemented logic to handle persistent user #11
