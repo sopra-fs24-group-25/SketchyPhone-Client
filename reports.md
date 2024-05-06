@@ -164,3 +164,10 @@ Noah Isaak
 Xindi Liu 
 - Implemented History feature #6
 - Implemented logic to handle persistent user #11
+
+## 06.05 - 12.05
+
+Victor Cruz da Silva
+- Added get mappings and functionality to get top three text prompts and drawings. #133, #134, #135
+- Fixed minor bug in getTextPrompt funcitonality.
+- Added tests to cover new functionality.
