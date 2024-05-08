@@ -42,4 +42,7 @@
         cursor: default;
         opacity: 0;
     }
+    &.close {
+        background-image: url("../../icons/CloseButton.svg");
+    }
 }

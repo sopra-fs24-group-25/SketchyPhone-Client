@@ -99,10 +99,10 @@ const Start = () => {
                                 Sign up
                             </Button>
                         </div>
-                        <div className="start sign-in-link"
+                        <button className="start sign-in-link"
                             onClick={() => doLogin()}>
                             Already have an account? Log in
-                        </div>
+                        </button>
                     </div>
                     <div className="start box">
                         <div className="guide-container">

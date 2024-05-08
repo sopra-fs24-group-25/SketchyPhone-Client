@@ -106,6 +106,7 @@ const GameRoom = () => {
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
+        setThisUser(new User(JSON.parse(sessionStorage.getItem("user"))));
     }
 
     async function fetchGameUpdate() {
@@ -233,8 +234,6 @@ const GameRoom = () => {
             setGame(null);
             setIsGameCreated(false);
             setUsers(null);
-            setThisUser(new User());
-            sessionStorage.setItem("user", JSON.stringify(new User()));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
             sessionStorage.removeItem("isEnabledTTS");
@@ -283,7 +282,7 @@ const GameRoom = () => {
                         </Button>
                     </div>
                     <div className="mascot">
-                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false" />
+                        <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
@@ -293,23 +292,21 @@ const GameRoom = () => {
     // Users overview
     function Overview() {
 
-        function handleCopyClick() {
+        async function handleCopyClick() {
             if (copyPin) {
                 return;
             }
-            navigator.clipboard.writeText(game["gamePin"])
-                .then(() => {
-                    console.log(`Saved pin ${game["gamePin"]} to clipboard`);
-                    setCopyPin(true);
-                    setTimeout(() => {
-                        setCopyPin(false);
-                    }, 1500);
-                })
-                .catch(error => {
-                    alert(
-                        `Failed to copy: \n${handleError(error)}`
-                    );
-                });
+            try {
+                navigator.clipboard.writeText(game["gamePin"]);
+                console.log(`Saved pin ${game["gamePin"]} to clipboard`);
+                setCopyPin(true);
+                await new Promise((resolve) => setTimeout(resolve, 1500));
+                setCopyPin(false);
+            } catch (error) {
+                alert(
+                    `Failed to copy: \n${handleError(error)}`
+                )
+            }
         }
 
         return (
@@ -322,18 +319,18 @@ const GameRoom = () => {
                 </div>
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
-                        <div className={`gameroom pin ${copyPin ? "copied" : ""}`}
+                        <button className={`gameroom pin ${copyPin ? "copied" : ""}`}
                             onClick={() => handleCopyClick()}
                             disabled={copyPin}>
                             <p>{copyPin ? "Copied Game PIN!" : `Game PIN: ${String(game["gamePin"]).slice(0, 3)} ${String(game["gamePin"]).slice(3)}`}</p>
-                        </div>
+                        </button>
                         <div className="gameroom waiting">
                             <p>Waiting for players...</p>
                         </div>
                     </div>
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
-                            userList={users ? users : []}
+                            userList={users || []}
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
@@ -453,7 +450,7 @@ const GameRoom = () => {
                         </div>
                         <div className="settings option">
                             <label htmlFor="text-to-speech">Enable text-to-speech:</label>
-                            <label className="switch" >
+                            <label className="switch">
                                 <input
                                     type="checkbox"
                                     checked={isEnabledTTS}

@@ -44,16 +44,16 @@ const GameJoin = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
     const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
+    const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
+    const [avatarId, setAvatarId] = useState<number>(user.avatarId);
+    const [nickname, setNickname] = useState<string>(user.nickname);
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<boolean>(false);
-    const [nickname, setNickname] = useState<string>("");
-    const [avatarId, setAvatarId] = useState<number>(null);
-    const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
     const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
-    const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
@@ -181,9 +181,9 @@ const GameJoin = () => {
 
     async function updateUser(updatedUser) {
         let response;
-        if (updatedUser.id) {
+        if (updatedUser.userId) {
             try {
-                response = await api.put(`/users/${user.id}`, updatedUser);
+                response = await api.put(`/users/${user.userId}`, updatedUser);
             }
             catch {
                 response = await api.post("/users", updatedUser);
@@ -201,19 +201,16 @@ const GameJoin = () => {
             // Lets assume the nickname is valid
             let updatedUser = { ...user, nickname };
             await updateUser(updatedUser);
-            setAvatarId(null);
 
             //fetch avatars GET avatars
-            let response = true//await api.post(`/gameRooms/join/${pin}`);
+            let response = true;
             if (response === true) { // fix later with correct server behavior
-                const fetchedAvatars = Array(
-                    new Avatar({ id: 1 }),
-                    new Avatar({ id: 2 }),
-                    new Avatar({ id: 3 }),
-                    new Avatar({ id: 4 }),
-                    new Avatar({ id: 5 }),
-                    new Avatar({ id: 6 }),
-                );//implement request for future custom avatars
+                const fetchedAvatars = Array.from({ length: 6 }, (_, index) => new Avatar(
+                    {
+                        id: index + 1,
+                        selected: avatarId === index + 1 ? "active" : "inactive"
+                    }
+                ));//implement request for future custom avatars
                 setAvatarSelection(fetchedAvatars);
                 setView("avatarView");
             }
@@ -244,12 +241,10 @@ const GameJoin = () => {
     const drawAvatar = async () => {
         console.log("drawing avatar");
         try {
-            const response = true//await api.post(`/gameRooms/join/${pin}`);
+            const response = true
             if (response === true) { // fix later with correct server behavior
-                //navigate("/game") // temporary
             }
             throw new Error;
-            //console.log(response.data);
         }
         catch (error) {
             alert(
@@ -273,7 +268,7 @@ const GameJoin = () => {
                         disabled={!visible}></BackButton>
                     {content}
                     <div className="mascot">
-                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false" />
+                        <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
@@ -307,12 +302,13 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}
                 onKeyDown={(e) => (e.keyCode === 13 && avatarId ? validateAvatar() : null)}>
                 <div className="join label">Choose avatar</div>
-                <div className="start sign-in-link"
-                    onClick={() => drawAvatar()}>
-                    or personalize your own avatar!</div>
+                <button className="start sign-in-link"
+                    onClick={() => drawAvatar()}
+                >
+                    or personalize your own avatar!</button>
                 <AvatarChoice
                     avatarList={avatarSelection}
-                    choose={(id) => chooseAvatar(id)}>
+                    choose={(id: number) => chooseAvatar(id)}>
                 </AvatarChoice>
                 <Button
                     disabled={!avatarId}

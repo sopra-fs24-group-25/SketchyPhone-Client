@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { api, handleError } from "helpers/api";
+import { api } from "helpers/api";
 import User from "models/User";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "components/ui/Button";
+import { BackButton } from "components/ui/BackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "styles/views/Login.scss";
@@ -57,10 +58,11 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [credentialsInvalid, setCredentialsInvalid] = useState<boolean>(false);
     const [isSignUp, setIsSignUp] = useState<boolean>(location.state.isSignUp);
+    const [toCreateAccount, setToCreateAccount] = useState<boolean>(location.state.toCreateAccount);
 
     const doLogin = async () => { //needs to handle login and sign-up in future (or separate in two functions)
         try {
-            const requestBody = JSON.stringify({ nickname: username, password });
+            const requestBody = JSON.stringify({ nickname: username, password, persistent: true });
             const response = await api.post("/users", requestBody); //will change in future: post /login
 
             // Get the returned user and update a new object.
@@ -85,11 +87,17 @@ const Login = () => {
             setUsername("");
             setPassword("");
             setConfirmPassword("");
-            //alert(
-            //    `Something went wrong during the login: \n${handleError(error)}`
-            //);
         }
     };
+
+    function goBack() {
+        if (toCreateAccount) {
+            navigate("/gameRoom");
+        } else {
+            sessionStorage.clear();
+            navigate("/");
+        }
+    }
 
     const switchLoginMethod = () => {
         if (credentialsInvalid) {
@@ -148,11 +156,14 @@ const Login = () => {
                                 {isSignUp ? "Sign up" : "Login"}
                             </Button>
                         </div>
-                        <div className={`login sign-in-link ${credentialsInvalid ? "locked" : ""}`}
+                        <button className={`login sign-in-link ${credentialsInvalid ? "locked" : ""}`}
                             onClick={() => switchLoginMethod()}>
                             {isSignUp ? "Already have an account? Log in" : "Don't have an account yet? Sign up"}
-                        </div>
+                        </button>
                     </div>
+                    <BackButton className="menu-backbutton"
+                        onClick={() => goBack()}>
+                    </BackButton>
                 </div>
             </BaseContainer>
         </div>
