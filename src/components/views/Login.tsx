@@ -58,7 +58,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [credentialsInvalid, setCredentialsInvalid] = useState<boolean>(false);
     const [isSignUp, setIsSignUp] = useState<boolean>(location.state.isSignUp);
-    const [toCreateAccount, setToCreateAccount] = useState<boolean>(location.state.toCreateAccount);
+    const [toCreateAccount] = useState<boolean>(location.state.toCreateAccount);
 
     const doLogin = async () => { //needs to handle login and sign-up in future (or separate in two functions)
         try {

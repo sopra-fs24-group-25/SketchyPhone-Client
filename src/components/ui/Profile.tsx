@@ -44,9 +44,9 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
     const defaultPassword = "password";
 
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
-    const [avatarId, setAvatarId] = useState<string>(user.avatarId);
-    const [nickname, setNickname] = useState<string>(user.nickname);
-    const [username, setUsername] = useState<string>(user.username);
+    const [avatarId, setAvatarId] = useState<string>(user.avatarId || "");
+    const [nickname, setNickname] = useState<string>(user.nickname || "");
+    const [username, setUsername] = useState<string>(user.username || "");
     const [password, setPassword] = useState<string>(defaultPassword);
     const [confirmPassword, setConfirmPassword] = useState<string>(defaultPassword);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -119,7 +119,7 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
                 <div className="profile field">
                     <AvatarPreview
                         className="inactive"
-                        id={avatarId ? avatarId : 0}
+                        id={avatarId || 0}
                         onClick={() => toggleAvatar()}
                         disabled={!isEditing}>
                     </AvatarPreview>

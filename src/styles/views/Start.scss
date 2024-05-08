@@ -36,6 +36,9 @@
   &.guide {
     @include center;
     flex-direction: column;
+    border: none;
+    background-color: transparent;
+    color: white;
   }
   &.guide-container {
     display: flex;

@@ -1,8 +1,7 @@
 import React from "react";
-import {Navigate, Route, Routes} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import GameRoom from "../../views/GameRoom";
 import GameJoin from "../../views/GameJoin";
-import PropTypes from "prop-types";
 
 const GameRoomRouter = () => {
     return (
@@ -22,12 +21,6 @@ const GameRoomRouter = () => {
         </div>
     );
 };
-/*
-* Don't forget to export your component!
- */
 
-GameRoomRouter.propTypes = {
-    base: PropTypes.string
-}
 
 export default GameRoomRouter;

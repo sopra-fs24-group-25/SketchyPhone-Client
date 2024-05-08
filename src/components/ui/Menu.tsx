@@ -40,16 +40,14 @@ const Menu = (openMenu, toggleMenu) => {
 
     return (
         <div>
-            <div
+            <button
                 className={`screen-layer ${openMenu ? "open" : "closed"}`}
                 onClick={() => toggleMenu()}>
                 <div
                     className={`menu-container ${openMenu ? "open" : "closed"}`}>
-                    <div>
-                        <BackButton className="menu-backbutton"
-                            onClick={() => toggleMenu()}>
-                        </BackButton>
-                    </div>
+                    <BackButton className="menu-backbutton"
+                        onClick={() => toggleMenu()}>
+                    </BackButton>
                     <button //profile
                         className="menu-button"
                         onClick={() => handleOpenProfile()}
@@ -69,7 +67,7 @@ const Menu = (openMenu, toggleMenu) => {
                         Log out
                     </button>
                 </div>
-            </div>
+            </button>
             {Profile(openProfile, toggleProfile, isInGame)}
         </div>
     );

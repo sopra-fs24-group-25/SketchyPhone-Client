@@ -47,8 +47,8 @@ const GameJoin = () => {
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
     const [isGameCreator, setIsGameCreator] = useState(location.state ? location.state.isGameCreator : false); // If we pass a state with location
     const [avatarSelection, setAvatarSelection] = useState<[]>(Array(0));
-    const [avatarId, setAvatarId] = useState<number>(user.avatarId);
-    const [nickname, setNickname] = useState<string>(user.nickname);
+    const [avatarId, setAvatarId] = useState<number>(user.avatarId || "");
+    const [nickname, setNickname] = useState<string>(user.nickname || "");
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<boolean>(false);
     const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
@@ -278,7 +278,7 @@ const GameJoin = () => {
 
     function nicknameView() {
         return baseView(
-            <div className="gameroom buttons-container"
+            <button className="gameroom buttons-container"
                 onKeyDown={(e) => (e.keyCode === 13 && nickname ? validateNickname() : null)}>
                 <JoinField
                     label="Set nickname"
@@ -292,14 +292,14 @@ const GameJoin = () => {
                     onClick={() => validateNickname()}>
                     Continue
                 </Button>
-            </div>,
+            </button>,
             () => goBack()
         );
     }
 
     function avatarView() {
         return baseView(
-            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}
+            <button className="gameroom buttons-container" style={{ "alignItems": "left" }}
                 onKeyDown={(e) => (e.keyCode === 13 && avatarId ? validateAvatar() : null)}>
                 <div className="join label">Choose avatar</div>
                 <button className="start sign-in-link"
@@ -316,7 +316,7 @@ const GameJoin = () => {
                     onClick={() => validateAvatar()}>
                     Continue
                 </Button>
-            </div>,
+            </button>,
             () => setView("nicknameView"),
             "up"
         );
@@ -324,7 +324,7 @@ const GameJoin = () => {
 
     function pinView() {
         return baseView(
-            <div className="gameroom buttons-container"
+            <button className="gameroom buttons-container"
                 onKeyDown={(e) => (e.keyCode === 13 && pin ? validatePin() : null)}>
                 <JoinField
                     label="Insert game PIN"
@@ -339,7 +339,7 @@ const GameJoin = () => {
                     onClick={() => validatePin()}>
                     Continue
                 </Button>
-            </div>,
+            </button>,
             () => setView("avatarView")
         );
     }

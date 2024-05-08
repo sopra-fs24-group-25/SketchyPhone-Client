@@ -1,7 +1,6 @@
 import React from "react";
-import {Navigate, Route, Routes} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Game from "../../views/Game";
-import PropTypes from "prop-types";
 
 const GameRouter = () => {
     return (
@@ -19,12 +18,5 @@ const GameRouter = () => {
         </div>
     );
 };
-/*
-* Don't forget to export your component!
- */
-
-GameRouter.propTypes = {
-    base: PropTypes.string
-}
 
 export default GameRouter;

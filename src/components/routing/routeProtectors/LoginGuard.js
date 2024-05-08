@@ -1,6 +1,5 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import PropTypes from "prop-types";
 
 /**
  *
@@ -8,14 +7,10 @@ import PropTypes from "prop-types";
  * instead of 'export default' at the end of the file.
  */
 export const LoginGuard = () => {
-    // if (!localStorage.getItem("token")) {
 
     return <Outlet />;
-    // }
+    //if (!sessionStorage.getItem("user")) {
 
-    // return <Navigate to="/GameRoom" replace />;
+    //    return <Navigate to="/GameRoom" replace />;
+    //}
 };
-
-LoginGuard.propTypes = {
-    children: PropTypes.node
-}

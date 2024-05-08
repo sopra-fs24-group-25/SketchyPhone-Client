@@ -1,6 +1,5 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import PropTypes from "prop-types";
+import { Outlet } from "react-router-dom";
 
 /**
  * routeProtectors interfaces can tell the router whether or not it should allow navigation to a requested route.
@@ -12,15 +11,6 @@ import PropTypes from "prop-types";
  * @param props
  */
 export const GameRoomGuard = () => {
-    // if (localStorage.getItem("token")) {
 
-    //   return <Outlet />;
-    // }
-
-    // return <Navigate to="/login" replace />;
     return <Outlet />;
-};
-
-GameRoomGuard.propTypes = {
-    children: PropTypes.node
 };
