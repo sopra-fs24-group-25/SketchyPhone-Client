@@ -258,7 +258,7 @@ const GameJoin = () => {
         }
     }
 
-    function baseView(content, goPlace, placement = "mid", visible = true) {
+    function baseView(content, goPlace, placement = "mid", visible = !openMenu) {
         return (
             <BaseContainer>
                 <div className="gameroom header">

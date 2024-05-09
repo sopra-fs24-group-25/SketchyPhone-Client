@@ -1,0 +1,62 @@
+@import "../theme";
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    background-color: $display-box-color;
+    border-radius: 2em;
+    width: 60vw;
+    margin-left: auto;
+    margin-right: auto;
+
+    &.elementcontainer {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        border-radius: 2em;
+        min-width: 50%;
+        max-width: 90%;
+        align-items: flex;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    &.user {
+        display: flex;
+        flex-direction: row;
+        color: black;
+        font-size: larger;
+        font-weight: 600;
+        margin: 0px 0px 20px 0px;
+        text-shadow: $dropShadow;
+        background-color: transparent;
+        min-width: 50%;
+        max-width: 90%;
+    }
+
+    &.textprompt {
+        background-color: white;
+        color: black;
+        max-width: 100%;
+        width: fit-content;
+        border-radius: 2em;
+        font-size: x-large;
+        font-weight: 600;
+        padding: 20px;
+        box-shadow: $dropShadow;
+        margin-left: 58px;
+    }
+
+    &.drawing {
+        background-color: white;
+        border-radius: 2em;
+        max-width: 50%;
+        width: auto;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+}
