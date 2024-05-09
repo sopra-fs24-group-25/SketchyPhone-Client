@@ -171,3 +171,11 @@ Victor Cruz da Silva
 - Added get mappings and functionality to get top three text prompts and drawings. #133, #134, #135
 - Fixed minor bug in getTextPrompt funcitonality.
 - Added tests to cover new functionality.
+
+Noah Isaak
+- Created leaderboard component, logic to show #9 and added fetching from server #54
+- Finish audio effect when timer is close to running out #3
+- Small addition to upvoting #8
+- Fix for repeated text-to-speech when upvoting #17
+- Mionr UI changes
+
