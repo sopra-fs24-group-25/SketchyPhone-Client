@@ -36,6 +36,9 @@
   &.guide {
     @include center;
     flex-direction: column;
+    border: none;
+    background-color: transparent;
+    color: white;
   }
   &.guide-container {
     display: flex;
@@ -57,6 +60,11 @@
     margin-top: 10px;
     margin-bottom: 10px;
     text-decoration: underline;
+    border: none;
+    background-color: transparent;
+    font-size: medium;
+    font-weight: 500;
+    color: white;
     cursor: pointer;
     transition: all 0.3s ease;
     &:hover {

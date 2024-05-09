@@ -16,9 +16,12 @@ import DrawingPrompt from "models/DrawingPrompt";
 import GameLoopStatus from "../../helpers/gameLoopStatus"
 import PresentationContainer from "components/ui/PresentationContainer";
 import { Spinner } from "components/ui/Spinner";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Game = () => {
+
+    const navigate = useNavigate();
+
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [currentTask, setCurrentTask] = useState<string>(GameLoopStatus.TEXTPROMPT);
     const prevTask = useRef<string>(GameLoopStatus.TEXTPROMPT);
@@ -47,8 +50,6 @@ const Game = () => {
     const [presentationElements, setPresentationElements] = useState(null);
     const startIndex = useRef(0);
 
-    const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
         // Change in gameLoopStatus detected
@@ -129,7 +130,7 @@ const Game = () => {
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameSessionId}/presentation/next`;
-            const response = await api.put(url, null, { headers: requestHeader })
+            await api.put(url, null, { headers: requestHeader })
         }
         catch (error) {
             console.log("Error while incrementing presentation index: " + error);
@@ -142,7 +143,6 @@ const Game = () => {
             const response = await api.post(`/games/${game.gameId}/start`, null, { headers: headers })
 
             const gameSession = new GameSession(response.data);
-            // console.log(gameSession);
 
             // check if user is admin and navigate to start
             if (gameSession !== null && gameSession.admin === user.userId) {
@@ -225,7 +225,7 @@ const Game = () => {
             }
 
             return (
-                <img src={response.data} style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
+                <img src={response.data} alt="Drawing" style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
             )
         }
         catch (error) {

@@ -1,25 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import "../../styles/ui/MenuButton.scss";
 import "../../styles/ui/BackButton.scss";
 import "../../styles/ui/MenuContainer.scss";
 import { BackButton } from "components/ui/BackButton";
+import Profile from "./Profile";
 
 const Menu = (openMenu, toggleMenu) => {
 
     const navigate = useNavigate();
 
-    const openProfile = () => {
-        //navigate("/profile");
-        console.log("To profile");
-        alert(
-            "Feature available soon"
-        );
+    const [openProfile, setOpenProfile] = useState<boolean>(false);
+    const [isInGame, setIsInGame] = useState<boolean>(sessionStorage.getItem("gameRoom"));
+
+    function toggleProfile(withToggleMenu: boolean) {
+        setOpenProfile(!openProfile);
+        if (withToggleMenu) {
+            toggleMenu();
+        }
     }
 
-    const openHistory = () => {
-        //navigate("/history");
+    const handleOpenProfile = () => {
+        console.log("To profile");
+        setOpenProfile(true);
+        setIsInGame(sessionStorage.getItem("gameRoom"));
+    }
+
+    const handleOpenHistory = () => {
         console.log("To history");
         alert(
             "Feature available soon"
@@ -32,35 +39,36 @@ const Menu = (openMenu, toggleMenu) => {
     };
 
     return (
-        <div
-            className={`screen-layer ${openMenu ? "open" : "closed"}`}
-            onClick={() => toggleMenu()}>
-            <div
-                className={`menu-container ${openMenu ? "open" : "closed"}`}>
-                <div>
+        <div>
+            <button
+                className={`screen-layer ${openMenu ? "open" : "closed"}`}
+                onClick={() => toggleMenu()}>
+                <div
+                    className={`menu-container ${openMenu ? "open" : "closed"}`}>
                     <BackButton className="menu-backbutton"
                         onClick={() => toggleMenu()}>
                     </BackButton>
+                    <button //profile
+                        className="menu-button"
+                        onClick={() => handleOpenProfile()}
+                    >
+                        Profile
+                    </button>
+                    <button //history
+                        className="menu-button"
+                        onClick={() => handleOpenHistory()}
+                    >
+                        History
+                    </button>
+                    <button //logout
+                        className="menu-button"
+                        onClick={() => logout()}
+                    >
+                        Log out
+                    </button>
                 </div>
-                <div //profile
-                    className="menu-button"
-                    onClick={() => openProfile()}
-                >
-                    Profile
-                </div>
-                <div //history
-                    className="menu-button"
-                    onClick={() => openHistory()}
-                >
-                    History
-                </div>
-                <div //logout
-                    className="menu-button"
-                    onClick={() => logout()}
-                >
-                    Log out
-                </div>
-            </div>
+            </button>
+            {Profile(openProfile, toggleProfile, isInGame)}
         </div>
     );
 }

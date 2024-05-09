@@ -1,14 +1,14 @@
 import React from "react";
-import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import {GameGuard} from "../routeProtectors/GameGuard";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { GameGuard } from "../routeProtectors/GameGuard";
 import GameRouter from "./GameRouter";
-import {GameRoomGuard} from "../routeProtectors/GameRoomGuard";
+import { GameRoomGuard } from "../routeProtectors/GameRoomGuard";
 import GameRoomRouter from "./GameRoomRouter";
-import {GameRoomJoinGuard} from "../routeProtectors/GameRoomJoinGuard";
+import { GameRoomJoinGuard } from "../routeProtectors/GameRoomJoinGuard";
 import GameJoin from "../../views/GameJoin";
-import {LoginGuard} from "../routeProtectors/LoginGuard";
+import { LoginGuard } from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
-import {StartGuard} from "../routeProtectors/StartGuard";
+import { StartGuard } from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
 import SandboxView from "../../views/SandboxView"
 
@@ -42,23 +42,16 @@ const AppRouter = () => {
                     <Route path="/" element={<Start/>} />
                 </Route>
 
-                <Route path="/sandboxview" element={<SandboxView />}>
+                <Route path="/sandboxView" element={<SandboxView />}>
                 </Route>
 
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
                 </Route>
-
-                <Route path="/" element={
-                    <Navigate to="/game" replace />
-                }/>
-
             </Routes>
         </BrowserRouter>
     );
 };
 
-/*
-* Don't forget to export your component!
- */
+
 export default AppRouter;

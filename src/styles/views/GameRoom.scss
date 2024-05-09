@@ -9,6 +9,8 @@
         margin: 5px;
         gap: 20px;
         width: 30%;
+        border: none;
+        background-color: transparent;
 
         &.row-flex {
             width: 80%;
@@ -42,6 +44,7 @@
         user-select: none;
         font-size: x-large;
         background-color: white;
+        border: none;
         height: 60px;
         width: 320px;
         font-weight: 600;

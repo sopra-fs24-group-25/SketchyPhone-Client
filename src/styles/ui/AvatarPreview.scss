@@ -50,6 +50,17 @@
         &.avatar6 {
             background-image: url("../../icons/avatars/avatar6.svg");
         }
+        &.avatar0 {
+            background-image: url("../../icons/QuestionMark.svg");
+            background-color: white;
+        }
+    }
+    &:disabled {
+        border-color: $highlights;
+        &:hover {
+            border-color: $highlights;
+            scale: 1;
+        }
     }
     background-position: center;
     background-size: cover;

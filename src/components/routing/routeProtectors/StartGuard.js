@@ -1,6 +1,5 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import PropTypes from "prop-types";
 
 /**
  *
@@ -8,14 +7,10 @@ import PropTypes from "prop-types";
  * instead of 'export default' at the end of the file.
  */
 export const StartGuard = () => {
-    // if (!localStorage.getItem("token")) {
+    if (!sessionStorage.getItem("user")) {
 
-    return <Outlet />;
-    // }
+        return <Outlet />;
+    }
 
-    // return <Navigate to="/GameRoom" replace />;
+    return <Navigate to="/GameRoom" replace />;
 };
-
-StartGuard.propTypes = {
-    children: PropTypes.node
-}

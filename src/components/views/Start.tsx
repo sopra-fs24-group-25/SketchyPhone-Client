@@ -10,14 +10,14 @@ import Header from "./Header";
 
 const GuideField = (props) => {
     return (
-        <div className="start guide"
+        <button className="start guide"
             onClick={() => props.onClick()}
             style={props.index !== 5 ? {cursor: "pointer"} : null}
         >
             <h2>Quick Guide to the Game</h2>
             <h1>{props.index}.</h1>
             <h2 style={{"textAlign": "center"}}>{Guide[`${props.index}`]}</h2>
-        </div>
+        </button>
     );
 };
 
@@ -99,10 +99,10 @@ const Start = () => {
                                 Sign up
                             </Button>
                         </div>
-                        <div className="start sign-in-link"
+                        <button className="start sign-in-link"
                             onClick={() => doLogin()}>
                             Already have an account? Log in
-                        </div>
+                        </button>
                     </div>
                     <div className="start box">
                         <div className="guide-container">

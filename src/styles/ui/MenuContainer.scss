@@ -5,10 +5,9 @@
   padding-left: 10px;
   margin-right: auto;
   padding-right: 10px;
-  min-width: max(calc($DESKTOP_WIDTH/4), 100px);
+  min-width: max(25vw, 100px);
   height: 100vh;
-  background-color: white;
-  opacity: 0.75;
+  background-color: $menu-color;
   position: fixed;
   top: 0;
   left: 0;
@@ -25,6 +24,7 @@
   }
 }
 .screen-layer {
+  border: none;
   width: 100vw;
   height: 100vh;
   background-color: transparent;

@@ -72,6 +72,11 @@
     user-select: none;
     display: flex;
     justify-content: center;
+    border: none;
+    background-color: transparent;
+    color: white;
+    font-size: medium;
+    font-weight: 500;
     margin-top: 20px;
     text-decoration: underline;
     cursor: pointer;

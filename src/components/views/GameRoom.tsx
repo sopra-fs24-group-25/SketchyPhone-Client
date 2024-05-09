@@ -106,6 +106,7 @@ const GameRoom = () => {
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);
+        setThisUser(new User(JSON.parse(sessionStorage.getItem("user"))));
     }
 
     async function fetchGameUpdate() {
@@ -116,7 +117,7 @@ const GameRoom = () => {
             const fetchedGameUpdate = new Game(response.data);
             if (fetchedGameUpdate) {
                 setGame(fetchedGameUpdate);
-                sessionStorage.setItem("gameRoom", JSON.stringify(fetchedGameUpdate)); // Store to sessionstorage
+                sessionStorage.setItem("gameRoom", JSON.stringify(fetchedGameUpdate));
             }
         }
         catch (error) {
@@ -131,6 +132,7 @@ const GameRoom = () => {
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
+            setIsAdmin(users.find(user => user.userId === thisUser.userId)?.role === "admin" || false);
         }
         catch (error) {
             console.log("Error while fetching users: " + error);
@@ -233,8 +235,6 @@ const GameRoom = () => {
             setGame(null);
             setIsGameCreated(false);
             setUsers(null);
-            setThisUser(new User());
-            sessionStorage.setItem("user", JSON.stringify(new User()));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
             sessionStorage.removeItem("isEnabledTTS");
@@ -283,7 +283,7 @@ const GameRoom = () => {
                         </Button>
                     </div>
                     <div className="mascot">
-                        <img src={require("../../icons/ChubbyGuy.png")} draggable="false" />
+                        <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
                 {Menu(openMenu, toggleMenu)}
@@ -293,23 +293,56 @@ const GameRoom = () => {
     // Users overview
     function Overview() {
 
-        function handleCopyClick() {
+        async function handleCopyClick() {
             if (copyPin) {
                 return;
             }
-            navigator.clipboard.writeText(game["gamePin"])
-                .then(() => {
-                    console.log(`Saved pin ${game["gamePin"]} to clipboard`);
-                    setCopyPin(true);
-                    setTimeout(() => {
-                        setCopyPin(false);
-                    }, 1500);
-                })
-                .catch(error => {
-                    alert(
-                        `Failed to copy: \n${handleError(error)}`
-                    );
-                });
+            try {
+                navigator.clipboard.writeText(game["gamePin"]);
+                console.log(`Saved pin ${game["gamePin"]} to clipboard`);
+                setCopyPin(true);
+                await new Promise((resolve) => setTimeout(resolve, 1500));
+                setCopyPin(false);
+            } catch (error) {
+                alert(
+                    `Failed to copy: \n${handleError(error)}`
+                )
+            }
+        }
+
+        function showUserControls() {
+            if (users.length >= 3) {
+
+                return showGameStartControl();
+            }
+
+            return (
+                <div className="gameroom waiting non-admin">{3 - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
+            )
+        }
+
+        function showGameStartControl() {
+            if (isAdmin) {
+
+                return (
+                    <Button
+                        width="50%"
+                        onClick={() => onClickGameStart()}
+                    >Start Game</Button>
+                )
+            }
+
+            return (
+                <div className="gameroom waiting non-admin">Tell the admin to start the game</div>
+            )
+        }
+
+        function handleSettingsButton() {
+            const settings = new GameSettings(JSON.parse(sessionStorage.getItem("gameSettings")));
+            setNumCycles(settings.numCycles);
+            setGameSpeed(settings.gameSpeed);
+            setIsEnabledTTS(settings.enableTextToSpeech);
+            setIsSettingsActive(true)
         }
 
         return (
@@ -322,34 +355,22 @@ const GameRoom = () => {
                 </div>
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
-                        <div className={`gameroom pin ${copyPin ? "copied" : ""}`}
+                        <button className={`gameroom pin ${copyPin ? "copied" : ""}`}
                             onClick={() => handleCopyClick()}
                             disabled={copyPin}>
                             <p>{copyPin ? "Copied Game PIN!" : `Game PIN: ${String(game["gamePin"]).slice(0, 3)} ${String(game["gamePin"]).slice(3)}`}</p>
-                        </div>
+                        </button>
                         <div className="gameroom waiting">
                             <p>Waiting for players...</p>
                         </div>
                     </div>
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
-                            userList={users ? users : []}
+                            userList={users || []}
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
-                            {users ?
-                                (users.length >= 3 ?
-                                    (isAdmin ?
-                                        <Button
-                                            width="50%"
-                                            onClick={() => onClickGameStart()}
-                                        >Start Game</Button>
-                                        : <div className="gameroom waiting non-admin">Tell the admin to start the game</div>
-                                    )
-                                    : <div className="gameroom waiting non-admin">{3 - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
-                                )
-                                : ""
-                            }
+                            {users ? showUserControls() : null}
                             <Button
                                 width="50%"
                                 onClick={() => exitRoom()}
@@ -357,7 +378,7 @@ const GameRoom = () => {
                             {isAdmin ?
                                 <Button
                                     width="50%"
-                                    onClick={() => setIsSettingsActive(true)}
+                                    onClick={() => handleSettingsButton()}
                                 >Settings</Button>
                                 : null}
                         </div>
@@ -380,9 +401,7 @@ const GameRoom = () => {
             setIsSettingsActive(false);
         } catch (error) {
             console.error(
-                `Something went wrong while sending game settings: \n${handleError(
-                    error
-                )}`
+                `Something went wrong while sending game settings: \n${handleError(error)}`
             );
             console.error("Details:", error);
             alert(
@@ -420,7 +439,6 @@ const GameRoom = () => {
                 </div>
                 <div className="settings container">
                     <div className="settings title">Settings</div>
-                    {/* TODO: fetch stored values from sessionstorage*/}
                     <div className="settings options-container">
                         <div className="settings option">
                             <label htmlFor="numCycles">Number of cycles:</label>
@@ -453,7 +471,7 @@ const GameRoom = () => {
                         </div>
                         <div className="settings option">
                             <label htmlFor="text-to-speech">Enable text-to-speech:</label>
-                            <label className="switch" >
+                            <label className="switch">
                                 <input
                                     type="checkbox"
                                     checked={isEnabledTTS}

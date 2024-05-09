@@ -1,0 +1,100 @@
+@import "../theme";
+
+.profile {
+  user-select: none;
+  color: black;
+  transition: all 0.3s ease;
+
+  &.container {
+    margin-left: auto;
+    padding-left: 10px;
+    margin-right: auto;
+    padding-right: 10px;
+    padding-bottom: 20px;
+    min-width: 45vw;
+    height: fit-content;
+    background-color: $menu-color;
+    position: fixed;
+    border-top-right-radius: 2em;
+    border-bottom-right-radius: 2em;
+    top: 20vh;
+    bottom: 20vh;
+    left: 0;
+    box-shadow: $dropShadow;
+  }
+  &.screen-layer {
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s cubic-bezier(0.52, 0.52, 0, 1);
+    z-index: 1000;
+    &.closed {
+      transform: translate3d(-100vw, 0, 0);
+    }
+    &.open {
+      transform: translate3d(0vw, 0, 0);
+    }
+  }
+  &.field {
+    user-select: none;
+    @include center;
+    flex-direction: column;
+    padding: 10px;
+    gap: 20px;
+  }
+  &.input {
+    user-select: none;
+    height: 50px;
+    max-width: 55vw;
+    min-width: 150px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: -4px;
+    border: solid;
+    border-color: $accentDark;
+    border-radius: 2em;
+    margin-bottom: 10px;
+    font-size: x-large;
+    cursor: pointer;
+    font-weight: 600;
+    &.invalid {
+      animation: shake2 0.4s ease-in-out 0s 1;
+      color: $error-color;
+      background-color: $error-field-color;
+    }
+  }
+  &.sign-in-link {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    color: black;
+    font-size: large;
+    font-weight: 600;
+    margin-top: 20px;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: $dropShadow;
+    &:hover {
+      scale: 1.1;
+    }
+  }
+  &.title {
+    user-select: none;
+    @include center;
+    margin-bottom: 10px;
+    font-weight: 900;
+    font-size: 3em;
+  }
+  &.subtitle {
+    color: black;
+    @include center;
+    font-size: larger;
+    font-weight: 600;
+  }
+}
