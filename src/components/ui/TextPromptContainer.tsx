@@ -10,6 +10,8 @@ import TextPrompt from "models/TextPrompt";
 import User from "../../models/User"
 import GameSession from "../../models/GameSession"
 import GameLoopStatus from "../../helpers/gameLoopStatus"
+import AudioContextEnum from "../../helpers/audioContextEnum";
+import AudioPlayer from "../../helpers/AudioPlayer";
 
 export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, timerDuration, setNextTask }) => {
 
@@ -26,6 +28,10 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     const remainingTime = endTime - startTime;
 
     //fetch drawing, if first time, draw PhoneLogo
+
+    // For audio effect
+    const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
+
 
     async function sendTextPrompt() {
         if (submitted) {
@@ -119,7 +125,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
                     onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
 
                     // Here submit if timer ran out
-                    onUpdate={(remainingTime) => (remainingTime === 0 && onSubmit())}
+                    onUpdate={(remainingTime) => { (remainingTime === 0 && onSubmit(), (remainingTime === 10 && timerSound.handlePlay())) }}
                 >
                 </CountdownCircleTimer>
                 <div className="prompt sub-container">

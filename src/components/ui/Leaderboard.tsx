@@ -63,6 +63,14 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts }) => {
     }
 
     function showTopThree() {
+        if (topThreeDrawings === null && topThreeTextPrompts === null) {
+            return (<div>
+                <p className="leaderboard textprompt">Nothing has been voted on!</p>
+
+                {/* TODO add buttons for new round etc. */}
+            </div>)
+        }
+
         if (leaderboardType === LeaderboardType.TEXTPROMPT) {
             return (
                 <div className="leaderboard" >

@@ -14,7 +14,7 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults }) => {
 
     const navigate = useNavigate();
 
@@ -63,9 +63,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 
         // get last element and speak if textprompt
         const lastElement = presentationContents[presentationContents.length - 1];
-        if (lastElement instanceof TextPrompt) {
-            TextToSpeech(lastElement.content);
-        }
 
     }, [presentationContents, newVote]);
 
@@ -78,26 +75,42 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             revealAudio.handlePlay();
         }
 
+        if (lastElement instanceof TextPrompt) {
+            TextToSpeech(lastElement.content);
+        }
+
     }, [presentationContents])
 
     // useeffect for upvote sound
     useEffect(() => {
         upvoteAudio.handlePlay();
-    },[newVote])
+    }, [newVote])
 
     function doVoteTextPrompt(textPrompt, creator) {
         console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
-
+        
+        if (textPrompt.hasVoted) {
+            alert("You already voted!")
+            return;
+        }
         //for testing, should be a server request to increase/decrease vote count in future
         textPrompt.votes += 1;
+        textPrompt.hasVoted = true;
         setNewVote(newVote + 1);
     }
 
     function doVoteDrawing(drawing, creator) {
         console.log(`Voted for drawing ${drawing.drawingId} from ${creator.nickname}`);
 
+        // Another approach would be to decrement when clicking again?
+        if (drawing.hasVoted) {
+            alert("You already voted!")
+            return;
+        }
+
         //for testing, should be a server request to increase/decrease vote count in future
         drawing.votes += 1;
+        drawing.hasVoted = true;
         setNewVote(newVote + 1);
     }
 
@@ -174,22 +187,29 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 </Button> */}
                 <div className="presentation buttonsContainer">
                     {isAdmin && <Button
-                        onClick={() => {onClickIncrement(); clickAudio.handlePlay()}}
+                        onClick={() => { onClickIncrement(); clickAudio.handlePlay() }}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
                         Show next prompt
                     </Button>}
                     {isAdmin && <Button
-                        onClick={() => {onClickNextRound(); clickAudio.handlePlay()}}
+                        onClick={() => { onClickNextRound(); clickAudio.handlePlay() }}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
                         Start new round
                     </Button>}
+                    {isAdmin && <Button
+                        onClick={() => { onClickResults(); clickAudio.handlePlay() }}
+                        width="20%"
+                        className="presentation buttonsContainer presentationButton"
+                    >
+                        Show results
+                    </Button>}
                     <Button className="presentation buttonsContainer presentationButton"
                         width="20%"
-                        onClick={() => {exitGame(); clickAudio.handlePlay()}}
+                        onClick={() => { exitGame(); clickAudio.handlePlay() }}
                     >
                         End game
                     </Button>
@@ -205,7 +225,8 @@ PresentationContainer.propTypes = {
     presentationContents: PropTypes.array,
     isAdmin: PropTypes.bool,
     onClickIncrement: PropTypes.func,
-    onClickNextRound: PropTypes.func
+    onClickNextRound: PropTypes.func,
+    onClickResults: PropTypes.func
 }
 
 export default PresentationContainer;

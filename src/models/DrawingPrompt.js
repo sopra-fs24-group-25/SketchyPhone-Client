@@ -14,6 +14,9 @@ class DrawingPrompt {
         this.assignedTo = null;
         this.round = null;
         this.votes = null;
+
+        // This field is for internal use only
+        this.hasVoted = false;
         Object.assign(this, data);
     }
 }
