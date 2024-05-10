@@ -8,6 +8,7 @@ import DrawingPrompt from "models/DrawingPrompt"
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
+import DrawContainer from "components/ui/DrawContainer";
 
 const minuteSeconds = 60;
 const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
@@ -332,7 +333,7 @@ const SandboxView = () => {
                 onClickIncrement={() => console.log("clicked increment")}
                 onClickNextRound={() => console.log("clicked next round")}
             ></PresentationContainer> */}
-            {/*<DrawContainer
+            <DrawContainer
                 height={400}
                 width={600}
                 user= {null}
@@ -341,7 +342,7 @@ const SandboxView = () => {
                 timerDuration= {100}
                 setNextTask={() => console.log("nexttask")}
                 setInitial={() => console.log("setInitial")}>
-            </DrawContainer>*/}
+            </DrawContainer>
         </div>
     )
 }

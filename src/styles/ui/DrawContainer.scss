@@ -7,6 +7,8 @@
     &.drawCanvas {
         background-color: white;
         border-radius: 20px;
+        //cursor: url("../../icons/PaintBrush.svg"), auto;
+        cursor: crosshair;
         box-shadow: $dropShadow;
     }
 
@@ -27,7 +29,7 @@
         flex-direction: column;
         padding: 20px;
         margin: 0 20px 0 0px;
-        background-color: rgba(255, 255, 255, 0.281);
+        background-color: $display-box-color;
         border-radius: 20px;
         gap: 5px;
         align-items: center;
@@ -43,20 +45,57 @@
     }
 
     input[type="color"] {
+        border: none;
         border-style: none;
+        cursor: pointer;
         background-color: transparent;
+        transition: all 0.3s ease;
         &:hover {
             scale: 1.1;
         }
     }
-
-    button {
-        border-style: none;
-        border-radius: 10px;
-        border-width: 2px;
+    input[type="range"] {
+        accent-color: $accentDark;
+        cursor: grab;
         width: 100%;
+    }
+
+    &.label {
+        font-size: large;
+        font-weight: 600;
+        text-shadow: $dropShadow;
+    }
+
+    &.separator {
+        border: none;
+        border-radius: 2em;
+        background: white;
+        color: white;
+        border-color: white;
+        height: 3px;
+        width: 100%;
+            
+    }
+
+    &.button {
+        border-style: none;
+        border-color: $accent;
+        @include center;
+        border-radius: 2em;
+        padding: 15px;
+        margin: 1px;
+        font-weight: 600;
+        height: 30px;
+        width: 100%;
+        cursor: pointer;
+        background-color: $accent;
+        box-shadow: $dropShadow;
+        transition: all 0.3s ease;
+        &.selected {
+            background-color: white;
+        }
         &:hover {
-            background-color: $accent;
+            scale: 1.1;
         }
         &:active {
             background-color: $accentDark;

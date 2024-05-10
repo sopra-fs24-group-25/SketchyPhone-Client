@@ -10,7 +10,13 @@
     &:hover {
       scale: none;
     }
+    &:active {
+      background-color: $button-color;
+    }
   }
+  &:active {
+    background-color: $accentDark;
+}
   padding: 6px;
   user-select: none;
   font-weight: 700;

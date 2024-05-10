@@ -1,4 +1,4 @@
-import { React, useEffect, useRef, useState } from "react";
+import { React, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
@@ -48,11 +48,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     let allowDraw = true;
 
-    let drawRect = false;
-
     let currentShape = Shapes.LINE; // Always start with line
-
-    let initialized = false;
 
     let submitted = false;
 
@@ -68,11 +64,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             initX = curX;
             initY = curY;
         }
-
     }
 
     const onMouseUp = () => {
-        // console.log("mouse up");
         pressed = false;
         newAction = false;
     }
@@ -83,7 +77,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                 curX = e.pageX - canvas.current.offsetLeft;
                 curY = e.pageY - canvas.current.offsetTop;
             } catch {
-                //console.log("not yet ready")
+
             }
         }
     }
@@ -117,10 +111,10 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         buttons.forEach((element) => {
             if (element.id === currentShape) {
                 console.log(element.id)
-                element.style.borderStyle = "solid"
+                element.className = "drawContainer button selected"
             }
             else {
-                element.style.borderStyle = "none"
+                element.className = "drawContainer button"
             }
         })
 
@@ -215,8 +209,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     const remainingTime = endTime - startTime;
 
-    const getTimeSeconds = (time) => (minuteSeconds - time) | 0;
-
 
     function initialize() {
         canvas.current = document.getElementById("canvas");
@@ -224,9 +216,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         if (canvas.current !== null) {
             ctx.current = (canvas.current as HTMLCanvasElement).getContext("2d");
         }
-
-        initialized = (canvas.current !== null && ctx.current !== null);
-
     }
 
     useEffect(() => {
@@ -282,6 +271,96 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         }
     }
 
+    function drawRectangle() {
+        if (newAction) {
+            // We push an empty array
+            rectangleDrawActions.push([]);
+            newAction = false;
+        }
+
+        let newPath = new Path2D();
+
+        newPath.rect(initX, initY, curX - initX, curY - initY);
+
+        let rectangleDrawAction;
+
+        if (currentShape === Shapes.RECTANGLE_EMPTY) {
+            rectangleDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.RECTANGLE_EMPTY, Date.now()]
+        }
+        else if (currentShape === Shapes.RECTANGLE_SOLID) {
+            rectangleDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.RECTANGLE_SOLID, Date.now()]
+        }
+
+        // Push it to last array
+        if (rectangleDrawActions[rectangleDrawActions.length - 1].length === 0) {
+            rectangleDrawActions[rectangleDrawActions.length - 1].push(rectangleDrawAction);
+        }
+        else {
+            rectangleDrawActions[rectangleDrawActions.length - 1][0] = rectangleDrawAction;
+        }
+    }
+
+    function drawLine() {
+        if (newAction) {
+            // We push an empty array
+            lineDrawActions.push([]);
+            newAction = false;
+        }
+
+        let newPath = new Path2D();
+
+        newPath.arc(curX, curY, sizePicker.value, degToRad(0), degToRad(360), false);
+
+        let lineDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.LINE, Date.now()]
+
+        lineDrawActions[lineDrawActions.length - 1].push(lineDrawAction);
+    }
+
+    function utilizeEraser() {
+        if (newAction) {
+            // We push an empty array
+            eraserDrawActions.push([]);
+            newAction = false;
+        }
+
+        let newPath = new Path2D();
+
+        newPath.arc(curX, curY, sizePicker.value, degToRad(0), degToRad(360), false);
+
+        // use transparent fill
+        let eraserDrawAction = [newPath, "rgba(0,0,0,1)", ctx.current.lineWidth, Shapes.ERASER, Date.now()]
+
+        eraserDrawActions[eraserDrawActions.length - 1].push(eraserDrawAction);
+    }
+
+    function drawEllipse() {
+        if (newAction) {
+            // We push an empty array
+            ellipseDrawActions.push([]);
+            newAction = false;
+        }
+        let newPath = new Path2D();
+
+
+        newPath.ellipse((initX + curX) / 2, (initY + curY) / 2, Math.abs((curX - initX) / 2), Math.abs((curY - initY) / 2), 0, 0, Math.PI * 2);
+        let ellipseDrawAction;
+
+        if (currentShape === Shapes.ELLIPSE_EMPTY) {
+            ellipseDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.ELLIPSE_EMPTY, Date.now()]
+        }
+        else if (currentShape === Shapes.ELLIPSE_SOLID) {
+            ellipseDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.ELLIPSE_SOLID, Date.now()]
+        }
+
+        // Push it to last array
+        if (ellipseDrawActions[ellipseDrawActions.length - 1].length === 0) {
+            ellipseDrawActions[ellipseDrawActions.length - 1].push(ellipseDrawAction);
+        }
+        else {
+            ellipseDrawActions[ellipseDrawActions.length - 1][0] = ellipseDrawAction;
+        }
+    }
+
     // Draw function where actual drawing is performed with context
     function draw() {
         if (pressed && allowDraw) {
@@ -289,96 +368,20 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             ctx.current.fillStyle = colorPicker.value;
             ctx.current.strokeStyle = colorPicker.value;
             ctx.current.lineWidth = sizePicker.value;
+            
 
             if (currentShape.includes("RECTANGLE")) {
-                if (newAction) {
-                    // We push an empty array
-                    rectangleDrawActions.push([]);
-                    newAction = false;
-                }
-
-                let newPath = new Path2D();
-
-                newPath.rect(initX, initY, curX - initX, curY - initY);
-
-                let rectangleDrawAction;
-
-                if (currentShape === Shapes.RECTANGLE_EMPTY) {
-                    rectangleDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.RECTANGLE_EMPTY, Date.now()]
-                }
-                else if (currentShape === Shapes.RECTANGLE_SOLID) {
-                    rectangleDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.RECTANGLE_SOLID, Date.now()]
-                }
-
-                // Push it to last array
-                if (rectangleDrawActions[rectangleDrawActions.length - 1].length === 0) {
-                    rectangleDrawActions[rectangleDrawActions.length - 1].push(rectangleDrawAction);
-                }
-                else {
-                    rectangleDrawActions[rectangleDrawActions.length - 1][0] = rectangleDrawAction;
-                }
-
+                drawRectangle();
             }
             else if (currentShape === Shapes.LINE) {
-                if (newAction) {
-                    // We push an empty array
-                    lineDrawActions.push([]);
-                    newAction = false;
-                }
-
-                let newPath = new Path2D();
-
-                newPath.arc(curX, curY, sizePicker.value, degToRad(0), degToRad(360), false);
-
-                let lineDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.LINE, Date.now()]
-
-                lineDrawActions[lineDrawActions.length - 1].push(lineDrawAction);
+                drawLine();
             }
             else if (currentShape === Shapes.ERASER) {
-                if (newAction) {
-                    // We push an empty array
-                    eraserDrawActions.push([]);
-                    newAction = false;
-                }
-
-                let newPath = new Path2D();
-
-                newPath.arc(curX, curY, sizePicker.value, degToRad(0), degToRad(360), false);
-
-                // use transparent fill
-                let eraserDrawAction = [newPath, "rgba(0,0,0,1)", ctx.current.lineWidth, Shapes.ERASER, Date.now()]
-
-                eraserDrawActions[eraserDrawActions.length - 1].push(eraserDrawAction);
+                utilizeEraser();
             }
             else if (currentShape.includes("ELLIPSE")) {
-                if (newAction) {
-                    // We push an empty array
-                    ellipseDrawActions.push([]);
-                    newAction = false;
-                }
-                let newPath = new Path2D();
-
-
-                newPath.ellipse((initX + curX) / 2, (initY + curY) / 2, Math.abs((curX - initX) / 2), Math.abs((curY - initY) / 2), 0, 0, Math.PI * 2);
-                let ellipseDrawAction;
-
-                if (currentShape === Shapes.ELLIPSE_EMPTY) {
-                    ellipseDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.ELLIPSE_EMPTY, Date.now()]
-                }
-                else if (currentShape === Shapes.ELLIPSE_SOLID) {
-                    ellipseDrawAction = [newPath, ctx.current.fillStyle, ctx.current.lineWidth, Shapes.ELLIPSE_SOLID, Date.now()]
-                }
-
-                // Push it to last array
-                if (ellipseDrawActions[ellipseDrawActions.length - 1].length === 0) {
-                    ellipseDrawActions[ellipseDrawActions.length - 1].push(ellipseDrawAction);
-                }
-                else {
-                    ellipseDrawActions[ellipseDrawActions.length - 1][0] = ellipseDrawAction;
-                }
+                drawEllipse();
             }
-
-
         }
 
         let allActionsArraySorted: [number, () => void][] = []; // first index is the timestamp of the action, second the actual call
@@ -469,66 +472,63 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     return (
         <div>
-            <div className="drawContainer" >
+            <div className="drawContainer">
                 <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</h>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
-                        <label htmlFor="color">Color
+                        <label
+                            className="drawContainer label"
+                            htmlFor="color">Color
                         </label>
                         <input type="color" defaultValue={defaultColor}></input>
-                        <label htmlFor="brushSize">Brush Size</label>
+                        <label
+                            className="drawContainer label"
+                            htmlFor="brushSize">Brush Size
+                        </label>
                         <input type="range" min="1" max="50" defaultValue="10" id="brushSize"></input>
-                        <hr
-                            style={{
-                                background: "white",
-                                color: "white",
-                                borderColor: "white",
-                                height: "2px",
-                                width: "100%"
-                            }}
-                        />
+                        <hr className="drawContainer separator"/>
                         <button
+                            className="drawContainer button selected"
                             id={Shapes.LINE}
                             onClick={() => onClickShapes(Shapes.LINE)}>
                             Line
                         </button>
                         <button
+                            className="drawContainer button"
                             id={Shapes.RECTANGLE_SOLID}
                             onClick={() => onClickShapes(Shapes.RECTANGLE_SOLID)}>
                             Rectangle Solid
                         </button>
                         <button
+                            className="drawContainer button"
                             id={Shapes.RECTANGLE_EMPTY}
                             onClick={() => onClickShapes(Shapes.RECTANGLE_EMPTY)}>
                             Rectangle Empty
                         </button>
-
                         <button
+                            className="drawContainer button"
                             id={Shapes.ELLIPSE_SOLID}
                             onClick={() => onClickShapes(Shapes.ELLIPSE_SOLID)}>
                             Ellipse Solid
                         </button>
                         <button
+                            className="drawContainer button"
                             id={Shapes.ELLIPSE_EMPTY}
                             onClick={() => onClickShapes(Shapes.ELLIPSE_EMPTY)}>
                             Ellipse Empty
                         </button>
-
-                        <hr
-                            style={{
-                                background: "white",
-                                color: "white",
-                                borderColor: "white",
-                                height: "2px",
-                                width: "100%"
-                            }}
-                        />
+                        <hr className="drawContainer separator"/>
                         <button
+                            className="drawContainer button"
                             id={Shapes.ERASER}
                             onClick={() => onClickShapes(Shapes.ERASER)}>
                             Eraser
                         </button>
-                        <button onClick={() => onButtonClear()}>Clear Canvas</button>
+                        <button 
+                            className="drawContainer button"
+                            onClick={() => onButtonClear()}>
+                            Clear Canvas
+                        </button>
 
                     </div>
                     <div className="drawContainer subcontainer">
@@ -545,7 +545,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             colors="#000000"
                             duration={timerDuration}
                             initialRemainingTime={remainingTime & minuteSeconds}
-                            onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
+                            onComplete={() => ({ shouldRepeat: false })}
 
                             // Here submit if timer ran out
                             onUpdate={(remainingTime) => (remainingTime === 0 && onTimerEnd())}

@@ -1,5 +1,4 @@
 import AudioContextEnum from "./audioContextEnum";
-import React from "react";
 
 export default class AudioPlayer{
     constructor(AudioContextInput) {
