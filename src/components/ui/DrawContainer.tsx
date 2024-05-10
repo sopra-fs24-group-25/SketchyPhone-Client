@@ -58,7 +58,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
 
 
-
     const onMouseDown = (e) => {
         // Check if in range
         if (curX > 0 && curX < width && curY > 0 && curY < height) {

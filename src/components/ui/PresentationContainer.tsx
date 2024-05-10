@@ -11,7 +11,6 @@ import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
-import GameSpeedEnum from "../../helpers/gameSpeedEnum"
 
 
 const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults }) => {
@@ -91,6 +90,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         
         if (textPrompt.hasVoted) {
             alert("You already voted!")
+
             return;
         }
         //for testing, should be a server request to increase/decrease vote count in future
@@ -105,6 +105,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         // Another approach would be to decrement when clicking again?
         if (drawing.hasVoted) {
             alert("You already voted!")
+            
             return;
         }
 

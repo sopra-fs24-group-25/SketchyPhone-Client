@@ -328,11 +328,11 @@ const SandboxView = () => {
     //        topThreeTextPrompts={[testTextPrompt1, testTextPrompt2, testTextPrompt3]}
     //        topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}
     //    >
-//
+    //
     //    </Leaderboard>)
 
     return (
-         <div>
+        <div>
             <Leaderboard
                 topThreeTextPrompts={[testTextPrompt1, testTextPrompt2, testTextPrompt3]}
                 topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}

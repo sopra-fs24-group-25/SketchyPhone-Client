@@ -1,13 +1,8 @@
-import { React, useEffect, useState } from 'react'
+import { React, useState } from "react";
 import PropTypes from "prop-types";
 import UserPreview from "./UserPreview";
-import BaseContainer from "components/ui/BaseContainer";
-import AudioPlayer from "../../helpers/AudioPlayer";
-import AudioContextEnum from "../../helpers/audioContextEnum";
-import TextPrompt from "models/TextPrompt";
-import DrawingPrompt from "models/DrawingPrompt";
 import "../../styles/ui/Leaderboard.scss";
-import { Button } from './Button';
+import { Button } from "./Button";
 
 const LeaderboardType = {
     TEXTPROMPT: "TEXTPROMPT",
