@@ -17,6 +17,7 @@ import GameLoopStatus from "../../helpers/gameLoopStatus"
 import PresentationContainer from "components/ui/PresentationContainer";
 import { Spinner } from "components/ui/Spinner";
 import { useNavigate } from "react-router-dom";
+import Leaderboard from "components/ui/Leaderboard";
 
 const Game = () => {
 
@@ -50,6 +51,10 @@ const Game = () => {
     const [presentationElements, setPresentationElements] = useState(null);
     const startIndex = useRef(0);
 
+    // To store top three text/drawings
+    const [topThreeDrawings, setTopThreeDrawings] = useState<[DrawingPrompt]>(null);
+    const [topThreeTextPrompts, setTopThreeTextPrompts] = useState<[TextPrompt]>(null);
+
 
     useEffect(() => {
         // Change in gameLoopStatus detected
@@ -73,6 +78,10 @@ const Game = () => {
                 fetchPresentationElements(user.current, gameSession.current);
                 fetchPresentationIndex(user.current, gameSession.current);
             }
+            else if (user.current.role === "player" && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
+                fetchTopThreeDrawings(user.current, gameSession.current);
+                fetchTopThreeTextPrompts(user.current, gameSession.current);
+            }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
                 fetchDrawing();
             }
@@ -82,7 +91,7 @@ const Game = () => {
         }
 
         // We also check if the room has changed to "OPEN"
-        if(gameObject.status === "OPEN"){
+        if (gameObject.status === "OPEN") {
             // We move to gameroom
             navigate("/gameRoom", { state: { isGameCreator: false, isGameCreated: true, gameRoom: gameObject } })
         }
@@ -269,6 +278,49 @@ const Game = () => {
         )
     }
 
+    const fetchTopThreeDrawings = async (user: User, game: GameSession) => {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${game.gameSessionId}/top/drawing`;
+
+            const response = await api.get(url, { headers: requestHeader });
+
+            if (response.data) {
+                const fetchedTopDrawings = new Array<DrawingPrompt>(response.data);
+                console.log(fetchedTopDrawings);
+
+                if (fetchedTopDrawings.length !== 0)
+                    setTopThreeDrawings(fetchedTopDrawings);
+            }
+
+
+        }
+        catch (error) {
+            console.log("There was an issue while fetching the top three drawings: " + error);
+        }
+    }
+
+    const fetchTopThreeTextPrompts = async (user: User, game: GameSession) => {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${game.gameSessionId}/top/text`;
+
+            const response = await api.get(url, { headers: requestHeader });
+
+            if (response.data) {
+                const fetchedTopTextPrompts = new Array<TextPrompt>(response.data);
+                console.log(fetchedTopTextPrompts);
+
+                if (fetchedTopTextPrompts.length !== 0)
+                    setTopThreeTextPrompts(fetchedTopTextPrompts);
+            }
+
+        }
+        catch (error) {
+            console.log("There was an issue while fetching the top three drawings: " + error);
+        }
+    }
+
     const TextPromptView = React.memo(() => {
         const timerDuration = Number(gameSettings.current.gameSpeed);
 
@@ -297,7 +349,7 @@ const Game = () => {
 
     const DrawView = React.memo(() => {
         const timerDuration = Number(gameSettings.current.gameSpeed);
-        
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -343,7 +395,7 @@ const Game = () => {
         let lastElementToShow = presentationElements[presentationIndex]
 
         // If element has no predecessor we show a new subsequence
-        if (lastElementToShow instanceof TextPrompt &&  lastElementToShow?.previousDrawingId === 777) {
+        if (lastElementToShow instanceof TextPrompt && lastElementToShow?.previousDrawingId === 777) {
             startIndex.current = endIndex;
         }
 
@@ -363,6 +415,7 @@ const Game = () => {
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
+                    onClickResults={() => {fetchTopThreeDrawings(user.current, gameSession.current), fetchTopThreeTextPrompts(user.current, gameSession.current)}}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>)
@@ -370,11 +423,29 @@ const Game = () => {
 
     PresentationView.displayName = "PresentationView";
 
+    const LeaderboardView = React.memo(() => {
+        return (
+            <BaseContainer>
+                <Leaderboard
+                    topThreeDrawings={topThreeDrawings}
+                    topThreeTextPrompts={topThreeTextPrompts}
+                >
+                </Leaderboard>
+                {Menu(openMenu, toggleMenu)}
+            </BaseContainer>
+        )
+    })
+
+    LeaderboardView.displayName = "LeaderboardView";
+
     const renderComponent = useMemo(() => {
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
             console.log("PRESENTING")
 
             return <PresentationView />;
+        }
+        if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
+            return <LeaderboardView />;
         }
         if (!isReadyForTask.current) {
             return <WaitingView />;
@@ -387,7 +458,7 @@ const Game = () => {
         }
 
         return null;
-    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu]);
+    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts]);
 
     return renderComponent;
 };

@@ -5,6 +5,8 @@ import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { api, handleError } from "helpers/api";
 import GameLoopStatus from "../../helpers/gameLoopStatus"
+import AudioContextEnum from "../../helpers/audioContextEnum";
+import AudioPlayer from "../../helpers/AudioPlayer";
 // Default draw container
 
 // For more see:
@@ -51,6 +53,10 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     let currentShape = Shapes.LINE; // Always start with line
 
     let submitted = false;
+
+    // For audio
+    const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
+
 
 
     const onMouseDown = (e) => {
@@ -548,7 +554,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             onComplete={() => ({ shouldRepeat: false })}
 
                             // Here submit if timer ran out
-                            onUpdate={(remainingTime) => (remainingTime === 0 && onTimerEnd())}
+                            onUpdate={(remainingTime) => { (remainingTime === 0 && onTimerEnd()), (remainingTime === 10 && timerSound.handlePlay()) }}
                         >
                         </CountdownCircleTimer>
                     </div>
