@@ -13,12 +13,12 @@ const PresentationDrawing = (props) => {
                 alt={`Drawing from ${props.drawingPrompt.creator.nickname}`}
                 src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
             ></img>
-            <div
+            <button
                 className={`presentation voting ${props.drawingPrompt.votes > 0 ? "selected" : ""}`}
                 onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
             >
                 {`Upvote ${props.drawingPrompt.votes ? props.drawingPrompt.votes : ""}`}
-            </div>
+            </button>
         </div>
     )
 }

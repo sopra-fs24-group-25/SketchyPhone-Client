@@ -7,9 +7,11 @@
     &.drawCanvas {
         background-color: white;
         border-radius: 20px;
-        //cursor: url("../../icons/PaintBrush.svg"), auto;
         cursor: crosshair;
         box-shadow: $dropShadow;
+        &.brush {
+            cursor: url("../../icons/PaintBrush.svg"), auto;
+        }
     }
 
     &.container {

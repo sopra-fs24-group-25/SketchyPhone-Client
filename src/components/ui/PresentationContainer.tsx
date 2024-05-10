@@ -60,12 +60,9 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         // Adjust the scroll position to maintain the bottom alignment
         containerRef.current.scrollTop += scrollDifference;
 
-        // get last element and speak if textprompt
-        const lastElement = presentationContents[presentationContents.length - 1];
-
     }, [presentationContents, newVote]);
 
-    // Useeffect for soundeffect trigger
+    // UseEffect for sound effect trigger
     useEffect(() => {
         const lastElement = presentationContents[presentationContents.length - 1];
 
@@ -80,7 +77,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 
     }, [presentationContents])
 
-    // useeffect for upvote sound
+    // useEffect for upvote sound
     useEffect(() => {
         upvoteAudio.handlePlay();
     }, [newVote])

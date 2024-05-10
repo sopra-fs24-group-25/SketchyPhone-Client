@@ -415,7 +415,7 @@ const Game = () => {
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
-                    onClickResults={() => {fetchTopThreeDrawings(user.current, gameSession.current), fetchTopThreeTextPrompts(user.current, gameSession.current)}}
+                    onClickResults={() => {fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current)}}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>)

@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { api, handleError } from "helpers/api";
-import { PhoneLogo } from "../ui/PhoneLogo";
 import "../../styles/ui/BaseContainer.scss";
 import "../../styles/ui/TextPromptContainer.scss";
 import { Button } from "./Button";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import PropTypes from "prop-types";
 import TextPrompt from "models/TextPrompt";
-import User from "../../models/User"
-import GameSession from "../../models/GameSession"
 import GameLoopStatus from "../../helpers/gameLoopStatus"
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
@@ -111,9 +108,9 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
                 <div className="prompt field">
                     {isInitialPrompt ? drawing : (drawing !== null && <img
                         src={`data:image/png; base64, ${drawing.encodedImage.replaceAll("\"", "")}`}
-                        style={{ userSelect: "none", "-webkit-user-drag": "none" }}
-                    ></img>)}
-
+                        alt="Drawing to guess"
+                        style={{ userSelect: "none", "-webkit-user-drag": "none" }}>
+                    </img>)}
                 </div>
             </div>
             <div className="prompt timer">
@@ -122,10 +119,10 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
                     colors="#000000"
                     duration={timerDuration}
                     initialRemainingTime={remainingTime & minuteSeconds}
-                    onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
+                    onComplete={() => ({ shouldRepeat: false })}
 
                     // Here submit if timer ran out
-                    onUpdate={(remainingTime) => { (remainingTime === 0 && onSubmit(), (remainingTime === 10 && timerSound.handlePlay())) }}
+                    onUpdate={(remainingTime) => { (remainingTime === 0 && onSubmit()); (remainingTime === 10 && timerSound.handlePlay()) }}
                 >
                 </CountdownCircleTimer>
                 <div className="prompt sub-container">

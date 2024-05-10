@@ -158,24 +158,39 @@ Noé Matumona
 - refactoring, visual changes, and cleanup
 
 Noah Isaak
-- Created AudioPlayer class used for various dev tasks #17 #58 #3
-- Minor refactorings
 
-Xindi Liu 
+- Created AudioPlayer class used for various dev tasks #17 #58 #3
+- Minor refactoring
+
+Xindi Liu
+
 - Implemented History feature #6
 - Implemented logic to handle persistent user #11
 
 ## 06.05 - 12.05
 
 Victor Cruz da Silva
+
 - Added get mappings and functionality to get top three text prompts and drawings. #133, #134, #135
-- Fixed minor bug in getTextPrompt funcitonality.
+- Fixed minor bug in getTextPrompt functionality.
 - Added tests to cover new functionality.
 
 Noah Isaak
+
 - Created leaderboard component, logic to show #9 and added fetching from server #54
 - Finish audio effect when timer is close to running out #3
 - Small addition to upvoting #8
 - Fix for repeated text-to-speech when upvoting #17
-- Mionr UI changes
+- Minor UI changes
 
+Noé Matumona
+
+- added profile functionality to menu #36, #37, #41
+- implemented reset of settings when not saving #33
+- fixed admin assignment when admin leaves game #29, #31, #32
+- added auto selection of nickname and avatar in GameJoin
+- fix for updateUser (was always creating new users)
+- started with enabling persistent users
+- reverted BackButton behavior
+- various refactoring and general cleanup
+- visual changes

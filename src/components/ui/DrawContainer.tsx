@@ -366,6 +366,38 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         }
     }
 
+    const drawFunctionLine = (element) => {
+        element.forEach(lineElement => {
+            ctx.current.fillStyle = lineElement[1];
+            ctx.current.lineWidth = lineElement[2];
+            ctx.current.fill(lineElement[0]);
+        });
+    }
+
+    const drawFunctionShapes = (element, shape) => {
+        ctx.current.strokeStyle = element[0][1];
+        ctx.current.fillStyle = element[0][1];
+        ctx.current.lineWidth = element[0][2];
+        if (element[0][3] === shape) {
+            ctx.current.stroke(element[0][0]);
+        }
+        else {
+            ctx.current.fill(element[0][0]);
+        }
+    }
+
+    const drawFunctionEraser = (element) => {
+        // Set compositeOperation to set transparent where pixels overlap
+        ctx.current.globalCompositeOperation = "destination-out";
+        element.forEach(eraserElement => {
+            ctx.current.fillStyle = "rbga(0,0,0,1)";
+            ctx.current.strokeStyle = "rbga(0,0,0,1)";
+            ctx.current.lineWidth = eraserElement[2];
+            ctx.current.fill(eraserElement[0]);
+        });
+        ctx.current.globalCompositeOperation = "source-over";
+    }
+
     // Draw function where actual drawing is performed with context
     function draw() {
         if (pressed && allowDraw) {
@@ -393,37 +425,24 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
         ctx.current?.reset();
 
+
         // Standard compositeOperation
         ctx.current && (ctx.current.globalCompositeOperation = "source-over");
 
-        // TODO: Should draw them in order they were drawn
         // Here we draw all the line path elements
         lineDrawActions.forEach(element => {
             const timeStamp = element[element.length - 1][4];
             const drawFunction = () => {
-                element.forEach(lineElement => {
-                    ctx.current.fillStyle = lineElement[1];
-                    ctx.current.lineWidth = lineElement[2];
-                    ctx.current.fill(lineElement[0]);
-                });
+                drawFunctionLine(element);
             };
             allActionsArraySorted.push([timeStamp, drawFunction]);
         });
-
 
         // Here we draw all the rectangle paths
         rectangleDrawActions.forEach(element => {
             const timeStamp = element[0][4];
             const drawFunction = () => {
-                ctx.current.strokeStyle = element[0][1];
-                ctx.current.fillStyle = element[0][1];
-                ctx.current.lineWidth = element[0][2];
-                if (element[0][3] === Shapes.RECTANGLE_EMPTY) {
-                    ctx.current.stroke(element[0][0]);
-                }
-                else {
-                    ctx.current.fill(element[0][0]);
-                }
+                drawFunctionShapes(element, Shapes.RECTANGLE_EMPTY);
             }
             allActionsArraySorted.push([timeStamp, drawFunction]);
         });
@@ -431,15 +450,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         ellipseDrawActions.forEach(element => {
             const timeStamp = element[0][4];
             const drawFunction = () => {
-                ctx.current.strokeStyle = element[0][1];
-                ctx.current.fillStyle = element[0][1];
-                ctx.current.lineWidth = element[0][2];
-                if (element[0][3] === Shapes.ELLIPSE_EMPTY) {
-                    ctx.current.stroke(element[0][0]);
-                }
-                else {
-                    ctx.current.fill(element[0][0]);
-                }
+                drawFunctionShapes(element, Shapes.ELLIPSE_EMPTY);
             }
             allActionsArraySorted.push([timeStamp, drawFunction]);
         });
@@ -447,15 +458,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         eraserDrawActions.forEach(element => {
             const timeStamp = element[element.length - 1][4];
             const drawFunction = () => {
-                // Set compositeOperation to set transparent where pixels overlap
-                ctx.current.globalCompositeOperation = "destination-out";
-                element.forEach(eraserElement => {
-                    ctx.current.fillStyle = "rbga(0,0,0,1)";
-                    ctx.current.strokeStyle = "rbga(0,0,0,1)";
-                    ctx.current.lineWidth = eraserElement[2];
-                    ctx.current.fill(eraserElement[0]);
-                });
-                ctx.current.globalCompositeOperation = "source-over";
+                drawFunctionEraser(element);
             }
             allActionsArraySorted.push([timeStamp, drawFunction]);
         })
@@ -553,7 +556,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             onComplete={() => ({ shouldRepeat: false })}
 
                             // Here submit if timer ran out
-                            onUpdate={(remainingTime) => { (remainingTime === 0 && onTimerEnd()), (remainingTime === 10 && timerSound.handlePlay()) }}
+                            onUpdate={(remainingTime) => { (remainingTime === 0 && onTimerEnd()); (remainingTime === 10 && timerSound.handlePlay()) }}
                         >
                         </CountdownCircleTimer>
                     </div>

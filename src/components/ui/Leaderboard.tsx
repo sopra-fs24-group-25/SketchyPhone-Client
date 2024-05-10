@@ -16,7 +16,8 @@ const IndexToRank = {
 }
 
 const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts }) => {
-    const [leaderboardType, setLeaderboardType] = useState<String>(LeaderboardType.TEXTPROMPT);
+    
+    const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
 
 
     function leaderboardTextPromptElement(element, idx) {

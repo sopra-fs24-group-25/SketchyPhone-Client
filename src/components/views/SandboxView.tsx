@@ -284,7 +284,6 @@ const SandboxView = () => {
     testTextPrompt1.content = "Ic hab voll in house gegaggeld sadface und ich bin trourig hahahahahahah asdfasdfasdfasdf";
     testTextPrompt1.votes = 3;
     testTextPrompt1.textPromptId = 1;
-    // TextToSpeech(testTextPrompt1.content);
 
     const testTextPrompt2 = new TextPrompt();
     testTextPrompt2.creator = testUser;
@@ -322,14 +321,6 @@ const SandboxView = () => {
         size: 60,
         strokeWidth: 6
     };
-
-    //return (
-    //    <Leaderboard
-    //        topThreeTextPrompts={[testTextPrompt1, testTextPrompt2, testTextPrompt3]}
-    //        topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}
-    //    >
-    //
-    //    </Leaderboard>)
 
     return (
         <div>

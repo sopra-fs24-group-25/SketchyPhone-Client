@@ -89,6 +89,8 @@
 
     &.voting {
         cursor: pointer;
+        border: none;
+        background-color: transparent;
         padding: 10px;
         border-radius: 2em;
         color: $background;
