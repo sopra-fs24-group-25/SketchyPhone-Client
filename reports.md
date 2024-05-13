@@ -194,3 +194,7 @@ Noé Matumona
 - reverted BackButton behavior
 - various refactoring and general cleanup
 - visual changes
+
+Xindi Liu
+- Wrote integration tests for the newly added features such as Hisotry, persistent users
+- Minor change to the DTO to cover new features 
