@@ -279,6 +279,7 @@ const SandboxView = () => {
     testUser.nickname = "averylongnameforatestUser";
     testUser.userId = 1;
     testUser.avatarId = 2;
+    testUser.role = "admin";
 
     const testTextPrompt1 = new TextPrompt();
     testTextPrompt1.creator = testUser;
@@ -359,7 +360,7 @@ const SandboxView = () => {
                 onClickNextRound={() => console.log("clicked next round")}
                 onClickResults={() => {}}
                 gameSession={undefined}
-                user= {undefined}
+                user= {testUser}
             ></PresentationContainer>
             <Button
                 onClick={() => TextToSpeech(testTextPrompt1.content)}
@@ -369,9 +370,9 @@ const SandboxView = () => {
             <DrawContainer
                 height={400}
                 width={600}
-                user= {null}
+                user= {testUser}
                 game= {null}
-                textPrompt={"YEAH"}
+                textPrompt={testTextPrompt1}
                 timerDuration= {100}
                 setNextTask={() => console.log("nexttask")}
                 setInitial={() => console.log("setInitial")}>

@@ -234,7 +234,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
             colorPicker = document.querySelector("input[type='color']");
             sizePicker = document.querySelector("input[type='range']");
-            clearBtn = document.querySelector("button");
+            clearBtn = document.getElementById("clearButton");
 
             // Add event listener for mouse move
             document.addEventListener("mousemove", onMouseMove);
@@ -534,6 +534,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                         </button>
                         <button 
                             className="drawContainer button"
+                            id = "clearButton"
                             onClick={() => onButtonClear()}>
                             Clear Canvas
                         </button>
@@ -569,8 +570,8 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 DrawContainer.propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    user: PropTypes.object.isRequired,
-    game: PropTypes.object.isRequired,
+    user: PropTypes.object,
+    game: PropTypes.object,
     textPrompt: PropTypes.object,
     timerDuration: PropTypes.number,
     setNextTask: PropTypes.func,

@@ -56,7 +56,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     {`SWITCH TO ${leaderboardType === LeaderboardType.DRAWING ? "DRAWINGS": "TEXTPROMPTS"}`}
                 </Button>
                 {/* Only for admin */}
-                {user.role === "admin" &&
+                {user?.role === "admin" &&
                     <Button width="20%"
                         className="leaderboard button"
                         onClick={() => onClickNextRound()}>
@@ -139,7 +139,6 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             return (
                 <div className="leaderboard" >
                     {textPromptLeaderboardContent}
-
                     {separator()}
                     {leaderboardButtons()}
                 </div >
