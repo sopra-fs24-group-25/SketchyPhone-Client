@@ -3,6 +3,7 @@ import { api, handleError } from "helpers/api";
 import BaseContainer from "components/ui/BaseContainer";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import { PhoneLogo } from "../ui/PhoneLogo";
+import { Button } from "components/ui/Button";
 import Menu from "components/ui/Menu";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
@@ -55,6 +56,10 @@ const Game = () => {
     const [topThreeDrawings, setTopThreeDrawings] = useState<[DrawingPrompt]>(null);
     const [topThreeTextPrompts, setTopThreeTextPrompts] = useState<[TextPrompt]>(null);
 
+    const exitGame = () => {
+        sessionStorage.clear();
+        navigate("/gameRoom");
+    }
 
     useEffect(() => {
         // Change in gameLoopStatus detected
@@ -78,7 +83,8 @@ const Game = () => {
                 fetchPresentationElements(user.current, gameSession.current);
                 fetchPresentationIndex(user.current, gameSession.current);
             }
-            else if (user.current.role === "player" && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
+            else if (user.current.role !== "admin" && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
+                console.log("Fetchingn leaderboard for: " + user.current)
                 fetchTopThreeDrawings(user.current, gameSession.current);
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
@@ -102,6 +108,7 @@ const Game = () => {
     useEffect(() => {
         let interval = setInterval(() => {
             fetchGameUpdate(user.current, gameObject);
+            console.log(user.current)
             isReadyForTask.current = (gameSession.current.gameLoopStatus === currentTask);
 
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
@@ -286,8 +293,12 @@ const Game = () => {
             const response = await api.get(url, { headers: requestHeader });
 
             if (response.data) {
-                const fetchedTopDrawings = new Array<DrawingPrompt>(response.data);
-                console.log(fetchedTopDrawings);
+                let fetchedTopDrawings = new Array<DrawingPrompt>(...response.data);
+
+                // remove elements if more than 3
+                if(fetchedTopDrawings.length >= 3) {
+                    fetchedTopDrawings = fetchedTopDrawings.slice(1,4);
+                }
 
                 if (fetchedTopDrawings.length !== 0)
                     setTopThreeDrawings(fetchedTopDrawings);
@@ -308,8 +319,12 @@ const Game = () => {
             const response = await api.get(url, { headers: requestHeader });
 
             if (response.data) {
-                const fetchedTopTextPrompts = new Array<TextPrompt>(response.data);
-                console.log(fetchedTopTextPrompts);
+                let fetchedTopTextPrompts = new Array<TextPrompt>(...response.data);
+
+                // remove elements if more than 3
+                if(fetchedTopTextPrompts.length >= 3){
+                    fetchedTopTextPrompts = fetchedTopTextPrompts.slice(1,4);
+                }
 
                 if (fetchedTopTextPrompts.length !== 0)
                     setTopThreeTextPrompts(fetchedTopTextPrompts);
@@ -416,6 +431,8 @@ const Game = () => {
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
                     onClickResults={() => {fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current)}}
+                    gameSession={gameSession.current}
+                    user={user.current}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu)}
             </BaseContainer>)
@@ -429,6 +446,9 @@ const Game = () => {
                 <Leaderboard
                     topThreeDrawings={topThreeDrawings}
                     topThreeTextPrompts={topThreeTextPrompts}
+                    onClickNextRound={() => startNewRound(user.current, gameObject)}
+                    onExitGame= {() => exitGame()}
+                    user={user.current}
                 >
                 </Leaderboard>
                 {Menu(openMenu, toggleMenu)}

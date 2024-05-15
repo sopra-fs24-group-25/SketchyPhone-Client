@@ -11,6 +11,7 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import DrawContainer from "components/ui/DrawContainer";
 import Leaderboard from "components/ui/Leaderboard";
 import User from "../../models/User";
+import { unescapeLeadingUnderscores } from "typescript";
 
 const minuteSeconds = 60;
 const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
@@ -325,14 +326,19 @@ const SandboxView = () => {
     return (
         <div>
             <Leaderboard
-                topThreeTextPrompts={[testTextPrompt1, testTextPrompt2, testTextPrompt3]}
+                topThreeTextPrompts={null}
                 topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}
+                onClickNextRound={() => console.log("next round")}
+                onExitGame={() => console.log("exiting game")}
+                user ={undefined}
             >
-
             </Leaderboard>
             <Leaderboard
                 topThreeTextPrompts={[testTextPrompt1, testTextPrompt2]}
                 topThreeDrawings={[testDrawingPrompt1]}
+                onClickNextRound={() => console.log("next round")}
+                onExitGame={() => console.log("exiting game")}
+                user={undefined}
             >
             </Leaderboard>
             <CountdownCircleTimer
@@ -352,6 +358,8 @@ const SandboxView = () => {
                 onClickIncrement={() => (setIdx(idx + 1))}
                 onClickNextRound={() => console.log("clicked next round")}
                 onClickResults={() => {}}
+                gameSession={undefined}
+                user= {undefined}
             ></PresentationContainer>
             <Button
                 onClick={() => TextToSpeech(testTextPrompt1.content)}

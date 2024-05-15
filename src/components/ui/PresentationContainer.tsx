@@ -11,9 +11,10 @@ import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
+import { api, handleError } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults, gameSession, user }) => {
 
     const navigate = useNavigate();
 
@@ -82,34 +83,107 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         upvoteAudio.handlePlay();
     }, [newVote])
 
-    function doVoteTextPrompt(textPrompt, creator) {
-        console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
-        
-        if (textPrompt.hasVoted) {
-            alert("You already voted!")
+    async function doVoteTextPrompt(textPrompt, creator) {
+        // For testing
+        if (gameSession === undefined) {
+            if (textPrompt.hasVoted) {
+                textPrompt.votes -= 1;
+                setNewVote(newVote - 1);
+            }
+            else {
+                textPrompt.votes += 1;
+                setNewVote(newVote + 1);
+            }
 
+            textPrompt.hasVoted = !textPrompt.hasVoted;
             return;
         }
-        //for testing, should be a server request to increase/decrease vote count in future
-        textPrompt.votes += 1;
-        textPrompt.hasVoted = true;
-        setNewVote(newVote + 1);
+
+        console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
+
+        // Base url for upvoting
+        const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/vote`;
+
+        if (textPrompt.hasVoted) {
+            alert("Unvoting!")
+
+            // Base url for unvoting
+            const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/unvote`;
+        }
+
+        const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+        console.log(requestHeader)
+
+        try {
+            const response = await api.put(url, null, { headers: requestHeader });
+            console.log(response);
+
+            if (textPrompt.hasVoted) {
+                textPrompt.votes -= 1;
+                setNewVote(newVote - 1);
+            }
+            else {
+                textPrompt.votes += 1;
+                setNewVote(newVote + 1);
+            }
+
+            textPrompt.hasVoted = !textPrompt.hasVoted;
+        } catch (error) {
+            console.log("There was an issue when upvoting on textprompt: " + error)
+        }
+
+
     }
 
-    function doVoteDrawing(drawing, creator) {
-        console.log(`Voted for drawing ${drawing.drawingId} from ${creator.nickname}`);
+    async function doVoteDrawing(drawing, creator) {
+        // For testing
+        if (gameSession === undefined) {
+            if (drawing.hasVoted) {
+                drawing.votes -= 1;
+                setNewVote(newVote - 1);
+            }
+            else {
+                drawing.votes += 1;
+                setNewVote(newVote + 1);
+            }
 
-        // Another approach would be to decrement when clicking again?
-        if (drawing.hasVoted) {
-            alert("You already voted!")
-            
+            drawing.hasVoted = !drawing.hasVoted;
+
             return;
         }
+        console.log(`Voted for drawing ${drawing.drawingId} from ${creator.nickname}`);
 
-        //for testing, should be a server request to increase/decrease vote count in future
-        drawing.votes += 1;
-        drawing.hasVoted = true;
-        setNewVote(newVote + 1);
+        // Base url for upvoting
+        const url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/vote`;
+
+        if (drawing.hasVoted) {
+            alert("Unvoting!")
+
+            // Base url for unvoting
+            const url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/unvote`;
+        }
+
+        const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+
+        try {
+            const response = await api.put(url, null, { headers: requestHeader });
+            console.log(response);
+
+            if (drawing.hasVoted) {
+                drawing.votes -= 1;
+                setNewVote(newVote - 1);
+            }
+            else {
+                drawing.votes += 1;
+                setNewVote(newVote + 1);
+            }
+
+            drawing.hasVoted = !drawing.hasVoted;
+        } catch (error) {
+            console.log("There was an issue when upvoting on drawing: " + error)
+        }
+
+
     }
 
     function presentTextPrompt(element) {
@@ -224,7 +298,9 @@ PresentationContainer.propTypes = {
     isAdmin: PropTypes.bool,
     onClickIncrement: PropTypes.func,
     onClickNextRound: PropTypes.func,
-    onClickResults: PropTypes.func
+    onClickResults: PropTypes.func,
+    gameSession: PropTypes.object,
+    user: PropTypes.object
 }
 
 export default PresentationContainer;

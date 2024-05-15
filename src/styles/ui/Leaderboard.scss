@@ -1,5 +1,7 @@
 @import "../theme";
 
+
+
 .leaderboard {
     display: flex;
     flex-direction: column;
@@ -9,6 +11,25 @@
     margin-left: auto;
     margin-right: auto;
 
+    p {
+        text-align: center;
+        font-size: larger;
+        font-weight: 600;
+    }
+
+    &.button {
+        @include center;
+        background-color: $button-color;
+        color: $button-text-color;
+        margin-bottom: 20px;
+    }
+
+    &.buttonsContainer {
+        display: flex;
+        flex-direction: row;
+        background-color: transparent;
+    }
+
     &.elementcontainer {
         min-height: 200px;
         display: flex;
@@ -16,11 +37,11 @@
         background-color: transparent;
         border-radius: 2em;
         min-width: 50%;
-        max-width: 90%;
+        max-width: 100%;
         align-items: flex;
-        margin-left: 20px;
         margin-bottom: 20px;
         margin-top: 20px;
+        padding: 20px;
     }
 
     &.user {
@@ -32,8 +53,9 @@
         margin: 0px 0px 20px 0px;
         text-shadow: $dropShadow;
         background-color: transparent;
-        min-width: 50%;
+        min-width: 70%;
         max-width: 90%;
+        width: fit-content;
     }
 
     &.textprompt {
