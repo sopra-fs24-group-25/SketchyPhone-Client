@@ -136,6 +136,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     return leaderboardTextPromptElement(element, idx);
                 })
             }
+
             return (
                 <div className="leaderboard" >
                     {textPromptLeaderboardContent}
@@ -157,6 +158,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     })
 
             }
+            
             return (
                 <div className="leaderboard">
                     {drawingLeaderboardContent}

@@ -96,6 +96,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             }
 
             textPrompt.hasVoted = !textPrompt.hasVoted;
+            
             return;
         }
 
