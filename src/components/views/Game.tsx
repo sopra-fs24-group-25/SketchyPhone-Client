@@ -422,6 +422,7 @@ const Game = () => {
         }
 
         let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
+        
         return (
             <BaseContainer>
                 <div className="gameroom header">

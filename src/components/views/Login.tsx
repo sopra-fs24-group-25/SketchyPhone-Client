@@ -60,10 +60,15 @@ const Login = () => {
     const [isSignUp, setIsSignUp] = useState<boolean>(location.state.isSignUp);
     const [toCreateAccount] = useState<boolean>(location.state.toCreateAccount);
 
-    const doLogin = async () => { //needs to handle login and sign-up in future (or separate in two functions)
+    const doLogin = async (isSignUp) => {
         try {
-            const requestBody = JSON.stringify({ nickname: username, password, persistent: true });
-            const response = await api.post("/users", requestBody); //will change in future: post /login
+            const requestBody = JSON.stringify({ nickname: username, username, password, persistent: true });
+            let response;
+            if (isSignUp) {
+                response = await api.post("/signUp", requestBody);
+            } else {
+                response = await api.post("/logIn", requestBody);
+            }
 
             // Get the returned user and update a new object.
             const user = new User(response.data);
@@ -151,7 +156,7 @@ const Login = () => {
                             <Button
                                 disabled={!username || !password || (password !== confirmPassword && isSignUp)}
                                 width="100%"
-                                onClick={() => doLogin()}
+                                onClick={() => doLogin(isSignUp)}
                             >
                                 {isSignUp ? "Sign up" : "Login"}
                             </Button>
