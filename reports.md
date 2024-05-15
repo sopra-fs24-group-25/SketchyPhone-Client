@@ -198,3 +198,9 @@ Noé Matumona
 Xindi Liu
 - Wrote integration tests for the newly added features such as Hisotry, persistent users
 - Minor change to the DTO to cover new features 
+
+## 13.05 - 19.05
+
+Victor Cruz da Silva
+
+- Fixed issue where getTopThree would return list of all drawings/prompts with at least one vote instead of only the top three. #133, #134
