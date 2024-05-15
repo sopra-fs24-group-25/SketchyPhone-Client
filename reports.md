@@ -196,11 +196,19 @@ Noé Matumona
 - visual changes
 
 Xindi Liu
-- Wrote integration tests for the newly added features such as Hisotry, persistent users
-- Minor change to the DTO to cover new features 
+
+- Wrote integration tests for the newly added features such as History, persistent users
+- Minor change to the DTO to cover new features
 
 ## 13.05 - 19.05
 
 Victor Cruz da Silva
 
 - Fixed issue where getTopThree would return list of all drawings/prompts with at least one vote instead of only the top three. #133, #134
+
+Noé Matumona
+
+- server-side update to UserGetDTO to allow modification of username and nickname from profile on client-side #36, #37, #41
+- updated profile functionality to have username displayed correctly, correct reset of nickname and username when not saving #36, #37, #41
+- implemented persistent user login and sign up
+- implemented automatic exiting of game when logging out from lobby
