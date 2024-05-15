@@ -13,7 +13,7 @@ class DrawingPrompt {
         this.gameSessionId = null;
         this.assignedTo = null;
         this.round = null;
-        this.votes = null;
+        this.numVotes = null;
 
         // This field is for internal use only
         this.hasVoted = false;

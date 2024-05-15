@@ -23,8 +23,8 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     const navigate = useNavigate();
 
     const separator = () => (
-        <div className="presentation separator">
-            <hr className="presentation separator leftalign"
+        <div className="leaderboard separator">
+            <hr className="leaderboard separator leftalign"
                 style={{
                     background: "black",
                     color: "black",
@@ -34,7 +34,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                 }}
             />
             <p>{"DONE"}</p>
-            <hr className="presentation separator rightalign"
+            <hr className="leaderboard separator rightalign"
                 style={{
                     background: "black",
                     color: "black",
@@ -53,7 +53,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                 <Button width="20%"
                     className="leaderboard button"
                     onClick={() => setLeaderboardType(leaderboardType === LeaderboardType.DRAWING ? LeaderboardType.TEXTPROMPT : LeaderboardType.DRAWING)}>
-                    {`SWITCH TO ${leaderboardType === LeaderboardType.DRAWING ? "DRAWINGS": "TEXTPROMPTS"}`}
+                    {`SWITCH TO ${leaderboardType === LeaderboardType.DRAWING ? "TEXTPROMPTS": "DRAWINGS"}`}
                 </Button>
                 {/* Only for admin */}
                 {user?.role === "admin" &&
@@ -87,7 +87,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     {element.content}
                 </div>
                 <p>
-                    #Votes: {element.votes}
+                    #Votes: {element.numVotes}
                 </p>
             </div>)
     }
@@ -111,7 +111,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     ></img>
                 </div>
                 <p>
-                    #Votes: {element.votes}
+                    #Votes: {element.numVotes}
                 </p>
             </div>)
     }
@@ -121,7 +121,6 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             return (<div>
                 <p className="leaderboard textprompt">Nothing has been voted on!</p>
                 {leaderboardButtons()}
-                {/* TODO add buttons for new round etc. */}
             </div>)
         }
 
@@ -138,7 +137,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             }
 
             return (
-                <div className="leaderboard" >
+                <div className="leaderboard container" >
                     {textPromptLeaderboardContent}
                     {separator()}
                     {leaderboardButtons()}
@@ -158,9 +157,9 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     })
 
             }
-            
+
             return (
-                <div className="leaderboard">
+                <div className="leaderboard container">
                     {drawingLeaderboardContent}
 
                     {separator()}

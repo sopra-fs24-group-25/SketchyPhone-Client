@@ -12,7 +12,7 @@ class TextPrompt {
         this.previousDrawingId = null;
         this.nextDrawingId = null;
         this.round = null;
-        this.votes = null;
+        this.numVotes = null;
 
         // This field is for internal use only
         this.hasVoted = false;

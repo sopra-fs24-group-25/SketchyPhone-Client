@@ -12,10 +12,10 @@ const PresentationText = (props) => {
                 {props.textPrompt.content}
             </div>
             <button
-                className={`presentation voting ${props.textPrompt.votes > 0 ? "selected" : ""}`}
+                className={`presentation voting ${props.textPrompt.numVotes > 0 ? "selected" : ""}`}
                 onClick={() => props.doVote(props.textPrompt, props.textPrompt.creator)}
             >
-                {`Upvote ${props.textPrompt.votes ? props.textPrompt.votes : ""}`}
+                {`Upvote ${props.textPrompt.numVotes ? props.textPrompt.numVotes : ""}`}
             </button>
         </div>
     )

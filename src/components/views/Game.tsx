@@ -64,8 +64,8 @@ const Game = () => {
     useEffect(() => {
         // Change in gameLoopStatus detected
         if (prevTask.current !== gameSession.current.gameLoopStatus) {
-            // If we were in presentation mode before and it changed to a textprompt -> a new game has started
-            if (prevTask.current === GameLoopStatus.PRESENTATION && gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT) {
+            // If we were in presentation or leadeboard mode before and it changed to a textprompt -> a new game has started
+            if ((prevTask.current === GameLoopStatus.PRESENTATION || prevTask.current === GameLoopStatus.LEADERBOARD) && gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT) {
                 console.log("RESETTING FOR NEW GAME")
                 // reset elements
                 receivedDrawingPrompt.current = null;
@@ -74,6 +74,8 @@ const Game = () => {
                 receivedTextPrompt.current = null;
                 setIsInitialPrompt(true);
                 setPresentationElements(null);
+                setTopThreeDrawings(null);
+                setTopThreeTextPrompts(null);
                 setPresentationIndex(-1);
 
                 // set current task for client to update view
@@ -108,7 +110,6 @@ const Game = () => {
     useEffect(() => {
         let interval = setInterval(() => {
             fetchGameUpdate(user.current, gameObject);
-            console.log(user.current)
             isReadyForTask.current = (gameSession.current.gameLoopStatus === currentTask);
 
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
@@ -163,6 +164,7 @@ const Game = () => {
             // check if user is admin and navigate to start
             if (gameSession !== null && gameSession.admin === user.userId) {
                 sessionStorage.setItem("gameSession", JSON.stringify(gameSession));
+                setIsInitialPrompt(true);
             }
         }
         catch (error) {
@@ -296,9 +298,12 @@ const Game = () => {
                 let fetchedTopDrawings = new Array<DrawingPrompt>(...response.data);
 
                 // remove elements if more than 3
-                if(fetchedTopDrawings.length >= 3) {
-                    fetchedTopDrawings = fetchedTopDrawings.slice(1,4);
+                if (fetchedTopDrawings.length >= 3) {
+                    fetchedTopDrawings = fetchedTopDrawings.slice(1, 4);
                 }
+
+                console.log(fetchedTopDrawings);
+
 
                 if (fetchedTopDrawings.length !== 0)
                     setTopThreeDrawings(fetchedTopDrawings);
@@ -322,9 +327,11 @@ const Game = () => {
                 let fetchedTopTextPrompts = new Array<TextPrompt>(...response.data);
 
                 // remove elements if more than 3
-                if(fetchedTopTextPrompts.length >= 3){
-                    fetchedTopTextPrompts = fetchedTopTextPrompts.slice(1,4);
+                if (fetchedTopTextPrompts.length >= 3) {
+                    fetchedTopTextPrompts = fetchedTopTextPrompts.slice(1, 4);
                 }
+
+                console.log(fetchedTopTextPrompts);
 
                 if (fetchedTopTextPrompts.length !== 0)
                     setTopThreeTextPrompts(fetchedTopTextPrompts);
@@ -415,8 +422,6 @@ const Game = () => {
         }
 
         let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
-        console.log(elementsToShow);
-
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -430,7 +435,7 @@ const Game = () => {
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
-                    onClickResults={() => {fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current)}}
+                    onClickResults={() => { fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current) }}
                     gameSession={gameSession.current}
                     user={user.current}
                 ></PresentationContainer>
@@ -447,7 +452,7 @@ const Game = () => {
                     topThreeDrawings={topThreeDrawings}
                     topThreeTextPrompts={topThreeTextPrompts}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
-                    onExitGame= {() => exitGame()}
+                    onExitGame={() => exitGame()}
                     user={user.current}
                 >
                 </Leaderboard>
@@ -460,8 +465,6 @@ const Game = () => {
 
     const renderComponent = useMemo(() => {
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
-            console.log("PRESENTING")
-
             return <PresentationView />;
         }
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {

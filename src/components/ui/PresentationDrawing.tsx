@@ -14,10 +14,10 @@ const PresentationDrawing = (props) => {
                 src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
             ></img>
             <button
-                className={`presentation voting ${props.drawingPrompt.votes > 0 ? "selected" : ""}`}
+                className={`presentation voting ${props.drawingPrompt.numVotes > 0 ? "selected" : ""}`}
                 onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
             >
-                {`Upvote ${props.drawingPrompt.votes ? props.drawingPrompt.votes : ""}`}
+                {`Upvote ${props.drawingPrompt.numVotes ? props.drawingPrompt.numVotes : ""}`}
             </button>
         </div>
     )

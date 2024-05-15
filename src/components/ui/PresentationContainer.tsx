@@ -87,16 +87,16 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         // For testing
         if (gameSession === undefined) {
             if (textPrompt.hasVoted) {
-                textPrompt.votes -= 1;
+                textPrompt.numVotes -= 1;
                 setNewVote(newVote - 1);
             }
             else {
-                textPrompt.votes += 1;
+                textPrompt.numVotes += 1;
                 setNewVote(newVote + 1);
             }
 
             textPrompt.hasVoted = !textPrompt.hasVoted;
-            
+
             return;
         }
 
@@ -171,11 +171,11 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             console.log(response);
 
             if (drawing.hasVoted) {
-                drawing.votes -= 1;
+                drawing.numVotes -= 1;
                 setNewVote(newVote - 1);
             }
             else {
-                drawing.votes += 1;
+                drawing.numVotes += 1;
                 setNewVote(newVote + 1);
             }
 
