@@ -212,3 +212,10 @@ Noé Matumona
 - updated profile functionality to have username displayed correctly, correct reset of nickname and username when not saving #36, #37, #41
 - implemented persistent user login and sign up
 - implemented automatic exiting of game when logging out from lobby
+
+Noah Isaak
+- Finish #54, #55, #56 for Leaderboard
+- Finish #51, #53 for Voting
+- Minor UI changes
+- Refactorings
+- Fix for draw tool
