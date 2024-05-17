@@ -78,6 +78,8 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
     function resetProfileView(withToggleMenu: boolean) {
         setIsEditing(false);
         setAvatarId(user.avatarId);
+        setNickname(user.nickname);
+        setUsername(user.username);
         toggleProfile(withToggleMenu);
         resetPasswordFields();
     }
@@ -136,6 +138,7 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
                             className="profile input"
                             label="Username"
                             placeholder={username}
+                            value={username}
                             disabled={!isEditing}
                             onChange={(u: string) => setUsername(u)}>
                         </ProfileField>
