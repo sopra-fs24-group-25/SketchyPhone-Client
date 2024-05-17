@@ -231,7 +231,7 @@ const Game = () => {
         const maxAttempts = 10;
         let attempts = 0;
 
-        while (receivedDrawingPrompt === null && attempts < maxAttempts) {
+        while (receivedDrawingPrompt.current === null && attempts < maxAttempts) {
 
             try {
                 // Get last gamesession (will always be the current)
@@ -493,10 +493,10 @@ const Game = () => {
         if (!isReadyForTask.current) {
             return <WaitingView />;
         }
-        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask && receivedDrawingPrompt !== null) {
+        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask && receivedDrawingPrompt.current !== null) {
             return <TextPromptView />;
         }
-        if (currentTask === GameLoopStatus.DRAWING && isReadyForTask && receivedTextPrompt !== null) {
+        if (currentTask === GameLoopStatus.DRAWING && isReadyForTask && receivedTextPrompt.current !== null) {
             return <DrawView />;
         }
 
