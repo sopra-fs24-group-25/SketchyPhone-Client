@@ -225,66 +225,79 @@ const Game = () => {
     }
 
     const fetchDrawing = async () => {
-        try {
-            // Get last gamesession (will always be the current)
-            let currentGameSessions = gameObject.gameSessions;
-            let idx = currentGameSessions.length - 1;
-            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
+        const maxAttempts = 10;
+        let attempts = 0;
 
-            const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
-            const response = await api.get(`/games/${currentGameSessionId}/drawings/${user.current.userId}`, { headers: requestHeader });
+        while (receivedDrawingPrompt === null && attempts < maxAttempts) {
 
-            if (response.data) {
-                // set receiveddrawingprompt
-                receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
-                const newDrawingPrompt = new DrawingPrompt(response.data);
-                receivedDrawingPrompt.current = newDrawingPrompt;
-                console.log(receivedDrawingPrompt.current);
+            try {
+                // Get last gamesession (will always be the current)
+                let currentGameSessions = gameObject.gameSessions;
+                let idx = currentGameSessions.length - 1;
+                let currentGameSessionId = currentGameSessions[idx].gameSessionId;
+
+                const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
+                const response = await api.get(`/games/${currentGameSessionId}/drawings/${user.current.userId}`, { headers: requestHeader });
+
+                if (response.data) {
+                    // set receiveddrawingprompt
+                    receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
+                    const newDrawingPrompt = new DrawingPrompt(response.data);
+                    receivedDrawingPrompt.current = newDrawingPrompt;
+                    console.log(receivedDrawingPrompt.current);
+                }
+
+                return (
+                    <img src={response.data} alt="Drawing" style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
+                )
+            }
+            catch (error) {
+                console.log("Attempt:" + attempts + " -- Unable to fetch drawing: " + error)
+                receivedDrawingPrompt.current = null;
             }
 
-            return (
-                <img src={response.data} alt="Drawing" style={{ userSelect: "none", "-webkit-user-drag": "none" }} />
-            )
-        }
-        catch (error) {
-            console.log("Unable to fetch drawing: " + error)
-            receivedDrawingPrompt.current = null;
-        }
+            attempts += 1;
 
+            // wait to try again
+            setTimeout(() => 250)
+
+        }
     }
 
     const fetchPrompt = async () => {
-        try {
-            // Get last gamesession (will always be the current)
-            let currentGameSessions = gameObject.gameSessions;
-            let idx = currentGameSessions.length - 1;
-            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
+        const maxAttempts = 10;
+        let attempts = 0;
+        while (receivedTextPrompt.current === null && attempts < maxAttempts) {
 
-            const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
-            const url = `/games/${currentGameSessionId}/prompts/${user.current.userId}`;
+            try {
+                // Get last gamesession (will always be the current)
+                let currentGameSessions = gameObject.gameSessions;
+                let idx = currentGameSessions.length - 1;
+                let currentGameSessionId = currentGameSessions[idx].gameSessionId;
 
-            const response = await api.get(url, { headers: requestHeader });
+                const requestHeader = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
+                const url = `/games/${currentGameSessionId}/prompts/${user.current.userId}`;
 
-            if (response.data) {
-                // set receivedtextprompt
-                receivedPreviousTextPrompt.current = receivedTextPrompt.current;
-                const newTextPrompt = new TextPrompt(response.data);
-                receivedTextPrompt.current = newTextPrompt;
-                console.log(receivedTextPrompt.current);
+                const response = await api.get(url, { headers: requestHeader });
+
+                if (response.data) {
+                    // set receivedtextprompt
+                    receivedPreviousTextPrompt.current = receivedTextPrompt.current;
+                    const newTextPrompt = new TextPrompt(response.data);
+                    receivedTextPrompt.current = newTextPrompt;
+                    console.log(receivedTextPrompt.current);
+                }
 
             }
+            catch (error) {
+                console.log("Attempt:" + attempts + " -- Unable to fetch prompt: " + error)
+                receivedTextPrompt.current = null;
+            }
 
+            attempts += 1;
+            // wait 250ms to try again
+            setTimeout(() => 250);
         }
-        catch (error) {
-            console.log("Unable to fetch prompt: " + error)
-            receivedTextPrompt.current = null;
-        }
-
-
-        return (
-            //prompt
-            <div></div>
-        )
     }
 
     const fetchTopThreeDrawings = async (user: User, game: GameSession) => {
@@ -422,6 +435,7 @@ const Game = () => {
         }
 
         let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -473,14 +487,16 @@ const Game = () => {
         if (!isReadyForTask.current) {
             return <WaitingView />;
         }
-        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask) {
+        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask && receivedDrawingPrompt !== null) {
             return <TextPromptView />;
         }
-        if (currentTask === GameLoopStatus.DRAWING && isReadyForTask) {
+        if (currentTask === GameLoopStatus.DRAWING && isReadyForTask && receivedTextPrompt !== null) {
             return <DrawView />;
         }
 
-        return null;
+        // Waiting room fallback
+        return <WaitingView />;
+
     }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts]);
 
     return renderComponent;
