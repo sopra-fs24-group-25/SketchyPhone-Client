@@ -225,6 +225,9 @@ const Game = () => {
     }
 
     const fetchDrawing = async () => {
+        // reset received drawing before fetching
+        receivedDrawingPrompt.current = null;
+
         const maxAttempts = 10;
         let attempts = 0;
 
@@ -265,6 +268,9 @@ const Game = () => {
     }
 
     const fetchPrompt = async () => {
+        // reset before fetching
+        receivedTextPrompt.current = null;
+
         const maxAttempts = 10;
         let attempts = 0;
         while (receivedTextPrompt.current === null && attempts < maxAttempts) {
