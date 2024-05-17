@@ -493,7 +493,7 @@ const Game = () => {
         if (!isReadyForTask.current) {
             return <WaitingView />;
         }
-        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask && receivedDrawingPrompt.current !== null) {
+        if (currentTask === GameLoopStatus.TEXTPROMPT && isReadyForTask && (receivedDrawingPrompt.current !== null || isInitialPrompt)) {
             return <TextPromptView />;
         }
         if (currentTask === GameLoopStatus.DRAWING && isReadyForTask && receivedTextPrompt.current !== null) {
