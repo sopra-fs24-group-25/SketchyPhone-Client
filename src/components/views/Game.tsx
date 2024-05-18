@@ -317,8 +317,8 @@ const Game = () => {
                 let fetchedTopDrawings = new Array<DrawingPrompt>(...response.data);
 
                 // remove elements if more than 3
-                if (fetchedTopDrawings.length >= 3) {
-                    fetchedTopDrawings = fetchedTopDrawings.slice(1, 4);
+                if (fetchedTopDrawings.length > 3) {
+                    fetchedTopDrawings = fetchedTopDrawings.slice(0, 4);
                 }
 
                 console.log(fetchedTopDrawings);
@@ -346,8 +346,8 @@ const Game = () => {
                 let fetchedTopTextPrompts = new Array<TextPrompt>(...response.data);
 
                 // remove elements if more than 3
-                if (fetchedTopTextPrompts.length >= 3) {
-                    fetchedTopTextPrompts = fetchedTopTextPrompts.slice(1, 4);
+                if (fetchedTopTextPrompts.length > 3) {
+                    fetchedTopTextPrompts = fetchedTopTextPrompts.slice(0, 4);
                 }
 
                 console.log(fetchedTopTextPrompts);
