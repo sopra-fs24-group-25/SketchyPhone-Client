@@ -106,8 +106,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/vote`;
 
         if (textPrompt.hasVoted) {
-            alert("Unvoting!")
-
             // Base url for unvoting
             const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/unvote`;
         }
@@ -201,6 +199,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 <PresentationText
                     textPrompt={element}
                     doVote={doVoteTextPrompt}
+                    ownsDrawing= {user.userId === element.creator.userId}
                 ></PresentationText>
             </div>
         )
@@ -213,6 +212,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     // key={element.drawingId}
                     drawingPrompt={element}
                     doVote={doVoteDrawing}
+                    ownsDrawing= {user.userId === element.creator.userId}
                 ></PresentationDrawing>
                 <UserPreview
                     id={element.creator.avatarId}

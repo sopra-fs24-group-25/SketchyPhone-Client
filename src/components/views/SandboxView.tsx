@@ -12,6 +12,11 @@ import DrawContainer from "components/ui/DrawContainer";
 import Leaderboard from "components/ui/Leaderboard";
 import User from "../../models/User";
 import { unescapeLeadingUnderscores } from "typescript";
+import { BurgerMenu } from "components/ui/BurgerMenu";
+import Menu from "components/ui/Menu";
+import BaseContainer from "components/ui/BaseContainer";
+
+
 
 const minuteSeconds = 60;
 const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
@@ -22,6 +27,12 @@ const remainingTime = endTime - startTime;
 const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
 
 const SandboxView = () => {
+
+    const [openMenu, setOpenMenu] = useState<boolean>(false);
+
+    const toggleMenu = () => {
+        setOpenMenu(!openMenu);
+    }
 
     const response = [
         {
@@ -276,10 +287,16 @@ const SandboxView = () => {
     }
 
     const testUser = new User();
-    testUser.nickname = "averylongnameforatestUser";
-    testUser.userId = 1;
+    testUser.nickname = "Greta";
+    testUser.userId = 3;
     testUser.avatarId = 2;
     testUser.role = "admin";
+
+    const testUser2 = new User();
+    testUser2.nickname = "anotherTestUser";
+    testUser2.userId = 2;
+    testUser2.avatarId = 3;
+    testUser2.role = "player";
 
     const testTextPrompt1 = new TextPrompt();
     testTextPrompt1.creator = testUser;
@@ -288,7 +305,7 @@ const SandboxView = () => {
     testTextPrompt1.textPromptId = 1;
 
     const testTextPrompt2 = new TextPrompt();
-    testTextPrompt2.creator = testUser;
+    testTextPrompt2.creator = testUser2;
     testTextPrompt2.content = "Another test text prompt";
     testTextPrompt2.numVotes = 2;
     testTextPrompt2.textPromptId = 2;
@@ -325,7 +342,7 @@ const SandboxView = () => {
     };
 
     return (
-        <div>
+        <BaseContainer>
             {/* <Leaderboard
                 topThreeTextPrompts={null}
                 topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}
@@ -353,15 +370,23 @@ const SandboxView = () => {
                 onUpdate={(remainingTime) => (remainingTime === 5 && timerSound.handlePlay())}
             >
             </CountdownCircleTimer> */}
+            <div className="gameroom header">
+                <BurgerMenu
+                    onClick={() => setOpenMenu(!openMenu)}
+                    disabled={openMenu}>
+                </BurgerMenu>
+            </div>
             <PresentationContainer
                 presentationContents={toShow}
                 isAdmin={true}
                 onClickIncrement={() => (setIdx(idx + 1))}
                 onClickNextRound={() => console.log("clicked next round")}
-                onClickResults={() => {}}
+                onClickResults={() => { }}
                 gameSession={undefined}
-                user= {testUser}
+                user={testUser}
             ></PresentationContainer>
+            {Menu(openMenu, toggleMenu)}
+
             {/* <Button
                 onClick={() => TextToSpeech(testTextPrompt1.content)}
             >
@@ -377,7 +402,7 @@ const SandboxView = () => {
                 setNextTask={() => console.log("nexttask")}
                 setInitial={() => console.log("setInitial")}>
             </DrawContainer> */}
-        </div>
+        </BaseContainer>
     )
 }
 

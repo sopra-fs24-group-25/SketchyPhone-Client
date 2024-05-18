@@ -5,7 +5,7 @@ import "styles/ui/PresentationContainer.scss";
 const PresentationDrawing = (props) => {
     return (
         <div className="presentation drawingContainer">
-            <div className = "presentation username rightalign">
+            <div className="presentation username rightalign">
                 {props.drawingPrompt.creator.nickname}
             </div>
             <img
@@ -13,19 +13,23 @@ const PresentationDrawing = (props) => {
                 alt={`Drawing from ${props.drawingPrompt.creator.nickname}`}
                 src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
             ></img>
-            <button
-                className={`presentation voting ${props.drawingPrompt.numVotes > 0 ? "selected" : ""}`}
-                onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
-            >
-                {`Upvote ${props.drawingPrompt.numVotes ? props.drawingPrompt.numVotes : ""}`}
-            </button>
+            {props.ownsDrawing &&
+                <button
+                    className={`presentation voting ${props.drawingPrompt.hasVoted ? "selected" : ""}`}
+                    onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
+                >
+                    {`${props.drawingPrompt.hasVoted ? "Upvoted" : "Upvote"}`}
+                </button>
+            }
+
         </div>
     )
 }
 
 PresentationDrawing.propTypes = {
     drawingPrompt: PropTypes.object,
-    doVote: PropTypes.func
+    doVote: PropTypes.func,
+    ownsDrawing: PropTypes.boolean
 }
 
 export default PresentationDrawing;
