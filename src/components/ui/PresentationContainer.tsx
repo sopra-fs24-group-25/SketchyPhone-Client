@@ -206,6 +206,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     }
 
     function presentDrawing(element) {
+        console.log(user.userId === element.creator.userId)
         return (
             <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
                 <PresentationDrawing

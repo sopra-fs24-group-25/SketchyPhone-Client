@@ -16,8 +16,6 @@ import { BurgerMenu } from "components/ui/BurgerMenu";
 import Menu from "components/ui/Menu";
 import BaseContainer from "components/ui/BaseContainer";
 
-
-
 const minuteSeconds = 60;
 const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
 const endTime = startTime + 10; // use UNIX timestamp in seconds
