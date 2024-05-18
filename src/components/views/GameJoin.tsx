@@ -150,12 +150,13 @@ const GameJoin = () => {
                 }
             } catch (error) {
                 console.log("in error")
-                status = error.response.data.message;
-                if (status.includes("closed") || numChecks === 0) {
+                status = error.response.status;
+                console.log("Status", status);
+                if (status === 404 || numChecks === 0) { // room closed
                     await doRoomClosed();
 
                     return;
-                } else if (status.includes("in play")) {
+                } else if (status === 401) { // room in play
                     await doRoomInPlay();
                 } else {
                     console.log("nothing in error");
@@ -271,7 +272,7 @@ const GameJoin = () => {
                         <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, user.persistent, false)}
             </BaseContainer>
         );
     }

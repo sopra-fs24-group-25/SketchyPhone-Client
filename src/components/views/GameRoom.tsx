@@ -286,7 +286,7 @@ const GameRoom = () => {
                         <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, thisUser.persistent, false)}
             </BaseContainer>);
     }
 
@@ -384,7 +384,7 @@ const GameRoom = () => {
                         </div>
                     </div>
                 </div>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, thisUser.persistent, false)}
             </BaseContainer>
         );
     }
@@ -495,7 +495,7 @@ const GameRoom = () => {
                     </div>
                     {isSettingsSaved ? <div className="settings saved">Saved successfully!</div> : ""}
                 </div>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, thisUser.persistent, false)}
             </BaseContainer>
         );
     }

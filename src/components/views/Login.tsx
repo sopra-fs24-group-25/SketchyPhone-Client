@@ -57,8 +57,8 @@ const Login = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [credentialsInvalid, setCredentialsInvalid] = useState<boolean>(false);
-    const [isSignUp, setIsSignUp] = useState<boolean>(location.state.isSignUp);
-    const [toCreateAccount] = useState<boolean>(location.state.toCreateAccount);
+    const [isSignUp, setIsSignUp] = useState<boolean>(location.state?.isSignUp ?? true);
+    const [toCreateAccount] = useState<boolean>(location.state?.toCreateAccount ?? false);
 
     const doLogin = async (isSignUp) => {
         try {

@@ -5,6 +5,7 @@ import "styles/ui/PresentationContainer.scss";
 const PresentationText = (props) => {
     console.log(props.ownsDrawing);
     console.log(props.textPrompt.creator.userId);
+
     return (
         <div className="presentation textContainer">
             <div className="presentation username leftalign">
@@ -20,7 +21,7 @@ const PresentationText = (props) => {
                 >
                     {`${props.textPrompt.hasVoted ? "Upvoted!" : "Upvote"}`}
                 </button>
-        }
+            }
 
         </div>
     )

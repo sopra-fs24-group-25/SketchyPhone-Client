@@ -9,12 +9,12 @@ import User from "models/User";
 import Game from "../../models/Game";
 import Profile from "./Profile";
 
-const Menu = (openMenu, toggleMenu) => {
+const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
 
     const navigate = useNavigate();
 
     const [openProfile, setOpenProfile] = useState<boolean>(false);
-    const [isInGame, setIsInGame] = useState<boolean>(sessionStorage.getItem("gameRoom"));
+    const [isInGameRoom, setIsInGameRoom] = useState<boolean>(sessionStorage.getItem("gameRoom"));
 
     function toggleProfile(withToggleMenu: boolean) {
         setOpenProfile(!openProfile);
@@ -26,7 +26,7 @@ const Menu = (openMenu, toggleMenu) => {
     const handleOpenProfile = () => {
         console.log("To profile");
         setOpenProfile(true);
-        setIsInGame(sessionStorage.getItem("gameRoom"));
+        setIsInGameRoom(sessionStorage.getItem("gameRoom"));
     }
 
     const handleOpenHistory = () => {
@@ -36,20 +36,38 @@ const Menu = (openMenu, toggleMenu) => {
         );
     }
 
-    const logout = async () => {
-        const user = new User(JSON.parse(sessionStorage.getItem("user")));
-        const game = new Game(JSON.parse(sessionStorage.getItem("gameRoom")));
-        sessionStorage.clear();
-        navigate("/");
-        if (game === null) {
-            return;
-        }
+    async function removeFromGame(user: User, game: Game, headers) {
         try {
-            const headers = { "Authorization": user.token, "X-User-ID": user.userId };
             await api.delete(`/games/${game.gameId}/leave/${user.userId}`, { headers: headers });
             console.log("Successfully exited game while logging out!");
         } catch {
             console.log("Couldn't exit the game properly!");
+        }
+    }
+
+    async function deleteUser(user: User, headers) {
+        try {
+            await api.delete(`/users/${user.userId}`, { headers: headers});
+            console.log("Successfully deleted user!");
+        } catch {
+            console.log("Couldn't delete user properly!");
+        }
+    }
+
+    const logout = async () => {
+        const user = new User(JSON.parse(sessionStorage.getItem("user")));
+        const game = new Game(JSON.parse(sessionStorage.getItem("gameRoom")));
+        const headers = { "Authorization": user.token, "X-User-ID": user.userId };
+
+        sessionStorage.clear();
+        navigate("/");
+
+        if (game.gameId) {
+            await removeFromGame(user, game, headers);
+        }
+        if (user.userId && !user.persistent) {
+            console.log("Guest user...");
+            await deleteUser(user, headers);
         }
         
     };
@@ -64,18 +82,22 @@ const Menu = (openMenu, toggleMenu) => {
                     <BackButton className="menu-backbutton"
                         onClick={() => toggleMenu()}>
                     </BackButton>
-                    <button //profile
-                        className="menu-button"
-                        onClick={() => handleOpenProfile()}
-                    >
-                        Profile
-                    </button>
-                    <button //history
-                        className="menu-button"
-                        onClick={() => handleOpenHistory()}
-                    >
-                        History
-                    </button>
+                    {!isPlaying ?
+                        <button //profile
+                            className="menu-button"
+                            onClick={() => handleOpenProfile()}
+                        >
+                            Profile
+                        </button>
+                        : null}
+                    {isPersistent && !isPlaying ?
+                        <button //history
+                            className="menu-button"
+                            onClick={() => handleOpenHistory()}
+                        >
+                            History
+                        </button>
+                        : null }
                     <button //logout
                         className="menu-button"
                         onClick={() => logout()}
@@ -84,7 +106,7 @@ const Menu = (openMenu, toggleMenu) => {
                     </button>
                 </div>
             </button>
-            {Profile(openProfile, toggleProfile, isInGame)}
+            {Profile(openProfile, toggleProfile, isInGameRoom)}
         </div>
     );
 }

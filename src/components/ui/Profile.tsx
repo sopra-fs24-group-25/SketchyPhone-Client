@@ -37,7 +37,7 @@ ProfileField.propTypes = {
     invalid: PropTypes.bool,
 };
 
-const Profile = (openProfile, toggleProfile, isInGame) => {
+const Profile = (openProfile, toggleProfile, isInGameRoom) => {
 
     const navigate = useNavigate();
 
@@ -133,7 +133,7 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
                         disabled={!isEditing}
                         onChange={(n: string) => setNickname(n)}>
                     </ProfileField>
-                    {user.persistent && !isInGame ?
+                    {user.persistent && !isInGameRoom ?
                         <><ProfileField
                             className="profile input"
                             label="Username"
@@ -168,7 +168,7 @@ const Profile = (openProfile, toggleProfile, isInGame) => {
                     >
                         {isEditing ? "Save": "Edit"}
                     </Button>
-                    {!user.persistent && !isInGame ?
+                    {!user.persistent && !isInGameRoom ?
                         <button className={"profile sign-in-link"}
                             onClick={() => createAccount()}
                         >

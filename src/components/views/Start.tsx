@@ -88,7 +88,7 @@ const Start = () => {
                                 width="100%"
                                 onClick={() => doPlayGuest()}
                             >
-                                Play as a guest
+                                Login as a guest
                             </Button>
                         </div>
                         <div className="start button-container">

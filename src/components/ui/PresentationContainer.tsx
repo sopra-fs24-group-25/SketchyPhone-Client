@@ -14,7 +14,7 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import { api, handleError } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults, gameSession, user }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults, gameSession, gameId, user }) => {
 
     const navigate = useNavigate();
 
@@ -27,9 +27,21 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     const upvoteAudio = new AudioPlayer(AudioContextEnum.UPVOTE);
     const clickAudio = new AudioPlayer(AudioContextEnum.BUTTON_POP);
 
-    const exitGame = () => {
-        sessionStorage.clear();
-        navigate("/gameRoom");
+    const exitGame = async () => {
+        try {
+            const headers = { "Authorization": user.token, "X-User-ID": user.userId };
+            await api.delete(`/games/${gameId}/leave/${user.userId}`, { headers: headers });
+            sessionStorage.removeItem("numCycles");
+            sessionStorage.removeItem("gameSpeed");
+            sessionStorage.removeItem("isEnabledTTS");
+            sessionStorage.removeItem("gameRoom");
+            sessionStorage.removeItem("gameroomToken");
+            sessionStorage.removeItem("gameSettings");
+            navigate("/gameRoom");
+            console.log("exited room");
+        } catch (error) {
+            alert(`Could not exit:\n ${handleError(error)}`);
+        }
     }
 
     function TextToSpeech(text) {
@@ -301,6 +313,7 @@ PresentationContainer.propTypes = {
     onClickNextRound: PropTypes.func,
     onClickResults: PropTypes.func,
     gameSession: PropTypes.object,
+    gameId: PropTypes.number,
     user: PropTypes.object
 }
 

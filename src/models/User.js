@@ -8,7 +8,7 @@ class User {
         this.nickname = null;
         this.creationDateTime = null;
         this.status = null;
-        this.persistent = null;
+        this.persistent = false;
         this.email = null;
         this.password = null;
         this.avatarId = null;

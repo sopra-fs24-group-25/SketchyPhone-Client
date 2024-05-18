@@ -56,9 +56,21 @@ const Game = () => {
     const [topThreeDrawings, setTopThreeDrawings] = useState<[DrawingPrompt]>(null);
     const [topThreeTextPrompts, setTopThreeTextPrompts] = useState<[TextPrompt]>(null);
 
-    const exitGame = () => {
-        sessionStorage.clear();
-        navigate("/gameRoom");
+    const exitGame = async () => {
+        try {
+            const headers = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
+            await api.delete(`/games/${gameObject.gameId}/leave/${user.current.userId}`, { headers: headers });
+            sessionStorage.removeItem("numCycles");
+            sessionStorage.removeItem("gameSpeed");
+            sessionStorage.removeItem("isEnabledTTS");
+            sessionStorage.removeItem("gameRoom");
+            sessionStorage.removeItem("gameroomToken");
+            sessionStorage.removeItem("gameSettings");
+            navigate("/gameRoom");
+            console.log("exited room");
+        } catch (error) {
+            alert(`Could not exit:\n ${handleError(error)}`);
+        }
     }
 
     useEffect(() => {
@@ -424,7 +436,7 @@ const Game = () => {
                     Waiting for players to finish their tasks...
                 </div>
                 <Spinner></Spinner>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, user.persistent, true)}
             </BaseContainer>
         )
     });
@@ -457,9 +469,10 @@ const Game = () => {
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
                     onClickResults={() => { fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current) }}
                     gameSession={gameSession.current}
+                    gameId={gameObject.gameId}
                     user={user.current}
                 ></PresentationContainer>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, user.persistent, true)}
             </BaseContainer>)
     });
 
@@ -468,6 +481,12 @@ const Game = () => {
     const LeaderboardView = React.memo(() => {
         return (
             <BaseContainer>
+                <div className="gameroom header">
+                    <BurgerMenu
+                        onClick={() => setOpenMenu(!openMenu)}
+                        disabled={openMenu}>
+                    </BurgerMenu>
+                </div>
                 <Leaderboard
                     topThreeDrawings={topThreeDrawings}
                     topThreeTextPrompts={topThreeTextPrompts}
@@ -476,7 +495,7 @@ const Game = () => {
                     user={user.current}
                 >
                 </Leaderboard>
-                {Menu(openMenu, toggleMenu)}
+                {Menu(openMenu, toggleMenu, user.persistent, true)}
             </BaseContainer>
         )
     })
