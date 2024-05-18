@@ -6,7 +6,7 @@ import { saveAs } from "file-saver";
 
 const PresentationDrawing = (props) => {
 
-    let FileSaver = require('file-saver');
+    let FileSaver = require("file-saver");
 
     const downloadImage = (ImageBase64, fileName) => {
         const imgDL = document.createElement("a") as HTMLAnchorElement;
