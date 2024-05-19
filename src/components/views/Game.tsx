@@ -480,6 +480,7 @@ const Game = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
+                <div className="gameroom title">Presentation</div>
                 <PresentationContainer
                     presentationContents={elementsToShow}
                     isAdmin={user.current.role === "admin"}
@@ -506,6 +507,7 @@ const Game = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
+                <div className="gameroom title">Leaderboard</div>
                 <Leaderboard
                     topThreeDrawings={topThreeDrawings}
                     topThreeTextPrompts={topThreeTextPrompts}

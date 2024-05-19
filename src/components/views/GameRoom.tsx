@@ -63,6 +63,10 @@ const GameRoom = () => {
 
     const [openMenu, setOpenMenu] = useState<boolean>(false);
 
+    // Player counts
+    const MAX_PLAYERS = 8;
+    const MIN_PLAYERS = 3;
+
     // Default settings
     const defaultNumCycles = 3;
     const defaultGameSpeed = GameSpeedEnum.NORMAL.inSeconds;
@@ -327,7 +331,7 @@ const GameRoom = () => {
             }
 
             return (
-                <div className="gameroom waiting non-admin">{3 - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
+                <div className="gameroom waiting non-admin">{MIN_PLAYERS - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
             )
         }
 
@@ -363,6 +367,7 @@ const GameRoom = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
+                <div className="gameroom title">Lobby</div>
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
                         <button className={`gameroom pin ${copyPin ? "copied" : ""}`}
@@ -371,7 +376,7 @@ const GameRoom = () => {
                             <p>{copyPin ? "Copied Game PIN!" : `Game PIN: ${String(game["gamePin"]).slice(0, 3)} ${String(game["gamePin"]).slice(3)}`}</p>
                         </button>
                         <div className="gameroom waiting">
-                            <p>Waiting for players...</p>
+                            <p>{users?.length === MAX_PLAYERS ? "Lobby is full!": "Waiting for players..."}</p>
                         </div>
                     </div>
                     <div className="gameroom subcontainer">
