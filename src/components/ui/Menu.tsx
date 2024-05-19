@@ -8,12 +8,14 @@ import { BackButton } from "components/ui/BackButton";
 import User from "models/User";
 import Game from "../../models/Game";
 import Profile from "./Profile";
+import History from "./History";
 
 const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
 
     const navigate = useNavigate();
 
     const [openProfile, setOpenProfile] = useState<boolean>(false);
+    const [openHistory, setOpenHistory] = useState<boolean>(false);
     const [isInGameRoom, setIsInGameRoom] = useState<boolean>(sessionStorage.getItem("gameRoom"));
 
     function toggleProfile(withToggleMenu: boolean) {
@@ -29,11 +31,17 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
         setIsInGameRoom(sessionStorage.getItem("gameRoom"));
     }
 
+    function toggleHistory(withToggleMenu: boolean) {
+        setOpenHistory(!openHistory);
+        if (withToggleMenu) {
+            toggleMenu();
+        }
+    }
+
     const handleOpenHistory = () => {
         console.log("To history");
-        alert(
-            "Feature available soon"
-        );
+        setOpenHistory(true);
+        setIsInGameRoom(sessionStorage.getItem("gameRoom"));
     }
 
     async function removeFromGame(user: User, game: Game, headers) {
@@ -107,6 +115,7 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
                 </div>
             </button>
             {Profile(openProfile, toggleProfile, isInGameRoom)}
+            {History(openHistory, toggleHistory, isInGameRoom)}
         </div>
     );
 }

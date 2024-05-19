@@ -21,16 +21,17 @@ const PresentationDrawing = (props) => {
             <div className="presentation username rightalign">
                 {props.drawingPrompt.creator.nickname}
             </div>
-            <img
-                className="presentation drawing"
-                alt={`Drawing from ${props.drawingPrompt.creator.nickname}`}
-                src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
-                onClick={() => downloadImage(props.drawingPrompt.encodedImage.replaceAll("\"", ""), `SKETCHY_PHONE_${props.drawingPrompt.creator.nickname + props.drawingPrompt.drawingId}`)}
-            >
-
-            </img>
-            <div className = "presentation download"
-            >
+            <div className="presentation drawingDownloadContainer">
+                <img
+                    className="presentation drawing"
+                    alt={`Drawing from ${props.drawingPrompt.creator.nickname}`}
+                    src={`data:image/png; base64, ${props.drawingPrompt.encodedImage.replaceAll("\"", "")}`}
+                >
+                </img>
+                <button
+                    className="presentation download"
+                    onClick={() => downloadImage(props.drawingPrompt.encodedImage.replaceAll("\"", ""), `SKETCHY_PHONE_${props.drawingPrompt.creator.nickname + props.drawingPrompt.drawingId}`)}
+                ></button>
             </div>
             <span>
                 {!props.ownsDrawing &&
@@ -38,7 +39,7 @@ const PresentationDrawing = (props) => {
                         className={`presentation voting ${props.drawingPrompt.hasVoted ? "selected" : ""}`}
                         onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
                     >
-                        {`${props.drawingPrompt.hasVoted ? "Upvoted" : "Upvote"}`}
+                        {`${props.drawingPrompt.hasVoted ? "Upvoted!" : "Upvote"}`}
                     </button>
                 }
             </span>

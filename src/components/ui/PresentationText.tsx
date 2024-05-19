@@ -19,7 +19,6 @@ const PresentationText = (props) => {
                     {`${props.textPrompt.hasVoted ? "Upvoted!" : "Upvote"}`}
                 </button>
             }
-
         </div>
     )
 }
