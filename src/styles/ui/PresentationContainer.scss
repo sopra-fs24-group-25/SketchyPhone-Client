@@ -67,13 +67,15 @@
     &.container {
         display: flex;
         flex-direction: column;
+        justify-content: space-evenly;
         background-color: $display-box-color;
         border-radius: 2em;
-        margin: 40px;
-        max-height: 50em;
-        min-height: 40em;
+        margin: 20px;
+        min-height: fit-content;
+        min-height: 400px;
         min-width: 60em;
-        height: $DESKTOP_HEIGHT / 2;
+        max-height: $DESKTOP_HEIGHT * 0.6;
+        max-width: 100em;
         width: $DESKTOP_WIDTH / 2;
         overflow: scroll;
         @include scrollbar;
@@ -92,10 +94,15 @@
 
     &.buttonsContainer {
         @include center;
+        justify-content: space-around;
 
         &.presentationButton {
             padding: 20px;
             margin: 20px;
+
+            &.hidden {
+                visibility: hidden;
+            }
         }
     }
 
@@ -108,8 +115,16 @@
         color: $background;
         font-size: larger;
         font-weight: 800;
+        transition: all 0.3s ease;
         &.selected {
             color: $highlights;
+        }
+        &.hidden {
+            visibility: hidden;
+            opacity: 1;
+        }
+        &:hover {
+            scale: 1.1;
         }
     }
 
@@ -135,8 +150,5 @@
         &:hover {
             scale: 1.1;
         }
-        
     }
-
-    
 }

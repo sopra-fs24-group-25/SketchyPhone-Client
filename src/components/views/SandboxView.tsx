@@ -375,6 +375,7 @@ const SandboxView = () => {
                     disabled={openMenu}>
                 </BurgerMenu>
             </div>
+            <div className="gameroom title">Presentation</div>
             <PresentationContainer
                 presentationContents={toShow}
                 isAdmin={true}

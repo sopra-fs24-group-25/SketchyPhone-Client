@@ -1,6 +1,7 @@
 import { React, useState } from "react";
 import PropTypes from "prop-types";
 import UserPreview from "./UserPreview";
+import BaseContainer from "components/ui/BaseContainer";
 import "../../styles/ui/Leaderboard.scss";
 import { Button } from "./Button";
 
@@ -20,55 +21,41 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
 
     const separator = () => (
-        <div className="leaderboard separator">
-            <hr className="leaderboard separator leftalign"
-                style={{
-                    background: "black",
-                    color: "black",
-                    borderColor: "black",
-                    height: "2px",
-                    width: "40%"
-                }}
-            />
-            <p>{"DONE"}</p>
-            <hr className="leaderboard separator rightalign"
-                style={{
-                    background: "black",
-                    color: "black",
-                    borderColor: "black",
-                    height: "2px",
-                    width: "40%"
-                }}
-            />
-        </div>
+        <hr className="leaderboard separator"
+            style={{
+                background: "black",
+                color: "black",
+                borderColor: "black",
+                height: "2px",
+                width: "90%"
+            }}
+        />
     )
 
-    const leaderboardButtons = () => {
+    const leaderboardButtons = (showSwitchButton = true) => {
         
         return (
             <div className="leaderboard buttonsContainer">
-                <Button width="20%"
-                    className="leaderboard button"
-                    onClick={() => setLeaderboardType(leaderboardType === LeaderboardType.DRAWING ? LeaderboardType.TEXTPROMPT : LeaderboardType.DRAWING)}>
-                    {`SWITCH TO ${leaderboardType === LeaderboardType.DRAWING ? "TEXTPROMPTS": "DRAWINGS"}`}
-                </Button>
+                {showSwitchButton &&
+                    <Button width="20%"
+                        onClick={() => setLeaderboardType(leaderboardType === LeaderboardType.DRAWING ? LeaderboardType.TEXTPROMPT : LeaderboardType.DRAWING)}>
+                        {`Show ${leaderboardType === LeaderboardType.DRAWING ? "PROMPTS": "DRAWINGS"}`}
+                    </Button>
+                }
                 {/* Only for admin */}
                 {user?.role === "admin" &&
                     <Button width="20%"
-                        className="leaderboard button"
                         onClick={() => onClickNextRound()}>
-                        New Round
+                        New round
                     </Button>
                 }
                 {user?.role === "admin" &&
                     <Button width="20%"
-                        className="leaderboard button"
                         onClick={() => onClickBackToLobby()}>
-                        Back to Lobby
+                        Lobby
                     </Button>
                 }
                 <Button width="20%"
-                    className="leaderboard button"
                     onClick={() => onExitGame()}>
                     Exit game
                 </Button>
@@ -96,6 +83,14 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     }
 
     function leaderboardDrawingElement(element, idx) {
+
+        const downloadImage = (ImageBase64, fileName) => {
+            const imgDL = document.createElement("a");
+            imgDL.href = "data:image/png;base64," + ImageBase64;
+            imgDL.download = fileName;
+            imgDL.click();
+        }
+
         return (
             <div key={`${element.textPromptId}` + `${element.creator.userId}`} className="leaderboard elementcontainer">
                 <div className="leaderboard user">
@@ -112,6 +107,10 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                         alt={`Drawing from ${element.creator.nickname}`}
                         src={`data:image/png; base64, ${element.encodedImage.replaceAll("\"", "")}`}
                     ></img>
+                    <button
+                        className="leaderboard download"
+                        onClick={() => downloadImage(element.encodedImage.replaceAll("\"", ""), `SKETCHY_PHONE_${element.creator.nickname + element.drawingId}`)}
+                    ></button>
                 </div>
                 <p>
                     #Votes: {element.numVotes}
@@ -122,8 +121,8 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     function showTopThree() {
         if (topThreeDrawings === null && topThreeTextPrompts === null) {
             return (<div>
-                <p className="leaderboard textprompt">Nothing has been voted on!</p>
-                {leaderboardButtons()}
+                <p className="leaderboard no-votes">Nothing has been voted on!</p>
+                {leaderboardButtons(false)}
             </div>)
         }
 
@@ -140,7 +139,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             }
 
             return (
-                <div className="leaderboard container" >
+                <div className="leaderboard container">
                     {textPromptLeaderboardContent}
                     {separator()}
                     {leaderboardButtons()}
@@ -173,7 +172,9 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     }
 
     return (
-        showTopThree()
+        <BaseContainer style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {showTopThree()}
+        </BaseContainer>
     )
 }
 

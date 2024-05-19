@@ -11,6 +11,8 @@ body {
   min-height: 100vh;
   font-family: $fontDefault;
   background-image: $radial-gradients;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 input,

@@ -22,6 +22,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     // create audioplayer to use
     const revealAudio = new AudioPlayer(AudioContextEnum.PRESENTATION_REVEAL_DRAWING);
     const upvoteAudio = new AudioPlayer(AudioContextEnum.UPVOTE);
+    const downvoteAudio = new AudioPlayer(AudioContextEnum.DOWNVOTE);
     const clickAudio = new AudioPlayer(AudioContextEnum.BUTTON_POP);
 
 
@@ -71,11 +72,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
 
     }, [presentationContents])
 
-    // useEffect for upvote sound
-    useEffect(() => {
-        upvoteAudio.handlePlay();
-    }, [newVote])
-
     async function doVoteTextPrompt(textPrompt, creator) {
         // For testing
         if (gameSession === undefined) {
@@ -113,10 +109,12 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             if (textPrompt.hasVoted) {
                 textPrompt.votes -= 1;
                 setNewVote(newVote - 1);
+                downvoteAudio.handlePlay();
             }
             else {
                 textPrompt.votes += 1;
                 setNewVote(newVote + 1);
+                upvoteAudio.handlePlay();
             }
 
             textPrompt.hasVoted = !textPrompt.hasVoted;
@@ -149,8 +147,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         let url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/vote`;
 
         if (drawing.hasVoted) {
-            alert("Unvoting!")
-
             // Base url for unvoting
             url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/unvote`;
         }
@@ -164,10 +160,12 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             if (drawing.hasVoted) {
                 drawing.numVotes -= 1;
                 setNewVote(newVote - 1);
+                downvoteAudio.handlePlay();
             }
             else {
                 drawing.numVotes += 1;
                 setNewVote(newVote + 1);
+                upvoteAudio.handlePlay();
             }
 
             drawing.hasVoted = !drawing.hasVoted;
@@ -181,11 +179,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     function presentTextPrompt(element) {
         return (
             <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
-                {/* <Button
-                    style = {{margin: "20px"}}
-                    onClick={() => TextToSpeech(element.content)}>
-                    Speak
-                </Button> */}
                 <UserPreview
                     id={element.creator.avatarId}
                 ></UserPreview>
@@ -204,7 +197,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         return (
             <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
                 <PresentationDrawing
-                    // key={element.drawingId}
                     drawingPrompt={element}
                     doVote={doVoteDrawing}
                     ownsDrawing= {user.userId === element.creator.userId}
@@ -233,63 +225,53 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                             color: "black",
                             borderColor: "black",
                             height: "2px",
-                            width: "40%"
-                        }}
-                    />
-                    <p>DONE</p>
-                    <hr className="presentation separator rightalign"
-                        style={{
-                            background: "black",
-                            color: "black",
-                            borderColor: "black",
-                            height: "2px",
-                            width: "40%"
+                            width: "90%"
                         }}
                     />
                 </div>
-                {/* NOT IMPLEMENTED YET */}
-                {/* <Button className="presentation presentationButton"
-                    width='20%'
-                >
-                    See Results
-                </Button> */}
-                <div className="presentation buttonsContainer">
-                    {isAdmin && <Button
+                {isAdmin && <div className="presentation buttonsContainer">
+                    <Button
                         onClick={() => { onClickIncrement(); clickAudio.handlePlay() }}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
-                        Show next prompt
-                    </Button>}
-                    {isAdmin && <Button
-                        onClick={() => { onClickNextRound(); clickAudio.handlePlay() }}
+                        Show next
+                    </Button>
+                    <Button
+                        width="20%"
+                        className="presentation buttonsContainer presentationButton hidden"
+                    ></Button>
+                    <Button
+                        onClick={() => onClickResults()}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
-                        Start new round
-                    </Button>}
+                        Leaderboard
+                    </Button>
+                </div>}
+                <div className="presentation buttonsContainer">
                     {isAdmin && <Button
-                        onClick={() => { onClickBackToLobby(); clickAudio.handlePlay() }}
+                        onClick={() => onClickNextRound()}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
-                        Back to lobby
+                        New round
                     </Button>}
                     {isAdmin && <Button
-                        onClick={() => { onClickResults(); clickAudio.handlePlay() }}
+                        onClick={() => onClickBackToLobby()}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
-                        Show results
+                        Lobby
                     </Button>}
+                    
                     <Button className="presentation buttonsContainer presentationButton"
                         width="20%"
-                        onClick={() => { onExitGame(); clickAudio.handlePlay() }}
+                        onClick={() => onExitGame()}
                     >
-                        End game
+                        Exit game
                     </Button>
                 </div>
-
             </div >
         </BaseContainer>
     )

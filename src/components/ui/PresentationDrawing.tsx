@@ -1,20 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "styles/ui/PresentationContainer.scss";
-import { Button } from "./Button";
-import { saveAs } from "file-saver";
 
 const PresentationDrawing = (props) => {
 
-    let FileSaver = require("file-saver");
-
     const downloadImage = (ImageBase64, fileName) => {
-        const imgDL = document.createElement("a") as HTMLAnchorElement;
+        const imgDL = document.createElement("a");
         imgDL.href = "data:image/png;base64," + ImageBase64;
         imgDL.download = fileName;
         imgDL.click();
     }
 
+    function getVotingButtonState() {
+        if (props.ownsDrawing) {
+            return "hidden";
+        }
+
+        return props.drawingPrompt.hasVoted ? "selected" : "";
+    }
 
     return (
         <div className="presentation drawingContainer">
@@ -34,14 +37,12 @@ const PresentationDrawing = (props) => {
                 ></button>
             </div>
             <span>
-                {!props.ownsDrawing &&
-                    <button
-                        className={`presentation voting ${props.drawingPrompt.hasVoted ? "selected" : ""}`}
-                        onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
-                    >
-                        {`${props.drawingPrompt.hasVoted ? "Upvoted!" : "Upvote"}`}
-                    </button>
-                }
+                <button
+                    className={`presentation voting ${getVotingButtonState()}`}
+                    onClick={() => props.doVote(props.drawingPrompt, props.drawingPrompt.creator)}
+                >
+                    {`${props.drawingPrompt.hasVoted ? "Upvoted!" : "Upvote"}`}
+                </button>
             </span>
 
 
