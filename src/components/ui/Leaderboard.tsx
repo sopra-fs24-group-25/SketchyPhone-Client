@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { React, useState } from "react";
 import PropTypes from "prop-types";
 import UserPreview from "./UserPreview";
@@ -16,11 +15,9 @@ const IndexToRank = {
     3: "3rd",
 }
 
-const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, onExitGame, user }) => {
+const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, onClickBackToLobby, onExitGame, user }) => {
 
     const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
-
-    const navigate = useNavigate();
 
     const separator = () => (
         <div className="leaderboard separator">
@@ -63,7 +60,13 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                         New Round
                     </Button>
                 }
-
+                {user?.role === "admin" &&
+                    <Button width="20%"
+                        className="leaderboard button"
+                        onClick={() => onClickBackToLobby()}>
+                        Back to Lobby
+                    </Button>
+                }
                 <Button width="20%"
                     className="leaderboard button"
                     onClick={() => onExitGame()}>
@@ -178,6 +181,7 @@ Leaderboard.propTypes = {
     topThreeDrawings: PropTypes.array,
     topThreeTextPrompts: PropTypes.array,
     onClickNextRound: PropTypes.func,
+    onClickBackToLobby: PropTypes.func,
     onExitGame: PropTypes.func,
     user: PropTypes.object
 }

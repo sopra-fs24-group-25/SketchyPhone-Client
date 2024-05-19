@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "components/ui/Button";
-import { useNavigate } from "react-router-dom";
 import BaseContainer from "components/ui/BaseContainer";
 import PresentationDrawing from "components/ui/PresentationDrawing";
 import PresentationText from "components/ui/PresentationText";
@@ -11,12 +10,10 @@ import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
-import { api, handleError } from "helpers/api";
+import { api } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickResults, gameSession, gameId, user }) => {
-
-    const navigate = useNavigate();
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user }) => {
 
     const containerRef = useRef(null);
 
@@ -27,22 +24,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     const upvoteAudio = new AudioPlayer(AudioContextEnum.UPVOTE);
     const clickAudio = new AudioPlayer(AudioContextEnum.BUTTON_POP);
 
-    const exitGame = async () => {
-        try {
-            const headers = { "Authorization": user.token, "X-User-ID": user.userId };
-            await api.delete(`/games/${gameId}/leave/${user.userId}`, { headers: headers });
-            sessionStorage.removeItem("numCycles");
-            sessionStorage.removeItem("gameSpeed");
-            sessionStorage.removeItem("isEnabledTTS");
-            sessionStorage.removeItem("gameRoom");
-            sessionStorage.removeItem("gameroomToken");
-            sessionStorage.removeItem("gameSettings");
-            navigate("/gameRoom");
-            console.log("exited room");
-        } catch (error) {
-            alert(`Could not exit:\n ${handleError(error)}`);
-        }
-    }
 
     function TextToSpeech(text) {
         const synth = window.speechSynthesis;
@@ -115,11 +96,11 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         console.log(`Voted for text prompt ${textPrompt.textPromptId} from ${creator.nickname}`);
 
         // Base url for upvoting
-        const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/vote`;
+        let url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/vote`;
 
         if (textPrompt.hasVoted) {
             // Base url for unvoting
-            const url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/unvote`;
+            url = `/games/${gameSession.gameSessionId}/prompt/${textPrompt.textPromptId}/unvote`;
         }
 
         const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -165,13 +146,13 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         console.log(`Voted for drawing ${drawing.drawingId} from ${creator.nickname}`);
 
         // Base url for upvoting
-        const url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/vote`;
+        let url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/vote`;
 
         if (drawing.hasVoted) {
             alert("Unvoting!")
 
             // Base url for unvoting
-            const url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/unvote`;
+            url = `/games/${gameSession.gameSessionId}/drawing/${drawing.drawingId}/unvote`;
         }
 
         const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -288,6 +269,13 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                         Start new round
                     </Button>}
                     {isAdmin && <Button
+                        onClick={() => { onClickBackToLobby(); clickAudio.handlePlay() }}
+                        width="20%"
+                        className="presentation buttonsContainer presentationButton"
+                    >
+                        Back to lobby
+                    </Button>}
+                    {isAdmin && <Button
                         onClick={() => { onClickResults(); clickAudio.handlePlay() }}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
@@ -296,7 +284,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     </Button>}
                     <Button className="presentation buttonsContainer presentationButton"
                         width="20%"
-                        onClick={() => { exitGame(); clickAudio.handlePlay() }}
+                        onClick={() => { onExitGame(); clickAudio.handlePlay() }}
                     >
                         End game
                     </Button>
@@ -313,9 +301,10 @@ PresentationContainer.propTypes = {
     isAdmin: PropTypes.bool,
     onClickIncrement: PropTypes.func,
     onClickNextRound: PropTypes.func,
+    onClickBackToLobby: PropTypes.func,
     onClickResults: PropTypes.func,
+    onExitGame: PropTypes.func,
     gameSession: PropTypes.object,
-    gameId: PropTypes.number,
     user: PropTypes.object
 }
 

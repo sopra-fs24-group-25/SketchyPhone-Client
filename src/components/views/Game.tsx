@@ -3,7 +3,6 @@ import { api, handleError } from "helpers/api";
 import BaseContainer from "components/ui/BaseContainer";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import { PhoneLogo } from "../ui/PhoneLogo";
-import { Button } from "components/ui/Button";
 import Menu from "components/ui/Menu";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
@@ -39,10 +38,10 @@ const Game = () => {
     // main objects we need for the application logic
     const user = useRef<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
-    // this should always be the current gamesession
+    // this should always be the current gameSession
     const gameSession = useRef<GameSession>(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
 
-    // The naming might be ambiguous as gamesession extends gameobject
+    // The naming might be ambiguous as gameSession extends gameObject
     const [gameObject, setGameObject] = useState<GameSession>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
     const [presentationIndex, setPresentationIndex] = useState<number>(0);
 
@@ -60,6 +59,8 @@ const Game = () => {
         try {
             const headers = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
             await api.delete(`/games/${gameObject.gameId}/leave/${user.current.userId}`, { headers: headers });
+            const userToSave = {...user.current, role: null};
+            sessionStorage.setItem("user", JSON.stringify(userToSave));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
             sessionStorage.removeItem("isEnabledTTS");
@@ -76,7 +77,7 @@ const Game = () => {
     useEffect(() => {
         // Change in gameLoopStatus detected
         if (prevTask.current !== gameSession.current.gameLoopStatus) {
-            // If we were in presentation or leadeboard mode before and it changed to a textprompt -> a new game has started
+            // If we were in presentation or leaderboard mode before and it changed to a text prompt -> a new game has started
             if ((prevTask.current === GameLoopStatus.PRESENTATION || prevTask.current === GameLoopStatus.LEADERBOARD) && gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT) {
                 console.log("RESETTING FOR NEW GAME")
                 // reset elements
@@ -98,7 +99,7 @@ const Game = () => {
                 fetchPresentationIndex(user.current, gameSession.current);
             }
             else if (user.current.role !== "admin" && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
-                console.log("Fetchingn leaderboard for: " + user.current)
+                console.log("Fetching leaderboard for: " + user.current)
                 fetchTopThreeDrawings(user.current, gameSession.current);
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
@@ -112,7 +113,7 @@ const Game = () => {
 
         // We also check if the room has changed to "OPEN"
         if (gameObject.status === "OPEN") {
-            // We move to gameroom
+            // We move to gameRoom
             navigate("/gameRoom", { state: { isGameCreator: false, isGameCreated: true, gameRoom: gameObject } })
         }
 
@@ -186,6 +187,23 @@ const Game = () => {
         }
     }
 
+    // Send to server to start game ADMIN METHOD
+    async function backToLobby(user: User, game: GameObject) {
+        try {
+            console.log("back to lobby");
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${game.gameId}`;
+            console.log(requestHeader)
+            await api.put(url, null, { headers: requestHeader });
+            navigate("/gameRoom", {state: {isGameCreated: true, isGameCreator: true, gameRoom: gameObject}});
+        }
+        catch (error) {
+            alert(
+                `Error while attempting to go back to lobby: \n${handleError(error)}`
+            );
+        }
+    }
+
     async function fetchPresentationElements(user: User, game: GameSession) {
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -222,9 +240,9 @@ const Game = () => {
 
             if (fetchedGameUpdate) {
                 setGameObject(fetchedGameUpdate);
-                sessionStorage.setItem("gameRoom", JSON.stringify(fetchedGameUpdate)); // Store to sessionstorage
+                sessionStorage.setItem("gameRoom", JSON.stringify(fetchedGameUpdate)); // Store to sessionStorage
 
-                // Get last gamesession (will always be the current)
+                // Get last gameSession (will always be the current)
                 let currentGameSessions = gameObject.gameSessions;
                 let idx = currentGameSessions.length - 1;
                 let currentGameSession = currentGameSessions[idx];
@@ -232,7 +250,7 @@ const Game = () => {
             }
         }
         catch (error) {
-            console.log("Error while fetching gamesessions: " + error);
+            console.log("Error while fetching game sessions: " + error);
         }
     }
 
@@ -246,7 +264,7 @@ const Game = () => {
         while (receivedDrawingPrompt.current === null && attempts < maxAttempts) {
 
             try {
-                // Get last gamesession (will always be the current)
+                // Get last gameSession (will always be the current)
                 let currentGameSessions = gameObject.gameSessions;
                 let idx = currentGameSessions.length - 1;
                 let currentGameSessionId = currentGameSessions[idx].gameSessionId;
@@ -255,7 +273,7 @@ const Game = () => {
                 const response = await api.get(`/games/${currentGameSessionId}/drawings/${user.current.userId}`, { headers: requestHeader });
 
                 if (response.data) {
-                    // set receiveddrawingprompt
+                    // set receivedDrawingPrompt
                     receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
                     const newDrawingPrompt = new DrawingPrompt(response.data);
                     receivedDrawingPrompt.current = newDrawingPrompt;
@@ -288,7 +306,7 @@ const Game = () => {
         while (receivedTextPrompt.current === null && attempts < maxAttempts) {
 
             try {
-                // Get last gamesession (will always be the current)
+                // Get last gameSession (will always be the current)
                 let currentGameSessions = gameObject.gameSessions;
                 let idx = currentGameSessions.length - 1;
                 let currentGameSessionId = currentGameSessions[idx].gameSessionId;
@@ -299,7 +317,7 @@ const Game = () => {
                 const response = await api.get(url, { headers: requestHeader });
 
                 if (response.data) {
-                    // set receivedtextprompt
+                    // set receivedTextPrompt
                     receivedPreviousTextPrompt.current = receivedTextPrompt.current;
                     const newTextPrompt = new TextPrompt(response.data);
                     receivedTextPrompt.current = newTextPrompt;
@@ -467,9 +485,10 @@ const Game = () => {
                     isAdmin={user.current.role === "admin"}
                     onClickIncrement={() => incrementPresentationIndex(user.current, gameSession.current)}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
+                    onClickBackToLobby={() => backToLobby(user.current, gameObject)}
                     onClickResults={() => { fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current) }}
+                    onExitGame={() => exitGame()}
                     gameSession={gameSession.current}
-                    gameId={gameObject.gameId}
                     user={user.current}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}
@@ -491,6 +510,7 @@ const Game = () => {
                     topThreeDrawings={topThreeDrawings}
                     topThreeTextPrompts={topThreeTextPrompts}
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
+                    onClickBackToLobby={() => backToLobby(user.current, gameObject)}
                     onExitGame={() => exitGame()}
                     user={user.current}
                 >

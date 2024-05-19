@@ -380,11 +380,13 @@ const SandboxView = () => {
                 isAdmin={true}
                 onClickIncrement={() => (setIdx(idx + 1))}
                 onClickNextRound={() => console.log("clicked next round")}
-                onClickResults={() => { }}
+                onClickBackToLobby={() => console.log("clicked back to lobby")}
+                onClickResults={() => console.log("clicked show results")}
+                onExitGame={() => console.log("clicked exit game")}
                 gameSession={undefined}
                 user={testUser}
             ></PresentationContainer>
-            {Menu(openMenu, toggleMenu)}
+            {Menu(openMenu, toggleMenu, false, true)}
 
             {/* <Button
                 onClick={() => TextToSpeech(testTextPrompt1.content)}
