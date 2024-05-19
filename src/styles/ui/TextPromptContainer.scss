@@ -13,6 +13,8 @@
         }
     }
     &.container {
+        border: none;
+        background-color: transparent;
         flex-direction: column;
         @include center;
         width: $DESKTOP_WIDTH;

@@ -99,7 +99,8 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     }
 
     return (
-        <div className="prompt container">
+        <button className="prompt container"
+            onKeyDown={(e) => (e.keyCode === 13 && textPromptContent ? onSubmit() : null)}>
             <div className={`prompt title ${isInitialPrompt ? "hidden" : ""}`}
             >
                 It&apos;s time to guess what this drawing is about
@@ -143,7 +144,7 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             >
                 Submit
             </Button>
-        </div>
+        </button>
     )
 
 }

@@ -51,7 +51,8 @@ const GameJoin = () => {
     const [nickname, setNickname] = useState<string>(user.nickname || "");
     const [pin, setPin] = useState<string>("");
     const [pinInvalid, setPinInvalid] = useState<boolean>(false);
-    const [view, setView] = useState<string>("nicknameView"); // If is gamecreator we dont show the pin
+    const [view, setView] = useState<string>("nicknameView"); // If is gameCreator we don't show the pin
+    const [isFullRoom, setIsFullRoom] = useState<boolean>(false);
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [countdownNumber, setCountdownNumber] = useState<number>(null);
 
@@ -134,29 +135,26 @@ const GameJoin = () => {
             numChecks -= 1;
             try {
                 const room = await fetchRoom();
-                if (room.status === "OPEN") {
-                    await doRoomOpen(room);
+                await doRoomOpen(room);
 
-                    return;
-                } else if (room.status === "IN-PLAY") {
-                    await doRoomInPlay();
-                } else if (room.status === "CLOSED") {
-                    await doRoomClosed();
-
-                    return;
-                } else {
-                    console.log("not fetched room info yet");
-                    await doRoomInPlay();
-                }
+                return;
             } catch (error) {
                 console.log("in error")
                 status = error.response.status;
                 console.log("Status", status);
-                if (status === 404 || numChecks === 0) { // room closed
+                if (numChecks === 0) {
+                    setIsFullRoom(false);
+                    await doRoomClosed();
+
+                    return;
+                }
+                if (status === 404) { // room closed
+                    setIsFullRoom(true);
                     await doRoomClosed();
 
                     return;
                 } else if (status === 401) { // room in play
+                    setIsFullRoom(false);
                     await doRoomInPlay();
                 } else {
                     console.log("nothing in error");
@@ -361,9 +359,9 @@ const GameJoin = () => {
     function unavailableRoomView() {
         return baseView(
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
-                <div className="join title">Room currently unavailable...</div>
+                <div className="join title">{`Room currently ${isFullRoom ? "full!" : "unavailable..."}`}</div>
                 <text>
-                    The game room is no longer active. Please return and insert a new game PIN to start a new session.
+                    {`The game room is ${isFullRoom ? "already full" : "no longer active"}. Please return and join another game or create a new one.`}
                 </text>
                 <h2 className="join label">Going back in...</h2>
                 <h2 className="join title">{countdownNumber} seconds</h2>

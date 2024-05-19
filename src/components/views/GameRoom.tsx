@@ -132,7 +132,15 @@ const GameRoom = () => {
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
-            setIsAdmin(users.find(user => user.userId === thisUser.userId)?.role === "admin" || false);
+            const isUserAdmin = users.find(user => user.userId === thisUser.userId)?.role === "admin" || false;
+            setIsAdmin(isUserAdmin);
+            let userToSave;
+            if (isUserAdmin) {
+                userToSave = {...thisUser, role: "admin"};
+            } else {
+                userToSave = {...thisUser, role: "player"};
+            }
+            sessionStorage.setItem("user", JSON.stringify(userToSave));
         }
         catch (error) {
             console.log("Error while fetching users: " + error);
@@ -235,6 +243,8 @@ const GameRoom = () => {
             setGame(null);
             setIsGameCreated(false);
             setUsers(null);
+            const userToSave = {...thisUser, role: null};
+            sessionStorage.setItem("user", JSON.stringify(userToSave));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
             sessionStorage.removeItem("isEnabledTTS");
