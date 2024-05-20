@@ -301,10 +301,10 @@ const GameJoin = () => {
             <button className="gameroom buttons-container" style={{ "alignItems": "left" }}
                 onKeyDown={(e) => (e.keyCode === 13 && avatarId ? validateAvatar() : null)}>
                 <div className="join label">Choose avatar</div>
-                <button className="start sign-in-link"
+                {user.persistent && <button className="join avatar-link"
                     onClick={() => drawAvatar()}
                 >
-                    or personalize your own avatar!</button>
+                    or personalize your own avatar!</button>}
                 <AvatarChoice
                     avatarList={avatarSelection}
                     choose={(id: number) => chooseAvatar(id)}>

@@ -75,4 +75,20 @@
     justify-content: left;
     margin-top: 2em;
   }
+  &.avatar-link {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    text-decoration: underline;
+    border: none;
+    background-color: transparent;
+    font-size: medium;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      scale: 1.1;
+    }
+  }
 }

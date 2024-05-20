@@ -107,7 +107,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
     }
 
     return (
-        <div className={`history screen-layer ${openHistory ? "open" : "closed"}`}>
+        <button className={`history screen-layer ${openHistory ? "open" : "closed"}`}>
             <div className="history container">
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                     <BackButton className="menu-backbutton"
@@ -176,7 +176,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
                         </button>: null}
                 </div>
             </div>
-        </div>
+        </button>
     );
 }
 

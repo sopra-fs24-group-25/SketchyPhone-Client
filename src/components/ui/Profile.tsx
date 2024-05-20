@@ -107,7 +107,7 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
     }
 
     return (
-        <div className={`profile screen-layer ${openProfile ? "open" : "closed"}`}>
+        <button className={`profile screen-layer ${openProfile ? "open" : "closed"}`}>
             <div className="profile container">
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                     <BackButton className="menu-backbutton"
@@ -176,7 +176,7 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
                         </button>: null}
                 </div>
             </div>
-        </div>
+        </button>
     );
 }
 

@@ -20,9 +20,11 @@
     top: 20vh;
     bottom: 20vh;
     left: 0;
+    transition: transform 0.3s cubic-bezier(0, 0.52, 0, 1);
     box-shadow: $dropShadow;
   }
   &.screen-layer {
+    border: none;
     width: 100vw;
     height: 100vh;
     background-color: transparent;

@@ -12,6 +12,7 @@
     border-width: 2px;
     border-radius: 50%;
     box-shadow: $dropShadow;
+    transition: all 0.3s ease;
     &.avatar1 {
         background-image: url("../../icons/avatars/avatar1.svg");
     }
@@ -29,5 +30,11 @@
     }
     &.avatar6 {
         background-image: url("../../icons/avatars/avatar6.svg");
+    }
+    &.isAdmin {
+        cursor: pointer;
+        &:hover {
+            scale: 1.1;
+        }
     }
 }

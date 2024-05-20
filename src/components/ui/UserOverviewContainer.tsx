@@ -10,8 +10,9 @@ export const UserOverviewContainer = props => (
         {props.userList.map((item) => (
             <div className="user" key={item.nickname}>
                 <UserPreview
+                    className={props.isAdmin && props.adminUserId !== item.userId ? "userpreview isAdmin" : ""}
                     id={item.avatarId}
-                    onClick={() => console.log(`Avatar ID: ${item.avatarId}\nUser ID: ${item.userId}\nNickname: ${item.nickname}\npossible future kick functionality`)}
+                    onClick={() => props.onAdminMenu(item)}
                 >
                 </UserPreview>
                 <div style={{flexDirection: "column" }}>
@@ -40,5 +41,8 @@ export const UserOverviewContainer = props => (
 UserOverviewContainer.propTypes = {
     className: PropTypes.string,
     userList: PropTypes.array,
+    onAdminMenu: PropTypes.func,
+    isAdmin: PropTypes.bool,
+    adminUserId: PropTypes.number,
     showUserNames: PropTypes.bool
 };

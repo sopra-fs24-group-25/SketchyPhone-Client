@@ -359,6 +359,17 @@ const GameRoom = () => {
             setIsSettingsActive(true)
         }
 
+        function handleAdminMenu(selectedUser) {
+            if (!isAdmin) {
+                return;
+            }
+            if (selectedUser.userId === thisUser.userId) {
+                return;
+            }
+            //TODO: open adminMenu to appoint new admin or kick user
+            console.log(selectedUser);
+        }
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -367,7 +378,7 @@ const GameRoom = () => {
                         disabled={openMenu}>
                     </BurgerMenu>
                 </div>
-                <div className="gameroom title">Lobby</div>
+                <div className="gameroom title lobby">Lobby</div>
                 <div className="gameroom container">
                     <div className="gameroom subcontainer">
                         <button className={`gameroom pin ${copyPin ? "copied" : ""}`}
@@ -382,6 +393,9 @@ const GameRoom = () => {
                     <div className="gameroom subcontainer">
                         <UserOverviewContainer
                             userList={users || []}
+                            onAdminMenu={handleAdminMenu}
+                            isAdmin={isAdmin}
+                            adminUserId={thisUser.userId}
                             showUserNames={true}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
