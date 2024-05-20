@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import User from "models/User";
 
 /**
  *
@@ -7,10 +8,11 @@ import { Navigate, Outlet } from "react-router-dom";
  * instead of 'export default' at the end of the file.
  */
 export const LoginGuard = () => {
+    const user = new User(JSON.parse(sessionStorage.getItem("user")));
+    if (!user.persistent) {
 
-    return <Outlet />;
-    //if (!sessionStorage.getItem("user")) {
+        return <Outlet />;
+    }
 
-    //    return <Navigate to="/GameRoom" replace />;
-    //}
+    return <Navigate to="/GameRoom" replace />;
 };

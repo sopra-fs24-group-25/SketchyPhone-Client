@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Outlet} from "react-router-dom";
+import { Outlet} from "react-router-dom";
 
 /**
  * routeProtectors interfaces can tell the router whether or not it should allow navigation to a requested route.
@@ -13,8 +13,4 @@ import { Navigate, Outlet} from "react-router-dom";
 export const GameRoomJoinGuard = () => {
 
     return <Outlet />;
-    // if (localStorage.getItem("token")) {
-    
-    // return <Navigate to="/" replace />;
-    //}
 };

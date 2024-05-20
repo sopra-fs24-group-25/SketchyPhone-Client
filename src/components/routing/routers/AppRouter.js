@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { GameGuard } from "../routeProtectors/GameGuard";
 import GameRouter from "./GameRouter";
 import { GameRoomGuard } from "../routeProtectors/GameRoomGuard";
@@ -11,6 +11,7 @@ import Login from "../../views/Login";
 import { StartGuard } from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
 import SandboxView from "../../views/SandboxView"
+import User from "models/User";
 
 
 /**
@@ -23,6 +24,8 @@ import SandboxView from "../../views/SandboxView"
  * Documentation about routing in React: https://reactrouter.com/en/main/start/tutorial 
  */
 const AppRouter = () => {
+    const user = new User(JSON.parse(sessionStorage.getItem("user")));
+
     return (
         <BrowserRouter>
             <Routes>
@@ -48,6 +51,8 @@ const AppRouter = () => {
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
                 </Route>
+
+                <Route path="*" element={<Navigate to={user.userId ? "/gameRoom" : "/"} replace />} />
             </Routes>
         </BrowserRouter>
     );
