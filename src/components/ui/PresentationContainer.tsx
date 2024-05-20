@@ -13,7 +13,7 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import { api } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user, lowPlayerCount }) => {
 
     const containerRef = useRef(null);
 
@@ -192,8 +192,6 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     }
 
     function presentDrawing(element) {
-        console.log(user.userId === element.creator.userId)
-        
         return (
             <div key={`${element.drawingId}` + `${element.round}`} className="presentation subContainer">
                 <PresentationDrawing
@@ -253,7 +251,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     {isAdmin && <Button
                         onClick={() => onClickNextRound()}
                         width="20%"
-                        className="presentation buttonsContainer presentationButton"
+                        className={`presentation buttonsContainer presentationButton ${lowPlayerCount ? "hidden" : ""}`}
                     >
                         New round
                     </Button>}
@@ -287,7 +285,8 @@ PresentationContainer.propTypes = {
     onClickResults: PropTypes.func,
     onExitGame: PropTypes.func,
     gameSession: PropTypes.object,
-    user: PropTypes.object
+    user: PropTypes.object,
+    lowPlayerCount: PropTypes.bool
 }
 
 export default PresentationContainer;

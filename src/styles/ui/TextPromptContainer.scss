@@ -18,6 +18,7 @@
         flex-direction: column;
         @include center;
         width: $DESKTOP_WIDTH;
+        max-width: 60em;
     }
     &.sub-container {
         align-items: center;

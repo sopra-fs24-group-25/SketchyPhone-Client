@@ -17,6 +17,7 @@
     &.container {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         background-color: $display-box-color;
         max-height: $DESKTOP_HEIGHT * 0.6;
         min-width: 50em;
@@ -117,7 +118,7 @@
         font-size: x-large;
         background-color: $background;
         color: white;
-        height: 60px;
+        max-height: 80px;
         width: 425px;
         @include center;
         font-weight: 600;

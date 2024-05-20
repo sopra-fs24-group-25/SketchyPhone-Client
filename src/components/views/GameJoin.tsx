@@ -349,7 +349,7 @@ const GameJoin = () => {
                 <div className="join title">Waiting room...</div>
                 <Spinner></Spinner>
                 <text>
-                    Please wait. The game room is currently hosting a game. You will be granted access by the admin once this game session concludes.
+                    Please wait. The game room is currently hosting a game. You will be granted access once the running game session ends.
                 </text>
             </div>,
             () => goBack()
@@ -361,7 +361,7 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">{`Room currently ${isFullRoom ? "full!" : "unavailable..."}`}</div>
                 <text>
-                    {`The game room is ${isFullRoom ? "already full" : "no longer active"}. Please return and join another game or create a new one.`}
+                    {`The game room is ${isFullRoom ? "already full" : "currently not available"}. Please return and join another game or create a new one.`}
                 </text>
                 <h2 className="join label">Going back in...</h2>
                 <h2 className="join title">{countdownNumber} seconds</h2>

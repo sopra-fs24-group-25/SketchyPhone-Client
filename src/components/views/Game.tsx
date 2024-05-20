@@ -23,6 +23,8 @@ const Game = () => {
 
     const navigate = useNavigate();
 
+    const MIN_PLAYERS = 3;
+
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [currentTask, setCurrentTask] = useState<string>(GameLoopStatus.TEXTPROMPT);
     const prevTask = useRef<string>(GameLoopStatus.TEXTPROMPT);
@@ -37,6 +39,8 @@ const Game = () => {
 
     // main objects we need for the application logic
     const user = useRef<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
+
+    const [sameUser, setSameUser] = useState<User>(user.current);
 
     // this should always be the current gameSession
     const gameSession = useRef<GameSession>(new GameSession(JSON.parse(sessionStorage.getItem("gameSession"))));
@@ -247,6 +251,20 @@ const Game = () => {
                 let idx = currentGameSessions.length - 1;
                 let currentGameSession = currentGameSessions[idx];
                 gameSession.current = currentGameSession;
+
+                // reassign user role when player leaves
+                const isUserAdmin = fetchedGameUpdate.users.find(u => u.userId === user.userId)?.role === "admin" || false;
+                let userToSave;
+                if (isUserAdmin) {
+                    userToSave = {...user, role: "admin"};
+                } else {
+                    userToSave = {...user, role: "player"};
+                }
+                sessionStorage.setItem("user", JSON.stringify(userToSave));
+                user = userToSave;
+                if (userToSave.role !== sameUser.role) {
+                    setSameUser(userToSave);
+                }
             }
         }
         catch (error) {
@@ -491,6 +509,7 @@ const Game = () => {
                     onExitGame={() => exitGame()}
                     gameSession={gameSession.current}
                     user={user.current}
+                    lowPlayerCount={gameObject.users.length < MIN_PLAYERS}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}
             </BaseContainer>)
@@ -515,6 +534,7 @@ const Game = () => {
                     onClickBackToLobby={() => backToLobby(user.current, gameObject)}
                     onExitGame={() => exitGame()}
                     user={user.current}
+                    lowPlayerCount={gameObject.users.length < MIN_PLAYERS}
                 >
                 </Leaderboard>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}
@@ -525,6 +545,10 @@ const Game = () => {
     LeaderboardView.displayName = "LeaderboardView";
 
     const renderComponent = useMemo(() => {
+        if (user.current.role !== sameUser.role) {
+            user.current = new User(JSON.parse(sessionStorage.getItem("user")));
+        }
+        
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
             return <PresentationView />;
         }
@@ -544,7 +568,7 @@ const Game = () => {
         // Waiting room fallback
         return <WaitingView />;
 
-    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts]);
+    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts, sameUser, gameSession.current.gameLoopStatus, user.current, gameObject.users.length]);
 
     return renderComponent;
 };

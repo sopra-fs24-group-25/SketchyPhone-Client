@@ -16,7 +16,7 @@ const IndexToRank = {
     3: "3rd",
 }
 
-const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, onClickBackToLobby, onExitGame, user }) => {
+const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, onClickBackToLobby, onExitGame, user, lowPlayerCount }) => {
 
     const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
 
@@ -43,7 +43,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     </Button>
                 }
                 {/* Only for admin */}
-                {user?.role === "admin" &&
+                {user?.role === "admin" && !lowPlayerCount &&
                     <Button width="20%"
                         onClick={() => onClickNextRound()}>
                         New round
@@ -130,7 +130,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             let textPromptLeaderboardContent;
 
             if (topThreeTextPrompts === null) {
-                textPromptLeaderboardContent = <p>No votes have been cast for text prompts!</p>
+                textPromptLeaderboardContent = <p className="leaderboard no-votes">No votes have been cast for text prompts!</p>
             }
             else {
                 textPromptLeaderboardContent = topThreeTextPrompts.map((element, idx) => {
@@ -150,7 +150,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             let drawingLeaderboardContent;
 
             if (topThreeDrawings === null) {
-                drawingLeaderboardContent = <p>No votes have been cast for drawings!</p>
+                drawingLeaderboardContent = <p className="leaderboard no-votes">No votes have been cast for drawings!</p>
             }
             else {
                 drawingLeaderboardContent =
@@ -163,7 +163,6 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             return (
                 <div className="leaderboard container">
                     {drawingLeaderboardContent}
-
                     {separator()}
                     {leaderboardButtons()}
                 </div>
@@ -184,7 +183,8 @@ Leaderboard.propTypes = {
     onClickNextRound: PropTypes.func,
     onClickBackToLobby: PropTypes.func,
     onExitGame: PropTypes.func,
-    user: PropTypes.object
+    user: PropTypes.object,
+    lowPlayerCount: PropTypes.bool
 }
 
 export default Leaderboard;
