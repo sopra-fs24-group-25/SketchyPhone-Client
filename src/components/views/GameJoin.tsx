@@ -148,7 +148,7 @@ const GameJoin = () => {
 
                     return;
                 }
-                if (status === 404) { // room closed
+                if (status === 403) { // room closed
                     setIsFullRoom(true);
                     await doRoomClosed();
 
