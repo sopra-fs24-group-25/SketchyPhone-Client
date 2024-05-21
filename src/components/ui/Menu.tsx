@@ -47,7 +47,7 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
     async function removeFromGame(user: User, game: Game, headers) {
         try {
             await api.delete(`/games/${game.gameId}/leave/${user.userId}`, { headers: headers });
-            console.log("Successfully exited game while logging out!");
+            console.log("Successfully exited game!");
         } catch {
             console.log("Couldn't exit the game properly!");
         }
@@ -62,7 +62,28 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
         }
     }
 
+    const exitGame = async () => {
+        const user = new User(JSON.parse(sessionStorage.getItem("user")));
+        const game = new Game(JSON.parse(sessionStorage.getItem("gameRoom")));
+        const headers = { "Authorization": user.token, "X-User-ID": user.userId };
+
+        if (game.gameId) {
+            await removeFromGame(user, game, headers);
+        }
+
+        const userToSave = {...user.current, role: null};
+        sessionStorage.setItem("user", JSON.stringify(userToSave));
+        sessionStorage.removeItem("numCycles");
+        sessionStorage.removeItem("gameSpeed");
+        sessionStorage.removeItem("isEnabledTTS");
+        sessionStorage.removeItem("gameRoom");
+        sessionStorage.removeItem("gameroomToken");
+        sessionStorage.removeItem("gameSettings");
+        navigate("/gameRoom");
+    }
+
     const logout = async () => {
+        console.log("logout");
         const user = new User(JSON.parse(sessionStorage.getItem("user")));
         const game = new Game(JSON.parse(sessionStorage.getItem("gameRoom")));
         const headers = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -104,6 +125,14 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
                             onClick={() => handleOpenHistory()}
                         >
                             History
+                        </button>
+                        : null }
+                    {isPlaying ?
+                        <button //exit game
+                            className="menu-button"
+                            onClick={() => exitGame()}
+                        >
+                            Exit game
                         </button>
                         : null }
                     <button //logout
