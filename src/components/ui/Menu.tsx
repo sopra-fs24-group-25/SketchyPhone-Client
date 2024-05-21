@@ -71,7 +71,7 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
             await removeFromGame(user, game, headers);
         }
 
-        const userToSave = {...user.current, role: null};
+        const userToSave = {...user, role: null};
         sessionStorage.setItem("user", JSON.stringify(userToSave));
         sessionStorage.removeItem("numCycles");
         sessionStorage.removeItem("gameSpeed");
