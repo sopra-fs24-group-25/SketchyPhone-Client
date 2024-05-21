@@ -49,6 +49,8 @@ const Game = () => {
     const [gameObject, setGameObject] = useState<GameSession>(new GameObject(JSON.parse(sessionStorage.getItem("gameRoom"))));
     const [presentationIndex, setPresentationIndex] = useState<number>(0);
 
+    const [playerCount, setPlayerCount] = useState<number>(gameObject.users.length);
+
     const gameSettings = useRef(JSON.parse(sessionStorage.getItem("gameSettings")));
 
     // Initialize to empty array
@@ -554,6 +556,12 @@ const Game = () => {
         }
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.LEADERBOARD) {
             return <LeaderboardView />;
+        }
+        if (playerCount !== gameObject.users.length) {
+            if (user.current.role === "admin") {
+                backToLobby(user.current, gameObject);
+            }
+            setPlayerCount(gameObject.users.length);
         }
         if (!isReadyForTask.current) {
             return <WaitingView />;
