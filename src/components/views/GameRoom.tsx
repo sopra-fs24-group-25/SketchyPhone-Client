@@ -136,13 +136,17 @@ const GameRoom = () => {
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
-            const isUserAdmin = users.find(user => user.userId === thisUser.userId)?.role === "admin" || false;
+            const foundUser = users.find(user => user.userId === thisUser.userId);
+            const isUserAdmin = foundUser?.role === "admin" || false;
+            if (foundUser) {
+                setThisUser(foundUser);
+            }
             setIsAdmin(isUserAdmin);
             let userToSave;
             if (isUserAdmin) {
-                userToSave = {...thisUser, role: "admin"};
+                userToSave = {...foundUser, role: "admin"};
             } else {
-                userToSave = {...thisUser, role: "player"};
+                userToSave = {...foundUser, role: "player"};
             }
             sessionStorage.setItem("user", JSON.stringify(userToSave));
         }
