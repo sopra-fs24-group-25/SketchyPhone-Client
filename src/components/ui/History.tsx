@@ -230,8 +230,8 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
                                 <div
                                     className="history button-container"
                                     key={element.historyId}>
-                                    <div
-                                        >{element.historyName}
+                                    <div>
+                                        {element.historyName}
                                     </div>
                                     <Button
                                         //className="history button"
