@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "helpers/api";
 import PropTypes from "prop-types";
@@ -9,6 +9,9 @@ import { BackButton } from "components/ui/BackButton";
 import AvatarPreview from "./AvatarPreview";
 import User from "models/User";
 import { Button } from "./Button";
+import SessionHistory from "../../models/SessionHistory";
+import TextPrompt from "../../models/TextPrompt";
+import DrawingPrompt from "models/DrawingPrompt";
 
 const HistoryField = (props) => {
     return (
@@ -51,6 +54,67 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
     const [confirmPassword, setConfirmPassword] = useState<string>(defaultPassword);
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
+    const [historyElements, setHistoryElements] = useState<[History]>(null);
+    const [currentHistorySequence, setCurrentHistorySequence] = useState(null);
+
+    useEffect(() => {
+        if (openHistory) {
+            console.log("Fetching history");
+            fetchHistory(user);
+        }
+
+    }, [openHistory])
+
+
+    // function to fetch history
+    async function fetchHistory(user: User) {
+        try {
+            const requestHeader = { "Authorization": user.token };
+            const url = `/users/${user.userId}/history`;
+            const response = await api.get(url, { headers: requestHeader })
+            console.log(response.data);
+
+            const fetchedHistory = response.data.map(element => {
+                return new SessionHistory(element);
+            });
+
+            if (fetchedHistory !== null) {
+                setHistoryElements(fetchedHistory);
+            }
+
+        }
+        catch (error) {
+            console.log("Error while fetching history elements: " + error);
+        }
+    }
+
+    // function to fetch a sequence corresponding to historyelement
+    async function fetchSequenceFromHistory(user: User, gameSessionId) {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/${gameSessionId}/sequence`;
+            const response = await api.get(url, { headers: requestHeader })
+            console.log(response.data);
+
+
+            const fetchedHistorySequence = response.data.map(element => {
+                if (element.drawingId === undefined) {
+                    return new TextPrompt(element);
+                } else {
+                    return new DrawingPrompt(element);
+                }
+            });
+            if (fetchedHistorySequence) {
+                setCurrentHistorySequence(fetchedHistorySequence);
+            }
+
+        }
+        catch (error) {
+            console.log("Error while fetching history sequence: " + error);
+        }
+    }
+
+
     function toggleAvatar() {
         setAvatarId(avatarId % 6 + 1);
     }
@@ -72,7 +136,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
     }
 
     function createAccount() {
-        navigate("/login", { state: {isSignUp: true, toCreateAccount: true}});
+        navigate("/login", { state: { isSignUp: true, toCreateAccount: true } });
     }
 
     function resetHistoryView(withToggleMenu: boolean) {
@@ -86,9 +150,9 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
 
     async function updateUser() {
         let response;
-        let updatedUser = {...user, avatarId, nickname, username};
+        let updatedUser = { ...user, avatarId, nickname, username };
         if (password !== "") {
-            updatedUser = {...updatedUser, password};
+            updatedUser = { ...updatedUser, password };
         }
         if (user.userId) {
             try {
@@ -109,7 +173,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
     return (
         <button className={`history screen-layer ${openHistory ? "open" : "closed"}`}>
             <div className="history container">
-                <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                     <BackButton className="menu-backbutton"
                         onClick={() => resetHistoryView(true)}>
                     </BackButton>
@@ -118,7 +182,14 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
                     </BackButton>
                 </div>
                 <div className="history title">History</div>
-                <div className="history field">
+                {historyElements?.map((element) => {
+                    return <button
+                        key={element.historyId}
+                        onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId) }}>
+                        {element.historyId}
+                    </button>
+                })}
+                {/* <div className="history field">
                     <AvatarPreview
                         className="inactive"
                         id={avatarId || 0}
@@ -174,7 +245,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
                         >
                             Create account
                         </button>: null}
-                </div>
+                </div> */}
             </div>
         </button>
     );
