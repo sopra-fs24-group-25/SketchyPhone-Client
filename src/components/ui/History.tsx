@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { api } from "helpers/api";
 import PropTypes from "prop-types";
 import "../../styles/ui/MenuButton.scss";
@@ -39,19 +38,9 @@ HistoryField.propTypes = {
     invalid: PropTypes.bool,
 };
 
-const History = (openHistory, toggleHistory, isInGameRoom) => {
-
-    const navigate = useNavigate();
-
-    const defaultPassword = "password";
+const History = (openHistory, toggleHistory) => {
 
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
-    const [avatarId, setAvatarId] = useState<string>(user.avatarId || "");
-    const [nickname, setNickname] = useState<string>(user.nickname || "");
-    const [username, setUsername] = useState<string>(user.username || "");
-    const [password, setPassword] = useState<string>(defaultPassword);
-    const [confirmPassword, setConfirmPassword] = useState<string>(defaultPassword);
-    const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const [historyElements, setHistoryElements] = useState<[History]>(null);
     const [currentHistorySequence, setCurrentHistorySequence] = useState(null);
@@ -155,60 +144,8 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
         }
     }
 
-
-    function toggleAvatar() {
-        setAvatarId(avatarId % 6 + 1);
-    }
-
-    async function handleHistoryChange() {
-        if (isEditing) {
-            await updateUser();
-            resetPasswordFields();
-        } else {
-            setPassword("");
-            setConfirmPassword("");
-        }
-        setIsEditing(!isEditing);
-    }
-
-    function resetPasswordFields() {
-        setPassword(defaultPassword);
-        setConfirmPassword(defaultPassword);
-    }
-
-    function createAccount() {
-        navigate("/login", { state: { isSignUp: true, toCreateAccount: true } });
-    }
-
     function resetHistoryView(withToggleMenu: boolean) {
-        setIsEditing(false);
-        setAvatarId(user.avatarId);
-        setNickname(user.nickname);
-        setUsername(user.username);
         toggleHistory(withToggleMenu);
-        resetPasswordFields();
-    }
-
-    async function updateUser() {
-        let response;
-        let updatedUser = { ...user, avatarId, nickname, username };
-        if (password !== "") {
-            updatedUser = { ...updatedUser, password };
-        }
-        if (user.userId) {
-            try {
-                response = await api.put(`/users/${user.userId}`, updatedUser);
-            }
-            catch {
-                response = await api.post("/users", updatedUser);
-            }
-        } else {
-            response = await api.post("/users", updatedUser);
-        }
-        let fullUser = new User(response.data);
-        setUser(fullUser);
-        sessionStorage.setItem("user", JSON.stringify(fullUser));
-        console.log("user has been updated");
     }
 
     return (

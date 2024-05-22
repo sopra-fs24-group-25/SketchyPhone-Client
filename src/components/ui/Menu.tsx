@@ -144,7 +144,7 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
                 </div>
             </button>
             {Profile(openProfile, toggleProfile, isInGameRoom)}
-            {History(openHistory, toggleHistory, isInGameRoom)}
+            {History(openHistory, toggleHistory)}
         </div>
     );
 }

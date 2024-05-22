@@ -110,13 +110,13 @@ const Game = () => {
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
-                setTimeout(() => 2000);
-                console.log("waited 2s text prompt")
+                //setTimeout(() => 2000);
+                //console.log("waited 2s text prompt")
                 fetchDrawing();
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.DRAWING) {
-                setTimeout(() => 2000);
-                console.log("waited 2s drawing")
+                //setTimeout(() => 2000);
+                //console.log("waited 2s drawing")
                 fetchPrompt();
             }
         }
