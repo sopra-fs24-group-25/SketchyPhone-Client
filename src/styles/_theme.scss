@@ -60,7 +60,7 @@ $borderRadius: 0.75em;
   justify-content: center;
 }
 
-@mixin scrollbar{
+@mixin scrollbar {
   &::-webkit-scrollbar {
       width: 14px;
       height: 18px;
@@ -76,6 +76,29 @@ $borderRadius: 0.75em;
   &::-webkit-scrollbar-button {
       width: 0;
       height: 14px;
+      display: auto;
+  }
+  &::-webkit-scrollbar-corner {
+      background-color: transparent;
+  }
+}
+
+@mixin scrollbarHistory {
+  &::-webkit-scrollbar {
+      width: 14px;
+      height: 18px;
+  }
+  &::-webkit-scrollbar-thumb {
+      height: 6px;
+      border: 4px solid rgba(0, 0, 0, 0);
+      background-clip: padding-box;
+      border-radius: 7px;
+      background-color: white;
+      box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+  &::-webkit-scrollbar-button {
+      width: 0;
+      height: 0px;
       display: auto;
   }
   &::-webkit-scrollbar-corner {

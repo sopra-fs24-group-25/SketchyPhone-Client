@@ -6,7 +6,6 @@ import "../../styles/ui/MenuButton.scss";
 import "../../styles/ui/BackButton.scss";
 import "../../styles/ui/History.scss";
 import { BackButton } from "components/ui/BackButton";
-import AvatarPreview from "./AvatarPreview";
 import User from "models/User";
 import { Button } from "./Button";
 import SessionHistory from "../../models/SessionHistory";
@@ -65,6 +64,46 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
 
     }, [openHistory])
 
+    const testHistory = [
+        {
+            "historyId": 1,
+            "userId": user.userId,
+            "gameSessionId": 1,
+            "historyName": "history123"
+        },
+        {
+            "historyId": 2,
+            "userId": user.userId,
+            "gameSessionId": 4,
+            "historyName": "historyNew"
+        },
+        {
+            "historyId": 3,
+            "userId": user.userId,
+            "gameSessionId": 12,
+            "historyName": "historyYesterday"
+        },
+        {
+            "historyId": 12,
+            "userId": user.userId,
+            "gameSessionId": 1,
+            "historyName": "history123"
+        },
+        {
+            "historyId": 24,
+            "userId": user.userId,
+            "gameSessionId": 4,
+            "historyName": "historyNew"
+        },
+        {
+            "historyId": 311,
+            "userId": user.userId,
+            "gameSessionId": 12,
+            "historyName": "historyYesterdaysuperlong maegaisdhdugwf"
+        },
+
+    ]
+
 
     // function to fetch history
     async function fetchHistory(user: User) {
@@ -72,6 +111,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
             const requestHeader = { "Authorization": user.token };
             const url = `/users/${user.userId}/history`;
             const response = await api.get(url, { headers: requestHeader })
+            response.data = testHistory;
             console.log(response.data);
 
             const fetchedHistory = response.data.map(element => {
@@ -88,12 +128,13 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
         }
     }
 
-    // function to fetch a sequence corresponding to historyelement
-    async function fetchSequenceFromHistory(user: User, gameSessionId) {
+    // function to fetch a sequence corresponding to history element
+    async function fetchSequenceFromHistory(user: User, gameSessionId: number) {
+        console.log("fetching with", user, `gameSessionId ${gameSessionId}`)
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${gameSessionId}/sequence`;
-            const response = await api.get(url, { headers: requestHeader })
+            const response = await api.get(url, { headers: requestHeader });
             console.log(response.data);
 
 
@@ -167,7 +208,7 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
         let fullUser = new User(response.data);
         setUser(fullUser);
         sessionStorage.setItem("user", JSON.stringify(fullUser));
-        console.log("user has been updated")
+        console.log("user has been updated");
     }
 
     return (
@@ -182,70 +223,34 @@ const History = (openHistory, toggleHistory, isInGameRoom) => {
                     </BackButton>
                 </div>
                 <div className="history title">History</div>
-                {historyElements?.map((element) => {
-                    return <button
-                        key={element.historyId}
-                        onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId) }}>
-                        {element.historyId}
+                {historyElements?.length !== 0 &&
+                    <button className="history scroll-container">
+                        {historyElements?.map((element) => {
+                            return (
+                                <div
+                                    className="history button-container"
+                                    key={element.historyId}>
+                                    <div
+                                        >{element.historyName}
+                                    </div>
+                                    <Button
+                                        //className="history button"
+                                        //key={element.historyId}
+                                        width="30%"
+                                        onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId) }}
+                                    >
+                                        Open
+                                    </Button>
+                                </div>
+                            )
+                        })}
                     </button>
-                })}
-                {/* <div className="history field">
-                    <AvatarPreview
-                        className="inactive"
-                        id={avatarId || 0}
-                        onClick={() => toggleAvatar()}
-                        disabled={!isEditing}>
-                    </AvatarPreview>
-                    <HistoryField
-                        className="history input"
-                        label="Nickname"
-                        placeholder={nickname}
-                        value={nickname}
-                        disabled={!isEditing}
-                        onChange={(n: string) => setNickname(n)}>
-                    </HistoryField>
-                    {user.persistent && !isInGameRoom ?
-                        <><HistoryField
-                            className="history input"
-                            label="Username"
-                            placeholder={username}
-                            value={username}
-                            disabled={!isEditing}
-                            onChange={(u: string) => setUsername(u)}>
-                        </HistoryField>
-                        <HistoryField
-                            className="history input"
-                            label="Password"
-                            placeholder="Password"
-                            value={password}
-                            disabled={!isEditing}
-                            type="password"
-                            onChange={(p: string) => setPassword(p)}>
-                        </HistoryField>
-                        <HistoryField
-                            className="history input"
-                            label="Confirm Password"
-                            placeholder="Confirm Password"
-                            value={confirmPassword}
-                            disabled={!isEditing}
-                            type="password"
-                            onChange={(p: string) => setConfirmPassword(p)}>
-                        </HistoryField></>
-                        : null}
-                    <Button
-                        width="25%"
-                        onClick={() => handleHistoryChange()}
-                        disabled={user.persistent ? isEditing && (!nickname || !username) || password !== confirmPassword : isEditing && !nickname}
-                    >
-                        {isEditing ? "Save": "Edit"}
-                    </Button>
-                    {!user.persistent && !isInGameRoom ?
-                        <button className={"history sign-in-link"}
-                            onClick={() => createAccount()}
-                        >
-                            Create account
-                        </button>: null}
-                </div> */}
+                }
+                {historyElements?.length === 0 &&
+                <div className="history no-history"
+                >
+                    No history yet
+                </div>}
             </div>
         </button>
     );
