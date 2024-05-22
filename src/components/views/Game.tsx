@@ -25,6 +25,8 @@ const Game = () => {
 
     const MIN_PLAYERS = 3;
 
+    const TIMEOUT = 1000;
+
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [currentTask, setCurrentTask] = useState<string>(GameLoopStatus.TEXTPROMPT);
     const prevTask = useRef<string>(GameLoopStatus.TEXTPROMPT);
@@ -110,13 +112,9 @@ const Game = () => {
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
-                //setTimeout(() => 2000);
-                //console.log("waited 2s text prompt")
                 fetchDrawing();
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.DRAWING) {
-                //setTimeout(() => 2000);
-                //console.log("waited 2s drawing")
                 fetchPrompt();
             }
         }
@@ -316,7 +314,7 @@ const Game = () => {
             attempts += 1;
 
             // wait to try again
-            setTimeout(() => 250)
+            setTimeout(() => TIMEOUT)
 
         }
     }
@@ -355,8 +353,8 @@ const Game = () => {
             }
 
             attempts += 1;
-            // wait 250ms to try again
-            setTimeout(() => 250);
+            // wait to try again
+            setTimeout(() => TIMEOUT);
         }
     }
 
