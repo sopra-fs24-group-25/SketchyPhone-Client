@@ -478,12 +478,12 @@ const GameRoom = () => {
                     <div className="settings title">Settings</div>
                     <div className="settings options-container">
                         <div className="settings option">
-                            <label className = "cyclesTooltip" htmlFor="numCycles">Game length:</label>
+                            <label className="cyclesTooltip" htmlFor="numCycles">Game length:</label>
                             <Tooltip
                                 anchorSelect=".cyclesTooltip"
                                 place="top">
-                                    Corresponds to how many times your original prompt ends up with you again.
-                                </Tooltip>
+                                Corresponds to how many times your original prompt ends up with you again.
+                            </Tooltip>
                             <select
                                 name="numCycles"
                                 value={numCycles}
@@ -496,12 +496,12 @@ const GameRoom = () => {
                             </select>
                         </div>
                         <div className="settings option">
-                            <label className = "gameSpeedTooltip" htmlFor="gameSpeed">Time limit per action:</label>
+                            <label className="gameSpeedTooltip" htmlFor="gameSpeed">Time limit per action:</label>
                             <Tooltip
                                 anchorSelect=".gameSpeedTooltip"
                                 place="top">
-                                    Time to complete a drawing or writing task. Normal: 25s Write / 50s Draw
-                                </Tooltip>
+                                Time to complete a drawing or writing task. Normal: 25s Write / 50s Draw
+                            </Tooltip>
                             <select
                                 name="gameSpeed"
                                 value={gameSpeed}
@@ -514,12 +514,12 @@ const GameRoom = () => {
                             </select>
                         </div>
                         <div className="settings option">
-                            <label className = "ttsTooltip" htmlFor="text-to-speech">Enable text-to-speech:</label>
+                            <label className="ttsTooltip" htmlFor="text-to-speech">Enable text-to-speech:</label>
                             <Tooltip
                                 anchorSelect=".ttsTooltip"
                                 place="top">
-                                    Do you want the text prompts to be narrated at the end of the game?
-                                </Tooltip>
+                                Do you want the text prompts to be narrated at the end of the game?
+                            </Tooltip>
                             <label className="switch">
                                 <input
                                     type="checkbox"
