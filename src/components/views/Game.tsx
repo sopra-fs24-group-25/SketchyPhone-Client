@@ -201,11 +201,14 @@ const Game = () => {
     async function backToLobby(user: User, game: GameObject) {
         try {
             console.log("back to lobby");
+            const resetGame = new GameObject({...gameObject, status: "OPEN"});
+            setGameObject(resetGame);
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameId}`;
             console.log(requestHeader)
             await api.put(url, null, { headers: requestHeader });
-            navigate("/gameRoom", { state: { isGameCreated: true, isGameCreator: true, gameRoom: gameObject } });
+            console.log(resetGame);
+            navigate("/gameRoom", { state: { isGameCreated: true, isGameCreator: true, gameRoom: resetGame } });
         }
         catch (error) {
             alert(
@@ -566,6 +569,8 @@ const Game = () => {
                 backToLobby(user.current, gameObject);
             }
             setPlayerCount(gameObject.users.length);
+
+            return;
         }
         if (!isReadyForTask.current) {
             return <WaitingView />;
