@@ -67,7 +67,7 @@ const Game = () => {
         try {
             const headers = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
             await api.delete(`/games/${gameObject.gameId}/leave/${user.current.userId}`, { headers: headers });
-            const userToSave = {...user.current, role: null};
+            const userToSave = { ...user.current, role: null };
             sessionStorage.setItem("user", JSON.stringify(userToSave));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
@@ -112,9 +112,11 @@ const Game = () => {
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
+                setTimeout(() => 2* TIMEOUT);
                 fetchDrawing();
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.DRAWING) {
+                setTimeout(() => 2 * TIMEOUT);
                 fetchPrompt();
             }
         }
@@ -136,7 +138,7 @@ const Game = () => {
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
                 fetchPresentationIndex(user.current, gameSession.current);
             }
-        }, 250); // Set interval to 0.25 seconds
+        }, TIMEOUT); // Set interval to TIMEOUT
 
         return () => clearInterval(interval);
 
@@ -203,7 +205,7 @@ const Game = () => {
             const url = `/games/${game.gameId}`;
             console.log(requestHeader)
             await api.put(url, null, { headers: requestHeader });
-            navigate("/gameRoom", {state: {isGameCreated: true, isGameCreator: true, gameRoom: gameObject}});
+            navigate("/gameRoom", { state: { isGameCreated: true, isGameCreator: true, gameRoom: gameObject } });
         }
         catch (error) {
             alert(
@@ -260,9 +262,9 @@ const Game = () => {
                 const isUserAdmin = fetchedGameUpdate.users.find(u => u.userId === user.userId)?.role === "admin" || false;
                 let userToSave;
                 if (isUserAdmin) {
-                    userToSave = {...user, role: "admin"};
+                    userToSave = { ...user, role: "admin" };
                 } else {
-                    userToSave = {...user, role: "player"};
+                    userToSave = { ...user, role: "player" };
                 }
                 sessionStorage.setItem("user", JSON.stringify(userToSave));
                 user = userToSave;
@@ -493,7 +495,7 @@ const Game = () => {
         }
 
         let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
-        
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -552,7 +554,7 @@ const Game = () => {
         if (user.current.role !== sameUser.role) {
             user.current = new User(JSON.parse(sessionStorage.getItem("user")));
         }
-        
+
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
             return <PresentationView />;
         }
