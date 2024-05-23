@@ -13,7 +13,7 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import { api } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user, lowPlayerCount }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user, lowPlayerCount, allElementsShown, enableTextToSpeech }) => {
 
     const containerRef = useRef(null);
 
@@ -67,7 +67,9 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
         }
 
         if (lastElement instanceof TextPrompt) {
-            TextToSpeech(lastElement.content);
+            if (enableTextToSpeech) {
+                TextToSpeech(lastElement.content);
+            }
         }
 
     }, [presentationContents])
@@ -185,7 +187,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 <PresentationText
                     textPrompt={element}
                     doVote={doVoteTextPrompt}
-                    ownsDrawing= {user.userId === element.creator.userId}
+                    ownsDrawing={user.userId === element.creator.userId}
                 ></PresentationText>
             </div>
         )
@@ -197,7 +199,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 <PresentationDrawing
                     drawingPrompt={element}
                     doVote={doVoteDrawing}
-                    ownsDrawing= {user.userId === element.creator.userId}
+                    ownsDrawing={user.userId === element.creator.userId}
                 ></PresentationDrawing>
                 <UserPreview
                     id={element.creator.avatarId}
@@ -230,6 +232,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 {isAdmin && <div className="presentation buttonsContainer">
                     <Button
                         onClick={() => { onClickIncrement(); clickAudio.handlePlay() }}
+                        disabled={allElementsShown}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
@@ -262,7 +265,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                     >
                         Lobby
                     </Button>}
-                    
+
                     <Button className="presentation buttonsContainer presentationButton"
                         width="20%"
                         onClick={() => onExitGame()}
@@ -286,7 +289,9 @@ PresentationContainer.propTypes = {
     onExitGame: PropTypes.func,
     gameSession: PropTypes.object,
     user: PropTypes.object,
-    lowPlayerCount: PropTypes.bool
+    lowPlayerCount: PropTypes.bool,
+    allElementsShown: PropTypes.bool,
+    enableTextToSpeech: PropTypes.bool
 }
 
 export default PresentationContainer;

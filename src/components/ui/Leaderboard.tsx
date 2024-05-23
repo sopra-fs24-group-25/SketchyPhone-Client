@@ -64,7 +64,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
 
     function leaderboardTextPromptElement(element, idx) {
         return (
-            <div key={`${element.textPromptId}` + `${element.creator.userId}`} className="leaderboard elementcontainer">
+            <div key={`${element.textPromptId}` + `_${element.creator.userId}` + `_${element.content}`} className="leaderboard elementcontainer">
                 <div className="leaderboard user">
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
@@ -92,7 +92,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
         }
 
         return (
-            <div key={`${element.textPromptId}` + `${element.creator.userId}`} className="leaderboard elementcontainer">
+            <div key={`${element.drawingId}` + `_${element.creator.userId}`} className="leaderboard elementcontainer">
                 <div className="leaderboard user">
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
@@ -105,7 +105,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     <img
                         className="presentation drawing"
                         alt={`Drawing from ${element.creator.nickname}`}
-                        src={`data:image/png; base64, ${element.encodedImage.replaceAll("\"", "")}`}
+                        src={`data:image/png; base64, ${element.encodedImage?.replaceAll("\"", "")}`}
                     ></img>
                     <button
                         className="leaderboard download"

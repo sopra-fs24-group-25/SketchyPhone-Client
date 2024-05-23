@@ -70,7 +70,7 @@ const GameRoom = () => {
     const MIN_PLAYERS = 3;
 
     // Default settings
-    const defaultNumCycles = 2;
+    const defaultNumCycles = 1;
     const defaultGameSpeed = GameSpeedEnum.NORMAL.inSeconds;
     const defaultIsEnabledTTS = true;
 
@@ -476,17 +476,16 @@ const GameRoom = () => {
                     <div className="settings title">Settings</div>
                     <div className="settings options-container">
                         <div className="settings option">
-                            <label htmlFor="numCycles">Number of cycles:</label>
+                            <label htmlFor="numCycles">Game length:</label>
                             <select
                                 name="numCycles"
                                 value={numCycles}
                                 id="numCycles"
                                 onChange={(e) => setNumCycles(e.target.value)}
                             >
-                                <option value={2}>2</option>
-                                <option value={3}>3</option>
-                                <option value={4}>4</option>
-                                <option value={5}>5</option>
+                                <option value={1}>Regular</option>
+                                <option value={2}>Long</option>
+                                <option value={3}>Very Long</option>
                             </select>
                         </div>
                         <div className="settings option">

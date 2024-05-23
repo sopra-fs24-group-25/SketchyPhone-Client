@@ -516,6 +516,8 @@ const Game = () => {
                     gameSession={gameSession.current}
                     user={user.current}
                     lowPlayerCount={gameObject.users.length < MIN_PLAYERS}
+                    allElementsShown={elementsToShow.size() === presentationElements.size()}
+                    enableTextToSpeech={gameSettings.current.isEnabledTTS}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}
             </BaseContainer>)
