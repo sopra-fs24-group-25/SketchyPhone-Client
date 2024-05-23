@@ -332,15 +332,15 @@ const SandboxView = () => {
             ></PresentationContainer>
             {Menu(openMenu, toggleMenu, false, true)}
             <Leaderboard
-                    topThreeDrawings={newArray.slice(0,3)}
-                    topThreeTextPrompts={newArray.slice(0,3)}
-                    onClickNextRound={() => console.log("nextround")}
-                    onClickBackToLobby={() => console.log("lobby")}
-                    onExitGame={() => console.log("exit")}
-                    user={testUser}
-                    lowPlayerCount={false}
-                >
-                </Leaderboard>
+                topThreeDrawings={newArray.slice(0,3)}
+                topThreeTextPrompts={newArray.slice(0,3)}
+                onClickNextRound={() => console.log("nextround")}
+                onClickBackToLobby={() => console.log("lobby")}
+                onExitGame={() => console.log("exit")}
+                user={testUser}
+                lowPlayerCount={false}
+            >
+            </Leaderboard>
         </BaseContainer>
     )
 }
