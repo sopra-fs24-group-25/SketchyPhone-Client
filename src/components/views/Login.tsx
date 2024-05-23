@@ -26,7 +26,7 @@ const FormField = (props) => {
                     onChange={(e) => props.onChange(e.target.value)}
                     disabled={props.disabled}
                 />
-                {props.disabled ? null :<FontAwesomeIcon
+                {props.disabled || !props.buttonEye ? null : <FontAwesomeIcon
                     icon={props.buttonEye}
                     color="black"
                     className="password-toggle-icon"
@@ -114,12 +114,17 @@ const Login = () => {
         setShowPassword(false);
     }
 
+    function checkButtonAvailability() {
+        return !username || !password || (password !== confirmPassword && isSignUp);
+    }
+
     return (
         <div className="login header">
             <Header></Header>
             <BaseContainer>
                 <div className="login container">
-                    <div className="login form">
+                    <div className="login form"
+                        onKeyDown={(e) => (e.keyCode === 13 && !checkButtonAvailability() ? doLogin(isSignUp) : null)}>
                         <FormField
                             label="Username"
                             placeholder="Username"
@@ -153,7 +158,7 @@ const Login = () => {
                         ) : null}
                         <div className="login button-container">
                             <Button
-                                disabled={!username || !password || (password !== confirmPassword && isSignUp)}
+                                disabled={checkButtonAvailability()}
                                 width="100%"
                                 onClick={() => doLogin(isSignUp)}
                             >

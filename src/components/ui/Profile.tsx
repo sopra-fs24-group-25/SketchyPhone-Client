@@ -17,7 +17,7 @@ const ProfileField = (props) => {
             <input
                 className={`profile input ${props.invalid ? "invalid" : ""}`}
                 placeholder={props.placeholder}
-                style={{ userSelect: "none" }}
+                style={props.style}
                 value={props.value}
                 type={props.type}
                 onChange={(e) => props.onChange(e.target.value)}
@@ -32,6 +32,7 @@ ProfileField.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.string,
     type: PropTypes.string,
+    style: PropTypes.object,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     invalid: PropTypes.bool,
@@ -106,6 +107,14 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
         console.log("user has been updated")
     }
 
+    function checkButtonAvailability() {
+        return user.persistent ? isEditing && (!nickname || !username) || password !== confirmPassword : isEditing && !nickname;
+    }
+
+    function checkFieldAvailability() {
+        return !isEditing ? {cursor: "default"} : {cursor: "text"};
+    }
+
     return (
         <button className={`profile screen-layer ${openProfile ? "open" : "closed"}`}>
             <div className="profile container">
@@ -118,11 +127,13 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
                     </BackButton>
                 </div>
                 <div className="profile title">Profile</div>
-                <div className="profile field">
+                <div className="profile field"
+                    onKeyDown={(e) => (e.keyCode === 13 && !checkButtonAvailability() ? handleProfileChange() : null)}>
                     <AvatarPreview
                         className="inactive"
                         id={avatarId || 0}
                         onClick={() => toggleAvatar()}
+                        style={!isEditing ? {cursor: "default"} : {cursor: "pointer"}}
                         disabled={!isEditing}>
                     </AvatarPreview>
                     <ProfileField
@@ -164,7 +175,7 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
                     <Button
                         width="25%"
                         onClick={() => handleProfileChange()}
-                        disabled={user.persistent ? isEditing && (!nickname || !username) || password !== confirmPassword : isEditing && !nickname}
+                        disabled={checkButtonAvailability()}
                     >
                         {isEditing ? "Save": "Edit"}
                     </Button>

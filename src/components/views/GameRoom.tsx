@@ -46,6 +46,8 @@ const GameRoom = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const TIMEOUT = 1000;
+
     // Naming inconsistency for gameRoom
     const [game, setGame] = useState<Game>(location.state ? location.state.gameRoom : null);
 
@@ -98,7 +100,7 @@ const GameRoom = () => {
                     }
 
                 }
-            }, 250); // Set interval to 0.25 seconds
+            }, TIMEOUT); // Set interval to wait
 
             return () => clearInterval(interval);
         } else if (isAdmin) {
@@ -136,7 +138,7 @@ const GameRoom = () => {
             let fetchedUsers = new Array<User>(response.data)[0];
 
             setUsers(fetchedUsers);
-            const foundUser = users.find(user => user.userId === thisUser.userId);
+            const foundUser = users?.find(user => user.userId === thisUser.userId);
             const isUserAdmin = foundUser?.role === "admin" || false;
             if (foundUser) {
                 setThisUser(foundUser);
@@ -478,7 +480,6 @@ const GameRoom = () => {
                             <select
                                 name="numCycles"
                                 value={numCycles}
-                                defaultValue={numCycles}
                                 id="numCycles"
                                 onChange={(e) => setNumCycles(e.target.value)}
                             >
@@ -493,7 +494,6 @@ const GameRoom = () => {
                             <select
                                 name="gameSpeed"
                                 value={gameSpeed}
-                                defaultValue={gameSpeed}
                                 id="gameSpeed"
                                 onChange={(e) => setGameSpeed(e.target.value)}
                             >

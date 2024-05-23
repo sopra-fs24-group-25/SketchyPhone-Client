@@ -1,29 +1,14 @@
 import { React, useEffect, useState } from "react";
-import { Button } from "components/ui/Button";
 import "styles/views/Game.scss";
 import "styles/views/GameRoom.scss";
 import PresentationContainer from "components/ui/PresentationContainer";
 import TextPrompt from "models/TextPrompt"
 import DrawingPrompt from "models/DrawingPrompt"
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import AudioContextEnum from "../../helpers/audioContextEnum";
-import AudioPlayer from "../../helpers/AudioPlayer";
-import DrawContainer from "components/ui/DrawContainer";
-import Leaderboard from "components/ui/Leaderboard";
 import User from "../../models/User";
-import { unescapeLeadingUnderscores } from "typescript";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import Menu from "components/ui/Menu";
 import BaseContainer from "components/ui/BaseContainer";
 
-
-const minuteSeconds = 60;
-const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
-const endTime = startTime + 10; // use UNIX timestamp in seconds
-
-const remainingTime = endTime - startTime;
-
-const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
 
 const SandboxView = () => {
 
@@ -272,19 +257,6 @@ const SandboxView = () => {
         }
     });
 
-
-    function TextToSpeech(text) {
-        const synth = window.speechSynthesis;
-        let speakThis = new SpeechSynthesisUtterance(text);
-        console.log(synth.getVoices())
-
-        speakThis.rate = 1;
-        speakThis.pitch = 1;
-        speakThis.voice = synth.getVoices()[50]
-        speakThis.lang = "pl-PL";
-        synth.cancel();
-    }
-
     const testUser = new User();
     testUser.nickname = "Greta";
     testUser.userId = 3;
@@ -334,41 +306,8 @@ const SandboxView = () => {
 
     console.log(toShow);
 
-    const timerProps = {
-        isPlaying: true,
-        size: 60,
-        strokeWidth: 6
-    };
-
     return (
         <BaseContainer>
-            {/* <Leaderboard
-                topThreeTextPrompts={null}
-                topThreeDrawings={[testDrawingPrompt1, testDrawingPrompt1, testDrawingPrompt1]}
-                onClickNextRound={() => console.log("next round")}
-                onExitGame={() => console.log("exiting game")}
-                user ={undefined}
-            >
-            </Leaderboard>
-            <Leaderboard
-                topThreeTextPrompts={[testTextPrompt1, testTextPrompt2]}
-                topThreeDrawings={[testDrawingPrompt1]}
-                onClickNextRound={() => console.log("next round")}
-                onExitGame={() => console.log("exiting game")}
-                user={undefined}
-            >
-            </Leaderboard>
-            <CountdownCircleTimer
-                {...timerProps}
-                colors="#000000"
-                duration={10}
-                initialRemainingTime={remainingTime & minuteSeconds}
-                onComplete={(totalElapsedTime) => ({ shouldRepeat: false })}
-
-                // Here submit if timer ran out
-                onUpdate={(remainingTime) => (remainingTime === 5 && timerSound.handlePlay())}
-            >
-            </CountdownCircleTimer> */}
             <div className="gameroom header">
                 <BurgerMenu
                     onClick={() => setOpenMenu(!openMenu)}
@@ -386,24 +325,9 @@ const SandboxView = () => {
                 onExitGame={() => console.log("clicked exit game")}
                 gameSession={undefined}
                 user={testUser}
+                lowPlayerCount={false}
             ></PresentationContainer>
             {Menu(openMenu, toggleMenu, false, true)}
-
-            {/* <Button
-                onClick={() => TextToSpeech(testTextPrompt1.content)}
-            >
-                CLICK TO SPEAK
-            </Button>
-            <DrawContainer
-                height={400}
-                width={600}
-                user= {testUser}
-                game= {null}
-                textPrompt={testTextPrompt1}
-                timerDuration= {100}
-                setNextTask={() => console.log("nexttask")}
-                setInitial={() => console.log("setInitial")}>
-            </DrawContainer> */}
         </BaseContainer>
     )
 }
