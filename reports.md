@@ -267,3 +267,13 @@ Noé Matumona
 - default persistence set to false
 - visual change DrawContainer (stable width)
 - waiting room fix (based on status now)
+
+Noah Isaak
+- Many bugfixes
+- Added tooltip for settings
+- Server textprompt/drawings assignment overhaul
+- Image downloading prototype #57
+- Initial History feature implementation #11
+- Minor change to drawing brushsize
+- Fix audio sources not uploaded on deployment
+- Fix for upvote button, upvoting own prompts was possible
