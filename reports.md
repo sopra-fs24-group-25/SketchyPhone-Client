@@ -219,3 +219,15 @@ Noah Isaak
 - Minor UI changes
 - Refactorings
 - Fix for draw tool
+
+## 20.05 - 26.05
+
+Victor Cruz da Silva
+
+- Updated tests to work with new sign up functionality, removed email from user. #11
+- Adapted joinRoom, added false as standard for persistent. #11, #3
+- Changed gameSettings standard values #68
+- Wrote and updated tests to test functionality of code. #143, #3
+- Fixed saveHistory test. #11
+- Adapted text prompt and drawing assignment to fix minor bug during gameplay. #4, #5
+- Fixed assignment issues.
