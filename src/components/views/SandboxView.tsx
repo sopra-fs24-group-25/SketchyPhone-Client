@@ -9,7 +9,7 @@ import { BurgerMenu } from "components/ui/BurgerMenu";
 import Menu from "components/ui/Menu";
 import BaseContainer from "components/ui/BaseContainer";
 import Leaderboard from "components/ui/Leaderboard";
-
+import { Tooltip } from "react-tooltip";
 
 const SandboxView = () => {
 

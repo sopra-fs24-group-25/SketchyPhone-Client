@@ -555,8 +555,8 @@ const Game = () => {
                     gameSession={gameSession.current}
                     user={user.current}
                     lowPlayerCount={gameObject.users.length < MIN_PLAYERS}
-                    allElementsShown={elementsToShow?.length === presentationElements?.length}
-                    enableTextToSpeech={gameSettings.current.isEnabledTTS}
+                    allElementsShown={endIndex >= presentationElements.length}
+                    enableTextToSpeech={gameSettings.current.enableTextToSpeech}
                     visibleHistoryButton={visibleHistoryButton}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}

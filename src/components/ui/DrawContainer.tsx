@@ -161,7 +161,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             else{
                 if(sendAttempt <= maxSendAttempt){
                     setTimeout(() => 500);
-                    sendImage();
+                    await sendImage();
                 }
             }
 
@@ -505,7 +505,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             className="drawContainer label"
                             htmlFor="brushSize">Brush Size
                         </label>
-                        <input type="range" min="1" max="50" defaultValue="10" id="brushSize"></input>
+                        <input type="range" min="2" max="30" defaultValue="10" id="brushSize"></input>
                         <hr className="drawContainer separator"/>
                         <button
                             className="drawContainer button selected"
