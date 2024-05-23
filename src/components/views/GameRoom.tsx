@@ -15,7 +15,9 @@ import User from "models/User";
 import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
-import GameSpeedEnum from "../../helpers/gameSpeedEnum"
+import GameSpeedEnum from "../../helpers/gameSpeedEnum";
+import { Tooltip } from "react-tooltip";
+
 
 const JoinField = (props) => {
     return (
@@ -146,9 +148,9 @@ const GameRoom = () => {
             setIsAdmin(isUserAdmin);
             let userToSave;
             if (isUserAdmin) {
-                userToSave = {...foundUser, role: "admin"};
+                userToSave = { ...foundUser, role: "admin" };
             } else {
-                userToSave = {...foundUser, role: "player"};
+                userToSave = { ...foundUser, role: "player" };
             }
             sessionStorage.setItem("user", JSON.stringify(userToSave));
         }
@@ -253,7 +255,7 @@ const GameRoom = () => {
             setGame(null);
             setIsGameCreated(false);
             setUsers(null);
-            const userToSave = {...thisUser, role: null};
+            const userToSave = { ...thisUser, role: null };
             sessionStorage.setItem("user", JSON.stringify(userToSave));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
@@ -337,7 +339,7 @@ const GameRoom = () => {
             }
 
             return (
-                <div className="gameroom waiting non-admin">{MIN_PLAYERS - users.length} more player{users.length !== 2 ? "s": ""} needed</div>
+                <div className="gameroom waiting non-admin">{MIN_PLAYERS - users.length} more player{users.length !== 2 ? "s" : ""} needed</div>
             )
         }
 
@@ -393,7 +395,7 @@ const GameRoom = () => {
                             <p>{copyPin ? "Copied Game PIN!" : `Game PIN: ${String(game["gamePin"]).slice(0, 3)} ${String(game["gamePin"]).slice(3)}`}</p>
                         </button>
                         <div className="gameroom waiting">
-                            <p>{users?.length === MAX_PLAYERS ? "Lobby is full!": "Waiting for players..."}</p>
+                            <p>{users?.length === MAX_PLAYERS ? "Lobby is full!" : "Waiting for players..."}</p>
                         </div>
                     </div>
                     <div className="gameroom subcontainer">
@@ -476,7 +478,12 @@ const GameRoom = () => {
                     <div className="settings title">Settings</div>
                     <div className="settings options-container">
                         <div className="settings option">
-                            <label htmlFor="numCycles">Game length:</label>
+                            <label className = "cyclesTooltip" htmlFor="numCycles">Game length:</label>
+                            <Tooltip
+                                anchorSelect=".cyclesTooltip"
+                                place="top">
+                                    Corresponds to how many times your original prompt ends up with you again.
+                                </Tooltip>
                             <select
                                 name="numCycles"
                                 value={numCycles}
@@ -489,7 +496,12 @@ const GameRoom = () => {
                             </select>
                         </div>
                         <div className="settings option">
-                            <label htmlFor="gameSpeed">Time limit per action:</label>
+                            <label className = "gameSpeedTooltip" htmlFor="gameSpeed">Time limit per action:</label>
+                            <Tooltip
+                                anchorSelect=".gameSpeedTooltip"
+                                place="top">
+                                    Time to complete a drawing or writing task. Normal: 25s Write / 50s Draw
+                                </Tooltip>
                             <select
                                 name="gameSpeed"
                                 value={gameSpeed}
@@ -502,7 +514,12 @@ const GameRoom = () => {
                             </select>
                         </div>
                         <div className="settings option">
-                            <label htmlFor="text-to-speech">Enable text-to-speech:</label>
+                            <label className = "ttsTooltip" htmlFor="text-to-speech">Enable text-to-speech:</label>
+                            <Tooltip
+                                anchorSelect=".ttsTooltip"
+                                place="top">
+                                    Do you want the text prompts to be narrated at the end of the game?
+                                </Tooltip>
                             <label className="switch">
                                 <input
                                     type="checkbox"
