@@ -1,6 +1,6 @@
 import AudioContextEnum from "./audioContextEnum";
 
-export default class AudioPlayer{
+export default class AudioPlayer {
     constructor(AudioContextInput) {
         // ctx to use
         this.ctx = AudioContextInput;
@@ -16,32 +16,32 @@ export default class AudioPlayer{
     }
 
     handlePlay() {
-        try {
-            if(this.isPlaying){
-                this.audio.pause();
-            }
-            else{
-                this.audio.play();
-            }
-            this.isPlaying = !this.isPlaying;
-        } catch (error) {
-            console.log(`Error while playing audio with url: ${this.url} `);
+        if (this.isPlaying) {
+            this.audio.pause();
+            this.isPlaying = false;
+        } else {
+            this.audio.play().then(() => {
+                this.isPlaying = true;
+            }).catch(error => {
+                console.log(`Error while playing audio with url: ${this.url} `, error);
+            });
         }
     }
 
     handlePause() {
         try {
             this.audio.pause();
+            this.isPlaying = false;
         } catch (error) {
-            console.log(`Error while pausing audio with url: ${this.url} `);
+            console.log(`Error while pausing audio with url: ${this.url} `, error);
         }
     }
 
     handleAudioContextChange(newAudioContext) {
         try {
-            this.audio.src  = AudioContextEnum[newAudioContext].url;
+            this.audio.src = AudioContextEnum[newAudioContext].url;
         } catch (error) {
-            console.log(`Error while changing AudioContext with url: ${this.url} `);
+            console.log(`Error while changing AudioContext with url: ${this.url} `, error);
         }
     }
 }

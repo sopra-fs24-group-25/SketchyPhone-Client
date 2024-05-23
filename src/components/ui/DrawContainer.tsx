@@ -493,7 +493,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     return (
         <div>
             <div className="drawContainer">
-                <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</h>
+                <div className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</div>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
                         <label

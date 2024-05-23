@@ -348,9 +348,9 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Waiting room...</div>
                 <Spinner></Spinner>
-                <text>
+                <div>
                     Please wait. The game room is currently hosting a game. You will be granted access once the running game session ends.
-                </text>
+                </div>
             </div>,
             () => goBack()
         );
@@ -360,9 +360,9 @@ const GameJoin = () => {
         return baseView(
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">{`Room currently ${isFullRoom ? "full!" : "unavailable..."}`}</div>
-                <text>
+                <div>
                     {`The game room is ${isFullRoom ? "already full" : "currently not available"}. Please return and join another game or create a new one.`}
-                </text>
+                </div>
                 <h2 className="join label">Going back in...</h2>
                 <h2 className="join title">{countdownNumber} seconds</h2>
             </div>,
@@ -377,9 +377,9 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Joining room...</div>
                 <Spinner></Spinner>
-                <text>
+                <div>
                     Please wait. In just a moment you&apos;ll be redirected to the room.
-                </text>
+                </div>
             </div>,
             () => goBack(),
             "mid",
