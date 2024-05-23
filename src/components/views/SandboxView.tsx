@@ -8,6 +8,7 @@ import User from "../../models/User";
 import { BurgerMenu } from "components/ui/BurgerMenu";
 import Menu from "components/ui/Menu";
 import BaseContainer from "components/ui/BaseContainer";
+import Leaderboard from "components/ui/Leaderboard";
 
 
 const SandboxView = () => {
@@ -326,8 +327,20 @@ const SandboxView = () => {
                 gameSession={undefined}
                 user={testUser}
                 lowPlayerCount={false}
+                allElementsShown={newArray.length === toShow.length}
+                enableTextToSpeech={false}
             ></PresentationContainer>
             {Menu(openMenu, toggleMenu, false, true)}
+            <Leaderboard
+                    topThreeDrawings={newArray.slice(0,3)}
+                    topThreeTextPrompts={newArray.slice(0,3)}
+                    onClickNextRound={() => console.log("nextround")}
+                    onClickBackToLobby={() => console.log("lobby")}
+                    onExitGame={() => console.log("exit")}
+                    user={testUser}
+                    lowPlayerCount={false}
+                >
+                </Leaderboard>
         </BaseContainer>
     )
 }

@@ -29,6 +29,8 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
     // For audio effect
     const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
 
+    let sendAttempt = 0;
+    const maxSendAttempt = 3;
 
     async function sendTextPrompt() {
         if (submitted) {
@@ -37,6 +39,9 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             return;
         }
         try {
+            // increase attempt counter
+            sendAttempt += 1;
+
             // Get last gamesession (will always be the current)
             let currentGameSessions = game.gameSessions;
             let idx = currentGameSessions.length - 1;
@@ -61,12 +66,19 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
 
+            console.log("sending text prompt to server");
+            console.log(response);
+
             if (response.status === 201) {
                 submitted = true;
             }
+            else{
+                if(sendAttempt <= maxSendAttempt){
+                    setTimeout(() => 500)
+                    sendTextPrompt();
+                }
+            }
 
-            console.log("sending text prompt to server");
-            console.log(response);
         }
         catch (error) {
             alert(

@@ -125,6 +125,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     }
 
+    let sendAttempt = 0;
+    const maxSendAttempt = 3;
+
     async function sendImage() {
         if (submitted) {
             console.log("Already successfully submitted");
@@ -132,6 +135,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             return;
         }
         try {
+            // increase send counter
+            sendAttempt += 1;
+
             // Get last gamesession (will always be the current)
             let currentGameSessions = game.gameSessions;
             let idx = currentGameSessions.length - 1;
@@ -151,6 +157,12 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
             if (response.status === 201) {
                 submitted = true;
+            }
+            else{
+                if(sendAttempt <= maxSendAttempt){
+                    setTimeout(() => 500);
+                    sendImage();
+                }
             }
 
         }
