@@ -161,7 +161,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             else{
                 if(sendAttempt <= maxSendAttempt){
                     setTimeout(() => 500);
-                    sendImage();
+                    await sendImage();
                 }
             }
 
