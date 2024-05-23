@@ -220,7 +220,7 @@ Noah Isaak
 - Refactorings
 - Fix for draw tool
 
-## 20.05 - 26.05
+## 20.05 - 24.05
 
 Victor Cruz da Silva
 
