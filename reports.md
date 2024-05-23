@@ -164,8 +164,8 @@ Noah Isaak
 
 Xindi Liu
 
-- Implemented History feature #6
-- Implemented logic to handle persistent user #11
+- Implemented History feature #155 # 156
+- Implemented logic to handle persistent user #152 #153
 
 ## 06.05 - 12.05
 
@@ -197,8 +197,8 @@ Noé Matumona
 
 Xindi Liu
 
-- Wrote integration tests for the newly added features such as History, persistent users
-- Minor change to the DTO to cover new features
+- Wrote integration tests for the newly added features such as History, persistent users #158, #159
+- Minor change to the DTO to cover new features 
 
 ## 13.05 - 19.05
 
@@ -220,6 +220,10 @@ Noah Isaak
 - Refactorings
 - Fix for draw tool
 
+Xindi liu
+- Design and implement the database schema to support user accounts, temporary sessions, and play history. #157
+- Readjusted the tests #158
+
 ## 20.05 - 24.05
 
 Victor Cruz da Silva
@@ -231,3 +235,7 @@ Victor Cruz da Silva
 - Fixed saveHistory test. #11
 - Adapted text prompt and drawing assignment to fix minor bug during gameplay. #4, #5
 - Fixed assignment issues.
+
+Xindi Liu 
+- Writing integration tests for Hisotry service #158
+- 
