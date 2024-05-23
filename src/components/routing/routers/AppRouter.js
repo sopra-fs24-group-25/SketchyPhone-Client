@@ -10,6 +10,8 @@ import { LoginGuard } from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
 import { StartGuard } from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
+import { DrawAvatarGuard } from "../routeProtectors/DrawAvatarGuard";
+import DrawAvatar from "../../views/DrawAvatar";
 import SandboxView from "../../views/SandboxView"
 import User from "models/User";
 
@@ -50,6 +52,10 @@ const AppRouter = () => {
 
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
+                </Route>
+
+                <Route path="/drawAvatar" element={<DrawAvatarGuard />}>
+                    <Route path="/drawAvatar" element={<DrawAvatar/>} />
                 </Route>
 
                 <Route path="*" element={<Navigate to={user.userId ? "/gameRoom" : "/"} replace />} />

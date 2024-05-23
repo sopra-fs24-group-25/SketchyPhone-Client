@@ -8,6 +8,7 @@ import "../../styles/ui/Profile.scss";
 import { BackButton } from "components/ui/BackButton";
 import AvatarPreview from "./AvatarPreview";
 import User from "models/User";
+import Avatar from "models/Avatar";
 import { Button } from "./Button";
 
 const ProfileField = (props) => {
@@ -52,8 +53,16 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
     const [confirmPassword, setConfirmPassword] = useState<string>(defaultPassword);
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
+    const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
+
     function toggleAvatar() {
-        setAvatarId(avatarId % 6 + 1);
+        let avatarCount = 6;
+        if (user.persistent) {
+            setAvatars(JSON.parse(sessionStorage.getItem("avatars")));
+            avatarCount += avatars ? avatars.length : 0;
+        }
+        console.log(avatarCount)
+        setAvatarId(avatarId % avatarCount + 1);
     }
 
     async function handleProfileChange() {
@@ -134,6 +143,7 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
                         id={avatarId || 0}
                         onClick={() => toggleAvatar()}
                         style={!isEditing ? {cursor: "default"} : {cursor: "pointer"}}
+                        encodedImage={avatars?.find(a => a.avatarId === avatarId)?.encodedImage}
                         disabled={!isEditing}>
                     </AvatarPreview>
                     <ProfileField

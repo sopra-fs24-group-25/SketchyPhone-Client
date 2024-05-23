@@ -136,7 +136,7 @@ const Game = () => {
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
                 fetchPresentationIndex(user.current, gameSession.current);
             }
-        }, 250); // Set interval to 0.25 seconds
+        }, TIMEOUT); // Set interval to wait
 
         return () => clearInterval(interval);
 

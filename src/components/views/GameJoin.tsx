@@ -76,7 +76,7 @@ const GameJoin = () => {
     const chooseAvatar = (index: number) => {
         setAvatarId(index);
         avatarSelection.forEach(function (a) {
-            if (a.id === index) {
+            if (a.avatarId === index) {
                 a.selected = "active";
             } else {
                 a.selected = "inactive";
@@ -193,26 +193,65 @@ const GameJoin = () => {
         let fullUser = new User(response.data);
         setUser(fullUser);
         sessionStorage.setItem("user", JSON.stringify(fullUser));
+
+        return fullUser;
     }
 
     const validateNickname = async () => {
         try {
             // Lets assume the nickname is valid
             let updatedUser = { ...user, nickname };
-            await updateUser(updatedUser);
+            updatedUser = await updateUser(updatedUser);
 
             //fetch avatars GET avatars
-            let response = true;
-            if (response === true) { // fix later with correct server behavior
-                const fetchedAvatars = Array.from({ length: 6 }, (_, index) => new Avatar(
-                    {
-                        id: index + 1,
-                        selected: avatarId === index + 1 ? "active" : "inactive"
+            const fetchedAvatars = [];
+            let fetchedAvatar;
+            let avatarCounter = 1;
+            let counter = 5;
+            while (counter !== 0) {
+                try {
+                    const requestHeader = { "Authorization": updatedUser.token, "X-User-ID": updatedUser.userId };
+                    const response = await api.get(`/users/avatar/${avatarCounter}`, {headers: requestHeader});
+                    fetchedAvatar = response.data;
+                    console.log(fetchedAvatar)
+                    fetchedAvatars.push(
+                        new Avatar(
+                            {...fetchedAvatar,
+                                avatarId: fetchedAvatar.avatarId + 6,
+                                encodedImage: `data:image/png;base64,${fetchedAvatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`,
+                                selected: avatarId === fetchedAvatar.avatarId + 6 ? "active" : "inactive"
+                            }
+                        )
+                    );
+                    avatarCounter += 1;
+                } catch (error) {
+                    console.log(error);
+                    if (error.response.status === 404) {
+                        console.log("done fetching")
+                        break;
                     }
-                ));//implement request for future custom avatars
-                setAvatarSelection(fetchedAvatars);
-                setView("avatarView");
+                    counter -= 1;
+                    await new Promise((resolve) => setTimeout(resolve, 1000)); 
+                }
             }
+            
+            sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
+            console.log(fetchedAvatars)
+             
+            const defaultAvatars = Array.from({ length: 6 }, (_, index) => new Avatar(
+                {
+                    avatarId: index + 1,
+                    selected: avatarId === index + 1 ? "active" : "inactive"
+                }
+            ));
+            
+            if (user.persistent) {
+                const allAvatars = [...defaultAvatars, ...fetchedAvatars];
+                setAvatarSelection(allAvatars);
+            } else {
+                setAvatarSelection(defaultAvatars);
+            }
+            setView("avatarView");
         }
         catch (error) {
             alert(
@@ -239,17 +278,10 @@ const GameJoin = () => {
 
     const drawAvatar = async () => {
         console.log("drawing avatar");
-        try {
-            const response = true
-            if (response === true) { // fix later with correct server behavior
-            }
-            throw new Error;
-        }
-        catch (error) {
-            alert(
-                "Feature available soon"
-            );
-        }
+        //alert(
+        //    "Feature available soon"
+        //);
+        navigate("/drawAvatar");
     }
 
     function baseView(content, goPlace, placement = "mid", visible = true) {
@@ -277,7 +309,7 @@ const GameJoin = () => {
 
     function nicknameView() {
         return baseView(
-            <button className="gameroom buttons-container"
+            <div className="gameroom buttons-container"
                 onKeyDown={(e) => (e.keyCode === 13 && nickname ? validateNickname() : null)}>
                 <JoinField
                     label="Set nickname"
@@ -291,14 +323,14 @@ const GameJoin = () => {
                     onClick={() => validateNickname()}>
                     Continue
                 </Button>
-            </button>,
+            </div>,
             () => goBack()
         );
     }
 
     function avatarView() {
         return baseView(
-            <button className="gameroom buttons-container" style={{ "alignItems": "left" }}
+            <div className="gameroom buttons-container" style={{ "alignItems": "left" }}
                 onKeyDown={(e) => (e.keyCode === 13 && avatarId ? validateAvatar() : null)}>
                 <div className="join label">Choose avatar</div>
                 {user.persistent && <button className="join avatar-link"
@@ -315,7 +347,7 @@ const GameJoin = () => {
                     onClick={() => validateAvatar()}>
                     Continue
                 </Button>
-            </button>,
+            </div>,
             () => setView("nicknameView"),
             "up"
         );
@@ -323,7 +355,7 @@ const GameJoin = () => {
 
     function pinView() {
         return baseView(
-            <button className="gameroom buttons-container"
+            <div className="gameroom buttons-container"
                 onKeyDown={(e) => (e.keyCode === 13 && pin ? validatePin() : null)}>
                 <JoinField
                     label="Insert game PIN"
@@ -338,7 +370,7 @@ const GameJoin = () => {
                     onClick={() => validatePin()}>
                     Continue
                 </Button>
-            </button>,
+            </div>,
             () => setView("avatarView")
         );
     }
@@ -348,9 +380,9 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Waiting room...</div>
                 <Spinner></Spinner>
-                <text>
+                <div>
                     Please wait. The game room is currently hosting a game. You will be granted access once the running game session ends.
-                </text>
+                </div>
             </div>,
             () => goBack()
         );
@@ -360,9 +392,9 @@ const GameJoin = () => {
         return baseView(
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">{`Room currently ${isFullRoom ? "full!" : "unavailable..."}`}</div>
-                <text>
+                <div>
                     {`The game room is ${isFullRoom ? "already full" : "currently not available"}. Please return and join another game or create a new one.`}
-                </text>
+                </div>
                 <h2 className="join label">Going back in...</h2>
                 <h2 className="join title">{countdownNumber} seconds</h2>
             </div>,
@@ -377,9 +409,9 @@ const GameJoin = () => {
             <div className="gameroom buttons-container" style={{ "alignItems": "left" }}>
                 <div className="join title">Joining room...</div>
                 <Spinner></Spinner>
-                <text>
+                <div>
                     Please wait. In just a moment you&apos;ll be redirected to the room.
-                </text>
+                </div>
             </div>,
             () => goBack(),
             "mid",
