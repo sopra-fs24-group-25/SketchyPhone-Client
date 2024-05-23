@@ -198,7 +198,7 @@ Noé Matumona
 Xindi Liu
 
 - Wrote integration tests for the newly added features such as History, persistent users #158, #159
-- Minor change to the DTO to cover new features 
+- Minor change to the DTO to cover new features
 
 ## 13.05 - 19.05
 
@@ -214,13 +214,15 @@ Noé Matumona
 - implemented automatic exiting of game when logging out from lobby
 
 Noah Isaak
+
 - Finish #54, #55, #56 for Leaderboard
 - Finish #51, #53 for Voting
 - Minor UI changes
-- Refactorings
+- Refactoring
 - Fix for draw tool
 
 Xindi liu
+
 - Design and implement the database schema to support user accounts, temporary sessions, and play history. #157
 - Readjusted the tests #158
 
@@ -236,6 +238,32 @@ Victor Cruz da Silva
 - Adapted text prompt and drawing assignment to fix minor bug during gameplay. #4, #5
 - Fixed assignment issues.
 
-Xindi Liu 
-- Writing integration tests for Hisotry service #158
-- 
+Xindi Liu
+
+- Writing integration tests for History service #158
+
+Noé Matumona
+
+- changes to PresentationDrawing and PresentationText #57
+- implemented image downloading for leaderboard #57
+- fixed automatic admin nomination #31
+- fixed leaderboard not showing after first click #55
+- manually appointing new admin preparation #29
+- fixed profile change during lobby #41
+- implemented drawing of avatars #39
+- added back-to-lobby functionality in PresentationContainer and Leaderboard
+- implementation History
+- Menu changes
+- hide next round button when too few players
+- fix profile and history ghosting
+- implemented automatic routing
+- fixed background gradient
+- fixed voting sound
+- added enter key functionality in various places
+- adjusted unavailableRoomView to handle full room
+- fix to correct exitGame in PresentationContainer and Game/Leaderboard
+- deletion of guest users after logout
+- login visibility fix
+- default persistence set to false
+- visual change DrawContainer (stable width)
+- waiting room fix (based on status now)
