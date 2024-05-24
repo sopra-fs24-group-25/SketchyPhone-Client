@@ -271,9 +271,6 @@ const GameJoin = () => {
 
     const drawAvatar = async () => {
         console.log("drawing avatar");
-        //alert(
-        //    "Feature available soon"
-        //);
         navigate("/drawAvatar", { state: { isGameCreator: isGameCreator } });
     }
 

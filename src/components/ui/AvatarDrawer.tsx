@@ -144,7 +144,6 @@ export const AvatarDrawer = ({ height, width, user }) => {
 
                 try{
                     // then set avatar id of user to newly created avatar
-                    const url = `/users/${user.userId}`;
                     user.avatarId = response.data.avatarId + 6;
 
                     console.log(user.avatarId);
@@ -153,7 +152,6 @@ export const AvatarDrawer = ({ height, width, user }) => {
                     console.log(userUpdateResponse.data)
 
                     if(userUpdateResponse.data){
-                        let user = new User(userUpdateResponse.data);
                         sessionStorage.setItem("user", JSON.stringify(userUpdateResponse.data));
                     }
                 }

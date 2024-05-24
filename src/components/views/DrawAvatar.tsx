@@ -19,7 +19,6 @@ const DrawAvatar = () => {
 
     // main objects we need for the application logic
     const user = useRef<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
-    //const user = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
 
     const toggleMenu = () => {
         setOpenMenu(!openMenu);

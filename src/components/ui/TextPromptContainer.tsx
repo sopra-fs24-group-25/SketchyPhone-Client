@@ -72,13 +72,10 @@ export const TextPromptContainer = ({ drawing, user, game, isInitialPrompt, time
             if (response.status === 201) {
                 submitted = true;
             }
-            else{
-                if(sendAttempt <= maxSendAttempt){
-                    setTimeout(() => 500)
-                    await sendTextPrompt();
-                }
+            else if(sendAttempt <= maxSendAttempt){
+                setTimeout(() => 500)
+                await sendTextPrompt();
             }
-
         }
         catch (error) {
             alert(
