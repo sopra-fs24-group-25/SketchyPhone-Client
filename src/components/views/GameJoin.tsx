@@ -121,7 +121,7 @@ const GameJoin = () => {
     async function fetchRoom() {
         console.log("fetch room");
         const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
-        const response = await api.post(`/gameRooms/join/${pin}/${user.userId}`, null, {headers: requestHeader});
+        const response = await api.post(`/gameRooms/join/${pin}/${user.userId}`, null, { headers: requestHeader });
         const room = new Game(response.data);
         sessionStorage.setItem("gameroomToken", room.gameToken);
         sessionStorage.setItem("gameRoom", JSON.stringify(room));
@@ -197,60 +197,53 @@ const GameJoin = () => {
         return fullUser;
     }
 
-    const validateNickname = async () => {
+    async function fetchAvatars() {
+        let fetchedAvatars = new Array<Avatar>();
         try {
             // Lets assume the nickname is valid
             let updatedUser = { ...user, nickname };
             updatedUser = await updateUser(updatedUser);
 
-            //fetch avatars GET avatars
-            const fetchedAvatars = [];
-            let fetchedAvatar;
-            let avatarCounter = 1;
-            let counter = 5;
-            while (counter !== 0) {
-                try {
-                    const requestHeader = { "Authorization": updatedUser.token, "X-User-ID": updatedUser.userId };
-                    const response = await api.get(`/users/avatar/${avatarCounter}`, {headers: requestHeader});
-                    fetchedAvatar = response.data;
-                    console.log(fetchedAvatar)
-                    fetchedAvatars.push(
-                        new Avatar(
-                            {...fetchedAvatar,
-                                avatarId: fetchedAvatar.avatarId + 6,
-                                encodedImage: `data:image/png;base64,${fetchedAvatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`,
-                                selected: avatarId === fetchedAvatar.avatarId + 6 ? "active" : "inactive"
-                            }
-                        )
-                    );
-                    avatarCounter += 1;
-                } catch (error) {
-                    console.log(error);
-                    if (error.response.status === 404) {
-                        console.log("done fetching")
-                        break;
-                    }
-                    counter -= 1;
-                    await new Promise((resolve) => setTimeout(resolve, 1000)); 
-                }
+            console.log(updatedUser)
+
+            const requestHeader = { "Authorization": updatedUser.token, "X-User-ID": updatedUser.userId };
+            const response = await api.get("/users/avatars", { headers: requestHeader });
+
+            fetchedAvatars = new Array<Avatar>(...response.data);
+
+            fetchedAvatars.forEach(avatar => {
+                avatar.avatarId += 6;
+                avatar.encodedImage = `data:image/png;base64,${avatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`;
+                avatar.selected = user.avatarId === avatar.avatarId ? "active" : "inactive"
+            });
+        }
+        catch (error) {
+            console.log("Something went wrong while fetching all avatars: " + error);
+        }
+
+        sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
+        console.log(fetchedAvatars)
+
+        const defaultAvatars = Array.from({ length: 6 }, (_, index) => new Avatar(
+            {
+                avatarId: index + 1,
+                selected: avatarId === index + 1 ? "active" : "inactive"
             }
-            
-            sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
-            console.log(fetchedAvatars)
-             
-            const defaultAvatars = Array.from({ length: 6 }, (_, index) => new Avatar(
-                {
-                    avatarId: index + 1,
-                    selected: avatarId === index + 1 ? "active" : "inactive"
-                }
-            ));
-            
-            if (user.persistent) {
-                const allAvatars = [...defaultAvatars, ...fetchedAvatars];
-                setAvatarSelection(allAvatars);
-            } else {
-                setAvatarSelection(defaultAvatars);
-            }
+        ));
+
+        if (user.persistent) {
+            // filter to only contain avatars a user created
+            const allAvatars = [...fetchedAvatars.filter((avatar) => (avatar.creatorId === user.userId)), ...defaultAvatars];
+            setAvatarSelection(allAvatars);
+        } else {
+            setAvatarSelection(defaultAvatars);
+        }
+    }
+
+    const validateNickname = async () => {
+        try {
+            await fetchAvatars();
+
             setView("avatarView");
         }
         catch (error) {
@@ -281,7 +274,7 @@ const GameJoin = () => {
         //alert(
         //    "Feature available soon"
         //);
-        navigate("/drawAvatar");
+        navigate("/drawAvatar", { state: { isGameCreator: isGameCreator } });
     }
 
     function baseView(content, goPlace, placement = "mid", visible = true) {

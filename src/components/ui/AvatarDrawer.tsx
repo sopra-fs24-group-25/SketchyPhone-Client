@@ -1,9 +1,10 @@
 import { React, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
 import { api, handleError } from "helpers/api";
+import User from "../../models/User";
 // Default draw container
 
 // For more see:
@@ -13,7 +14,8 @@ import { api, handleError } from "helpers/api";
 export const AvatarDrawer = ({ height, width, user }) => {
 
     const navigate = useNavigate();
-    
+    const location = useLocation();
+
     const Shapes = {
         LINE: "LINE",
         RECTANGLE_EMPTY: "RECTANGLE_EMPTY",
@@ -135,12 +137,32 @@ export const AvatarDrawer = ({ height, width, user }) => {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
 
             const url = `/users/${user.userId}/avatar/create`;
-            console.log(user)
-            console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
 
             if (response.status === 201) {
                 submitted = true;
+
+                try{
+                    // then set avatar id of user to newly created avatar
+                    const url = `/users/${user.userId}`;
+                    user.avatarId = response.data.avatarId + 6;
+
+                    console.log(user.avatarId);
+
+                    const userUpdateResponse = await api.put(`/users/${user.userId}`, user);
+                    console.log(userUpdateResponse.data)
+
+                    if(userUpdateResponse.data){
+                        let user = new User(userUpdateResponse.data);
+                        sessionStorage.setItem("user", JSON.stringify(userUpdateResponse.data));
+                    }
+                }
+                catch(error){
+                    console.log("Something went wrong went updating user with new avatarId: " + error);
+                }
+
+                // We pass the received isGameCreator to /join
+                navigate("/join", { state: { isGameCreator: location.state.isGameCreator, view: "avatarView" }});
             }
             console.log(response.data)
 
@@ -372,7 +394,7 @@ export const AvatarDrawer = ({ height, width, user }) => {
             ctx.current.fillStyle = colorPicker.value;
             ctx.current.strokeStyle = colorPicker.value;
             ctx.current.lineWidth = sizePicker.value;
-            
+
 
             if (currentShape.includes("RECTANGLE")) {
                 drawRectangle();
@@ -461,7 +483,7 @@ export const AvatarDrawer = ({ height, width, user }) => {
                             htmlFor="brushSize">Brush Size
                         </label>
                         <input type="range" min="1" max="50" defaultValue="10" id="brushSize"></input>
-                        <hr className="drawContainer separator"/>
+                        <hr className="drawContainer separator" />
                         <button
                             className="drawContainer button selected"
                             id={Shapes.LINE}
@@ -492,16 +514,16 @@ export const AvatarDrawer = ({ height, width, user }) => {
                             onClick={() => onClickShapes(Shapes.ELLIPSE_EMPTY)}>
                             Ellipse Empty
                         </button>
-                        <hr className="drawContainer separator"/>
+                        <hr className="drawContainer separator" />
                         <button
                             className="drawContainer button"
                             id={Shapes.ERASER}
                             onClick={() => onClickShapes(Shapes.ERASER)}>
                             Eraser
                         </button>
-                        <button 
+                        <button
                             className="drawContainer button"
-                            id = "clearButton"
+                            id="clearButton"
                             onClick={() => onButtonClear()}>
                             Clear Canvas
                         </button>

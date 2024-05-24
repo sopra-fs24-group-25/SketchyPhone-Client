@@ -136,11 +136,46 @@ const GameRoom = () => {
         }
     }
 
+    async function fetchedAvatars() {
+        let fetchedAvatars = new Array<Avatar>();
+        try {
+            const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
+            const response = await api.get("/users/avatars", { headers: requestHeader });
+
+            fetchedAvatars = new Array<Avatar>(...response.data);
+            console.log(fetchedAvatars)
+            if (fetchedAvatars.length !== 0) {
+                fetchedAvatars.forEach(avatar => {
+                    avatar.avatarId += 6;
+                    avatar.encodedImage = `data:image/png;base64,${avatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`;
+                    avatar.selected = thisUser.avatarId === avatar.avatarId ? "active" : "inactive"
+                });
+                console.log(fetchedAvatars);
+                sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
+                setAvatars(fetchedAvatars);
+            }
+
+        }
+        catch (error) {
+            console.log("Something went wrong while fetching all avatars: " + error);
+        }
+
+    }
+
     async function fetchGameRoomUsers() {
         try {
             const requestHeader = { "Authorization": thisUser.token, "X-User-ID": thisUser.userId };
             const response = await api.get(`/gameRooms/${game.gameId}/users`, { headers: requestHeader })
             let fetchedUsers = new Array<User>(response.data)[0];
+
+            // a new user joined
+            if (fetchedUsers.length !== users?.length) {
+                console.log("new user detected");
+                console.log(fetchedUsers);
+                console.log(users)
+                // refresh avatar
+                await fetchedAvatars();
+            }
 
             setUsers(fetchedUsers);
             const foundUser = users?.find(user => user.userId === thisUser.userId);
