@@ -18,7 +18,7 @@ const FormField = (props) => {
             <label className="login label">{props.label}</label>
             <div className="password-field">
                 <input
-                    className={`login input ${props.disabled ? "invalid" : ""}`}
+                    className={`login input ${props.disabled ? "invalid" : ""} ${props.type === "password" || props.buttonEye ? "password" : ""}`}
                     placeholder={props.placeholder}
                     style={{ userSelect: "none" }}
                     value={props.value}

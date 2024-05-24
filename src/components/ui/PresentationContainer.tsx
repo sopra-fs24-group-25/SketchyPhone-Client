@@ -13,9 +13,10 @@ import AudioPlayer from "../../helpers/AudioPlayer";
 import { api } from "helpers/api";
 
 
-const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onExitGame, gameSession, user, lowPlayerCount, allElementsShown, enableTextToSpeech }) => {
+const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement, onClickNextRound, onClickBackToLobby, onClickResults, onSaveToHistory, onExitGame, gameSession, user, lowPlayerCount, allElementsShown, enableTextToSpeech, visibleHistoryButton }) => {
 
     const containerRef = useRef(null);
+    const previousLastElementRef = useRef();
 
     const [newVote, setNewVote] = useState<number>(0);
 
@@ -60,18 +61,20 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     // UseEffect for sound effect trigger
     useEffect(() => {
         const lastElement = presentationContents[presentationContents.length - 1];
+        const previousLastElement = previousLastElementRef.current;
 
-        if (lastElement instanceof DrawingPrompt) {
-            // Play audio
-            revealAudio.handlePlay();
-        }
-
-        if (lastElement instanceof TextPrompt) {
-            if (enableTextToSpeech) {
-                TextToSpeech(lastElement.content);
+        if (lastElement !== previousLastElement) {
+            if (lastElement instanceof DrawingPrompt) {
+                // Play audio
+                revealAudio.handlePlay();
+            }
+            if (lastElement instanceof TextPrompt) {
+                if (enableTextToSpeech) {
+                    TextToSpeech(lastElement.content);
+                }
             }
         }
-
+        previousLastElementRef.current = lastElement;
     }, [presentationContents])
 
     async function doVoteTextPrompt(textPrompt, creator) {
@@ -229,34 +232,39 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                         }}
                     />
                 </div>
-                {isAdmin && <div className="presentation buttonsContainer">
-                    <Button
+                <div className="presentation buttonsContainer">
+                    {isAdmin && <Button
                         onClick={() => { onClickIncrement(); clickAudio.handlePlay() }}
-                        disabled={allElementsShown}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
+                        disabled={allElementsShown}
                     >
-                        Show next
-                    </Button>
-                    <Button
+                        {!allElementsShown ? "Show next" : "Presentation end"}
+                    </Button>}
+                    {(isAdmin || user.persistent) && <Button
+                        onClick={() => onSaveToHistory()}
                         width="20%"
-                        className="presentation buttonsContainer presentationButton hidden"
-                    ></Button>
-                    <Button
+                        className={`presentation buttonsContainer presentationButton ${!user.persistent ? "hidden" : ""}`}
+                        disabled={!visibleHistoryButton}
+                    >
+                        {visibleHistoryButton ? "Save to history" : "History saved"}
+                    </Button>}
+                    {isAdmin && <Button
                         onClick={() => onClickResults()}
                         width="20%"
                         className="presentation buttonsContainer presentationButton"
                     >
                         Leaderboard
-                    </Button>
-                </div>}
+                    </Button>}
+                </div>
                 <div className="presentation buttonsContainer">
                     {isAdmin && <Button
                         onClick={() => onClickNextRound()}
                         width="20%"
-                        className={`presentation buttonsContainer presentationButton ${lowPlayerCount ? "hidden" : ""}`}
+                        className="presentation buttonsContainer presentationButton"
+                        disabled={lowPlayerCount}
                     >
-                        New round
+                        {!lowPlayerCount ? "New round" : "Too few players"}
                     </Button>}
                     {isAdmin && <Button
                         onClick={() => onClickBackToLobby()}
@@ -266,7 +274,8 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                         Lobby
                     </Button>}
 
-                    <Button className="presentation buttonsContainer presentationButton"
+                    <Button 
+                        className="presentation buttonsContainer presentationButton"
                         width="20%"
                         onClick={() => onExitGame()}
                     >
@@ -286,12 +295,14 @@ PresentationContainer.propTypes = {
     onClickNextRound: PropTypes.func,
     onClickBackToLobby: PropTypes.func,
     onClickResults: PropTypes.func,
+    onSaveToHistory: PropTypes.func,
     onExitGame: PropTypes.func,
     gameSession: PropTypes.object,
     user: PropTypes.object,
     lowPlayerCount: PropTypes.bool,
     allElementsShown: PropTypes.bool,
-    enableTextToSpeech: PropTypes.bool
+    enableTextToSpeech: PropTypes.bool,
+    visibleHistoryButton: PropTypes.bool,
 }
 
 export default PresentationContainer;

@@ -47,6 +47,7 @@
     user-select: none;
     height: 35px;
     padding-left: 15px;
+    padding-right: 15px;
     border: none;
     border-radius: 0.75em;
     margin-bottom: 20px;
@@ -55,6 +56,12 @@
       animation: shake2 0.4s ease-in-out 0s 1;
       color: $error-color;
       background-color: $error-field-color;
+      &.password {
+        padding-right: 15px;
+      }
+    }
+    &.password {
+      padding-right: 35px;
     }
   }
   &.label {

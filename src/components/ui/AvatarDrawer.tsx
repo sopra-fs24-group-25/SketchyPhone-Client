@@ -1,20 +1,19 @@
 import { React, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import "../../styles/ui/DrawContainer.scss"
 import { Button } from "./Button";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { api, handleError } from "helpers/api";
-import GameLoopStatus from "../../helpers/gameLoopStatus"
-import AudioContextEnum from "../../helpers/audioContextEnum";
-import AudioPlayer from "../../helpers/AudioPlayer";
 // Default draw container
 
 // For more see:
 // https://github.com/mdn/learning-area/blob/main/javascript/apis/drawing-graphics/loops_animation/8_canvas_drawing_app/script.js
 
 //Also pass user and gameroom details as props in order to submit
-export const DrawContainer = ({ height, width, user, game, textPrompt, timerDuration, setNextTask, setInitial }) => {
+export const AvatarDrawer = ({ height, width, user }) => {
 
+    const navigate = useNavigate();
+    
     const Shapes = {
         LINE: "LINE",
         RECTANGLE_EMPTY: "RECTANGLE_EMPTY",
@@ -53,10 +52,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     let currentShape = Shapes.LINE; // Always start with line
 
     let submitted = false;
-
-    // For audio
-    const timerSound = new AudioPlayer(AudioContextEnum.TIMER);
-
 
     const onMouseDown = (e) => {
         // Check if in range
@@ -125,42 +120,29 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     }
 
-    let sendAttempt = 0;
-    const maxSendAttempt = 3;
-
-    async function sendImage() {
+    async function sendAvatar() {
         if (submitted) {
             console.log("Already successfully submitted");
+            navigate("/join");
 
             return;
         }
         try {
-            // increase send counter
-            sendAttempt += 1;
-
-            // Get last gamesession (will always be the current)
-            let currentGameSessions = game.gameSessions;
-            let idx = currentGameSessions.length - 1;
-            let currentGameSessionId = currentGameSessions[idx].gameSessionId;
-
-            // If we have a previous drawing id
-            const previousTextPromptId = textPrompt.textPromptId;
 
             const base64Canvas = canvas.current.toDataURL("image/png").split(";base64,")[1];
 
             const requestBody = base64Canvas;
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
 
-            const url = `/games/${currentGameSessionId}/drawings/${user.userId}/${previousTextPromptId}`;
+            const url = `/users/${user.userId}/avatar/create`;
+            console.log(user)
             console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
 
             if (response.status === 201) {
                 submitted = true;
-            } else if (sendAttempt <= maxSendAttempt) {
-                setTimeout(() => 500);
-                await sendImage();
             }
+            console.log(response.data)
 
         }
         catch (error) {
@@ -208,21 +190,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         // pop the latest element
         lastDrawnArray[0][1]();
     }
-
-    // TIMER https://github.com/vydimitrov/react-countdown-circle-timer/tree/master/packages/web#readme
-    const timerProps = {
-        isPlaying: true,
-        size: 60,
-        strokeWidth: 6
-    };
-
-    const minuteSeconds = 60;
-
-    const startTime = Date.now() / 1000; // use UNIX timestamp in seconds
-    const endTime = startTime + timerDuration; // use UNIX timestamp in seconds
-
-    const remainingTime = endTime - startTime;
-
 
     function initialize() {
         canvas.current = document.getElementById("canvas");
@@ -272,17 +239,8 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     async function onSubmit() {
         allowDraw = false;
-        await sendImage();
-        setInitial(false);
+        await sendAvatar();
         submitted = true;
-        setNextTask(GameLoopStatus.TEXTPROMPT);
-        // Also set button to deactivated
-    }
-
-    async function onTimerEnd() {
-        if (!submitted) {
-            await onSubmit();
-        }
     }
 
     function drawRectangle() {
@@ -490,7 +448,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     return (
         <div>
             <div className="drawContainer">
-                <div className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</div>
+                <h className="drawContainer textPrompt">Draw your own avatar!</h>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
                         <label
@@ -502,7 +460,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             className="drawContainer label"
                             htmlFor="brushSize">Brush Size
                         </label>
-                        <input type="range" min="2" max="30" defaultValue="10" id="brushSize"></input>
+                        <input type="range" min="1" max="50" defaultValue="10" id="brushSize"></input>
                         <hr className="drawContainer separator"/>
                         <button
                             className="drawContainer button selected"
@@ -557,34 +515,16 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                         >Submit</Button>
 
                     </div>
-                    <div className="drawContainer timer">
-                        <CountdownCircleTimer
-                            {...timerProps}
-                            colors="#000000"
-                            duration={timerDuration}
-                            initialRemainingTime={remainingTime & minuteSeconds}
-                            onComplete={() => ({ shouldRepeat: false })}
-
-                            // Here submit if timer ran out
-                            onUpdate={(remainingTime) => { (remainingTime === 0 && onTimerEnd()); (remainingTime === 10 && timerSound.handlePlay()) }}
-                        >
-                        </CountdownCircleTimer>
-                    </div>
                 </div>
 
             </div>
         </div >
     );
 };
-DrawContainer.propTypes = {
+AvatarDrawer.propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     user: PropTypes.object,
-    game: PropTypes.object,
-    textPrompt: PropTypes.object,
-    timerDuration: PropTypes.number,
-    setNextTask: PropTypes.func,
-    setInitial: PropTypes.func,
 };
 
-export default DrawContainer;
+export default AvatarDrawer;

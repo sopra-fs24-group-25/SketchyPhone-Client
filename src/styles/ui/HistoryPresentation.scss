@@ -1,6 +1,6 @@
 @import "../theme";
 
-.presentation {
+.history-presentation {
     user-select: none;
     &.text {
         background-color: white;
@@ -13,6 +13,37 @@
         padding: 20px;
         box-shadow: $dropShadow;
     }
+
+    &.screen-layer {
+        border: none;
+        width: 100vw;
+        height: 100vh;
+        background-color: transparent;
+        position: fixed;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 1000;
+        &.closed {
+          transform: translate3d(-100vw, 0, 0);
+          opacity: 0;
+          visibility: hidden;
+        }
+        &.open {
+          transform: translate3d(0vw, 0, 0);
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
+    &.title {
+        user-select: none;
+        @include center;
+        margin-bottom: 10px;
+        font-weight: 900;
+        font-size: 3em;
+      }
 
     &.username {
         color: black;
@@ -70,14 +101,34 @@
         justify-content: space-evenly;
         background-color: $display-box-color;
         border-radius: 2em;
-        margin: 20px;
-        min-height: fit-content;
-        min-height: 400px;
-        min-width: 60em;
+        border-bottom-left-radius: 3em;
+        border-bottom-right-radius: 3em;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin: auto;
+        min-height: 450px;
+        min-width: 70em;
         max-height: $DESKTOP_HEIGHT * 0.6;
         max-width: 100em;
         width: $DESKTOP_WIDTH / 2;
-        overflow: scroll;
+        box-shadow: $dropShadow;
+        overflow: hidden;
+        --container-width: width;
+        --container-height: height;
+    }
+
+    &.scroll-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        background-color: $menu-color;
+        border-radius: 2em;
+        margin: 20px;
+        margin-bottom: 30px;
+        width: calc(var(--container-width));
+        height: calc(var(--container-height));
+        overflow-x: hidden;
+        overflow-y: scroll;
         @include scrollbar;
     }
 

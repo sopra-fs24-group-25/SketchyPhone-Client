@@ -7,11 +7,12 @@ import Avatar from "models/Avatar";
 const AvatarChoice = props => (
     <div className={`avatar-container ${props.className}`}>
         {props.avatarList.map((item: Avatar) => (
-            <div className = "avatar" key={item.id}>
+            <div className = "avatar" key={item.avatarId}>
                 <AvatarPreview
                     className={item.selected}
-                    id={item.id}
-                    onClick={() => props.choose(item.id)}
+                    id={item.avatarId}
+                    onClick={() => props.choose(item.avatarId)}
+                    encodedImage={item.encodedImage ?? null}
                 >
                 </AvatarPreview>
             </div>

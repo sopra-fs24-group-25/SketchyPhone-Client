@@ -1,6 +1,6 @@
 @import "../theme";
 
-.history {
+.history-popUp {
   user-select: none;
   color: black;
   transition: all 0.3s ease;
@@ -12,16 +12,14 @@
     padding-right: 10px;
     padding-bottom: 20px;
     height: fit-content;
-    width: 620px;
     max-height: 500px;
     background-color: $menu-color;
-    position: fixed;
-    border-top-right-radius: 2em;
-    border-bottom-right-radius: 2em;
+    width: 400px;
+    border-radius: 2em;
+    justify-content: center;
     top: 20vh;
     bottom: 20vh;
     left: 0;
-    transition: transform 0.3s cubic-bezier(0, 0.52, 0, 1);
     box-shadow: $dropShadow;
   }
   &.screen-layer {
@@ -34,19 +32,16 @@
     left: 0;
     opacity: 0;
     visibility: hidden;
-    transition: transform 0.3s cubic-bezier(0.52, 0.52, 0, 1), opacity 0.3s, visibility 0s 0.3s;
     z-index: 1000;
     &.closed {
       transform: translate3d(-100vw, 0, 0);
       opacity: 0;
       visibility: hidden;
-      transition: transform 0.3s cubic-bezier(0.52, 0.52, 0, 1), opacity 0.3s, visibility 0.3s;
     }
     &.open {
       transform: translate3d(0vw, 0, 0);
       opacity: 1;
       visibility: visible;
-      transition: transform 0.3s cubic-bezier(0.52, 0.52, 0, 1), opacity 0.3s, visibility 0s;
     }
   }
   &.field {
@@ -59,18 +54,21 @@
   &.input {
     user-select: none;
     height: 50px;
-    max-width: 55vw;
-    min-width: 150px;
+    width: 300px;
     padding-left: 15px;
     padding-right: 15px;
-    margin-left: -4px;
     border: solid;
     border-color: $accentDark;
     border-radius: 2em;
-    margin-bottom: 10px;
+    margin: 10px;
     font-size: x-large;
-    cursor: pointer;
+    cursor: text;
     font-weight: 600;
+    &:disabled {
+      cursor: default;
+      background-color: transparent;
+
+    }
     &.invalid {
       animation: shake2 0.4s ease-in-out 0s 1;
       color: $error-color;
@@ -107,12 +105,7 @@
     @include center;
     font-size: larger;
     font-weight: 600;
-  }
-  &.name {
-    color: black;
-    font-size: x-large;
-    font-weight: 700;
-    overflow: hidden;
+    padding-top: 10px;
   }
   &.no-history {
     font-size: larger;
@@ -145,25 +138,19 @@
     margin-top: 20px;
   }
   &.button-container {
-    border: solid;
-    border-radius: 2em;
-    border-color: white;
     @include center;
     flex-direction: row;
     justify-content: space-between;
-    width: 500px;
+    width: 300px;
+    gap: 10px;
     margin: auto;
-    padding: 20px;
   }
   &.button {
     font-size: larger;
-    background-color: $background;
-    color: white;
     max-height: 80px;
     width: 200px;
     @include center;
     font-weight: 600;
-    border-radius: 2em;
     padding: 20px;
     margin: auto;
     margin-top: 30px;
