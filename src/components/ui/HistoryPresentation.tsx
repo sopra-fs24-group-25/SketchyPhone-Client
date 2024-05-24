@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import { api } from "helpers/api";
 import { Button } from "components/ui/Button";
 import PresentationDrawing from "components/ui/PresentationDrawing";
 import PresentationText from "components/ui/PresentationText";
 import "styles/ui/HistoryPresentation.scss";
+import User from "models/User";
 import TextPrompt from "models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
@@ -12,7 +14,7 @@ import "../../styles/ui/HistoryPopUp.scss";
 import { BackButton } from "components/ui/BackButton";
 
 
-const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName) => {
+const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName, historyId, user) => {
 
     function presentTextPrompt(element) {
         return (
@@ -51,6 +53,18 @@ const HistoryPresentation = (presentationContents, toggleHistorySession, openHis
         }
     }
 
+    async function handleDeleteHistory(historyId: number) {
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const url = `/games/history/${historyId}/delete`;
+            const response = await api.delete(url, { headers: requestHeader });
+            console.log(response.data);
+            closeHistorySession(false);
+        } catch (error) {
+            console.log("Error while deleting history session: " + error);
+        }
+    }
+
     return (      
         <button className={`screen-layer ${openHistorySession ? "open" : "closed"}`}>
             <div className="history-presentation container">
@@ -86,7 +100,7 @@ const HistoryPresentation = (presentationContents, toggleHistorySession, openHis
                         <Button 
                             className="history-presentation buttonsContainer presentationButton"
                             width="20%"
-                            onClick={() => console.log("possibly delete")}
+                            onClick={() => handleDeleteHistory(historyId)}
                         >
                             Delete
                         </Button>

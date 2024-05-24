@@ -47,6 +47,7 @@ const History = (openHistory, toggleHistory) => {
     const [historyElements, setHistoryElements] = useState<[History]>(null);
     const [currentHistorySequence, setCurrentHistorySequence] = useState(null);
     const [historyName, setHistoryName] = useState<string>("");
+    const [historyId, setHistoryId] = useState<string>(null);
 
     useEffect(() => {
         if (openHistory) {
@@ -80,7 +81,7 @@ const History = (openHistory, toggleHistory) => {
     }
 
     // function to fetch a sequence corresponding to history element
-    async function fetchSequenceFromHistory(user: User, gameSessionId: number, name: string) {
+    async function fetchSequenceFromHistory(user: User, gameSessionId: number, name: string, id: number) {
         console.log("fetching with", user, `gameSessionId ${gameSessionId}`)
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -100,6 +101,7 @@ const History = (openHistory, toggleHistory) => {
                 setCurrentHistorySequence(fetchedHistorySequence);
             }
             setHistoryName(name);
+            setHistoryId(id);
             setOpenHistorySession(true);
             toggleHistory(false);
         }
@@ -143,7 +145,7 @@ const History = (openHistory, toggleHistory) => {
                                         </div>
                                         <Button
                                             width="30%"
-                                            onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId, element.historyName) }}
+                                            onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId, element.historyName, element.historyId) }}
                                         >
                                             Open
                                         </Button>
@@ -160,7 +162,7 @@ const History = (openHistory, toggleHistory) => {
                 </div>
             </button>
             <button className={`history screen-layer ${openHistorySession ? "open" : "closed"}`}>
-                {currentHistorySequence && HistoryPresentation(currentHistorySequence, toggleHistorySession, openHistorySession, setOpenHistorySession, historyName)}
+                {currentHistorySequence && HistoryPresentation(currentHistorySequence, toggleHistorySession, openHistorySession, setOpenHistorySession, historyName, historyId, user)}
             </button>
         </div>
     );

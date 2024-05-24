@@ -180,17 +180,16 @@ const GameRoom = () => {
             setUsers(fetchedUsers);
             const foundUser = users?.find(user => user.userId === thisUser.userId);
             const isUserAdmin = foundUser?.role === "admin" || false;
-            if (foundUser) {
-                setThisUser(foundUser);
-            }
+            
             setIsAdmin(isUserAdmin);
             let userToSave;
             if (isUserAdmin) {
-                userToSave = { ...foundUser, role: "admin" };
+                userToSave = { ...thisUser, role: "admin" };
             } else {
-                userToSave = { ...foundUser, role: "player" };
+                userToSave = { ...thisUser, role: "player" };
             }
             sessionStorage.setItem("user", JSON.stringify(userToSave));
+            setThisUser(userToSave);
         }
         catch (error) {
             console.log("Error while fetching users: " + error);
@@ -234,10 +233,13 @@ const GameRoom = () => {
             sessionStorage.setItem("gameSpeed", defaultGameSpeed.toString());
             sessionStorage.setItem("isEnabledTTS", defaultIsEnabledTTS ? "True" : "False");
 
-            // Store user and gameroom to sessionstorage
-            sessionStorage.setItem("user", JSON.stringify(createdRoom.users[0]));
-            sessionStorage.setItem("gameRoom", JSON.stringify(createdRoom));
+            // Set this user role as admin
+            sessionStorage.setItem("user", JSON.stringify({...thisUser, role: "admin"}));
+        
+            // also update thisUser object
+            setThisUser({...thisUser, role: "admin"});
 
+            sessionStorage.setItem("gameRoom", JSON.stringify(createdRoom));
 
             setUsers(createdRoom.users);
             setGame({ ...createdRoom });
