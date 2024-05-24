@@ -10,6 +10,7 @@ import { Button } from "./Button";
 import SessionHistory from "../../models/SessionHistory";
 import TextPrompt from "../../models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
+import HistoryPresentation from "components/ui/HistoryPresentation";
 
 const HistoryField = (props) => {
     return (
@@ -42,57 +43,19 @@ const History = (openHistory, toggleHistory) => {
 
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
 
+    const [openHistorySession, setOpenHistorySession] = useState<boolean>(false);
     const [historyElements, setHistoryElements] = useState<[History]>(null);
     const [currentHistorySequence, setCurrentHistorySequence] = useState(null);
+    const [historyName, setHistoryName] = useState<string>("");
 
     useEffect(() => {
         if (openHistory) {
+            setUser(new User(JSON.parse(sessionStorage.getItem("user"))));
             console.log("Fetching history");
             fetchHistory(user);
         }
 
     }, [openHistory])
-
-    const testHistory = [
-        {
-            "historyId": 1,
-            "userId": user.userId,
-            "gameSessionId": 1,
-            "historyName": "history123"
-        },
-        {
-            "historyId": 2,
-            "userId": user.userId,
-            "gameSessionId": 4,
-            "historyName": "historyNew"
-        },
-        {
-            "historyId": 3,
-            "userId": user.userId,
-            "gameSessionId": 12,
-            "historyName": "historyYesterday"
-        },
-        {
-            "historyId": 12,
-            "userId": user.userId,
-            "gameSessionId": 1,
-            "historyName": "history123"
-        },
-        {
-            "historyId": 24,
-            "userId": user.userId,
-            "gameSessionId": 4,
-            "historyName": "historyNew"
-        },
-        {
-            "historyId": 311,
-            "userId": user.userId,
-            "gameSessionId": 12,
-            "historyName": "historyYesterdaysuperlong maegaisdhdugwf"
-        },
-
-    ]
-
 
     // function to fetch history
     async function fetchHistory(user: User) {
@@ -100,7 +63,6 @@ const History = (openHistory, toggleHistory) => {
             const requestHeader = { "Authorization": user.token };
             const url = `/users/${user.userId}/history`;
             const response = await api.get(url, { headers: requestHeader })
-            response.data = testHistory;
             console.log(response.data);
 
             const fetchedHistory = response.data.map(element => {
@@ -118,7 +80,7 @@ const History = (openHistory, toggleHistory) => {
     }
 
     // function to fetch a sequence corresponding to history element
-    async function fetchSequenceFromHistory(user: User, gameSessionId: number) {
+    async function fetchSequenceFromHistory(user: User, gameSessionId: number, name: string) {
         console.log("fetching with", user, `gameSessionId ${gameSessionId}`)
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
@@ -137,7 +99,9 @@ const History = (openHistory, toggleHistory) => {
             if (fetchedHistorySequence) {
                 setCurrentHistorySequence(fetchedHistorySequence);
             }
-
+            setHistoryName(name);
+            setOpenHistorySession(true);
+            toggleHistory(false);
         }
         catch (error) {
             console.log("Error while fetching history sequence: " + error);
@@ -148,48 +112,57 @@ const History = (openHistory, toggleHistory) => {
         toggleHistory(withToggleMenu);
     }
 
+    function toggleHistorySession(withToggleHistory: boolean) {
+        if (withToggleHistory) {
+            toggleHistory(!withToggleHistory);
+        }
+    }
+
     return (
-        <button className={`history screen-layer ${openHistory ? "open" : "closed"}`}>
-            <div className="history container">
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                    <BackButton className="menu-backbutton"
-                        onClick={() => resetHistoryView(true)}>
-                    </BackButton>
-                    <BackButton className="menu-backbutton close"
-                        onClick={() => resetHistoryView(false)}>
-                    </BackButton>
-                </div>
-                <div className="history title">History</div>
-                {historyElements?.length !== 0 &&
-                    <button className="history scroll-container">
-                        {historyElements?.map((element) => {
-                            return (
-                                <div
-                                    className="history button-container"
-                                    key={element.historyId}>
-                                    <div>
-                                        {element.historyName}
+        <div>
+            <button className={`history screen-layer ${openHistory ? "open" : "closed"}`}>
+                <div className="history container">
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                        <BackButton className="menu-backbutton"
+                            onClick={() => resetHistoryView(true)}>
+                        </BackButton>
+                        <BackButton className="menu-backbutton close"
+                            onClick={() => resetHistoryView(false)}>
+                        </BackButton>
+                    </div>
+                    <div className="history title">History</div>
+                    {historyElements?.length !== 0 &&
+                        <button className="history scroll-container">
+                            {historyElements?.map((element) => {
+                                return (
+                                    <div
+                                        className="history button-container"
+                                        key={element.historyId}>
+                                        <div className="history name">
+                                            {element.historyName}
+                                        </div>
+                                        <Button
+                                            width="30%"
+                                            onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId, element.historyName) }}
+                                        >
+                                            Open
+                                        </Button>
                                     </div>
-                                    <Button
-                                        //className="history button"
-                                        //key={element.historyId}
-                                        width="30%"
-                                        onClick={() => { fetchSequenceFromHistory(user, element.gameSessionId) }}
-                                    >
-                                        Open
-                                    </Button>
-                                </div>
-                            )
-                        })}
-                    </button>
-                }
-                {historyElements?.length === 0 &&
-                <div className="history no-history"
-                >
-                    No history yet
-                </div>}
-            </div>
-        </button>
+                                )
+                            })}
+                        </button>
+                    }
+                    {historyElements?.length === 0 &&
+                    <div className="history no-history"
+                    >
+                        No history yet
+                    </div>}
+                </div>
+            </button>
+            <button className={`history screen-layer ${openHistorySession ? "open" : "closed"}`}>
+                {currentHistorySequence && HistoryPresentation(currentHistorySequence, toggleHistorySession, openHistorySession, setOpenHistorySession, historyName)}
+            </button>
+        </div>
     );
 }
 

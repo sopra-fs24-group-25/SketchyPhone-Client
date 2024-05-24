@@ -125,6 +125,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
     }
 
+    let sendAttempt = 0;
+    const maxSendAttempt = 3;
+
     async function sendImage() {
         if (submitted) {
             console.log("Already successfully submitted");
@@ -132,6 +135,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             return;
         }
         try {
+            // increase send counter
+            sendAttempt += 1;
+
             // Get last gamesession (will always be the current)
             let currentGameSessions = game.gameSessions;
             let idx = currentGameSessions.length - 1;
@@ -151,6 +157,9 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
 
             if (response.status === 201) {
                 submitted = true;
+            } else if (sendAttempt <= maxSendAttempt) {
+                setTimeout(() => 500);
+                await sendImage();
             }
 
         }
@@ -481,7 +490,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     return (
         <div>
             <div className="drawContainer">
-                <h className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</h>
+                <div className="drawContainer textPrompt">Hey! It&apos;s time to draw: {textPrompt.content}</div>
                 <div className="drawContainer container">
                     <div className="drawContainer tools">
                         <label
@@ -493,7 +502,7 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
                             className="drawContainer label"
                             htmlFor="brushSize">Brush Size
                         </label>
-                        <input type="range" min="1" max="50" defaultValue="10" id="brushSize"></input>
+                        <input type="range" min="2" max="30" defaultValue="10" id="brushSize"></input>
                         <hr className="drawContainer separator"/>
                         <button
                             className="drawContainer button selected"

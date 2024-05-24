@@ -164,8 +164,8 @@ Noah Isaak
 
 Xindi Liu
 
-- Implemented History feature #6
-- Implemented logic to handle persistent user #11
+- Implemented History feature #155 # 156
+- Implemented logic to handle persistent user #152 #153
 
 ## 06.05 - 12.05
 
@@ -197,7 +197,7 @@ Noé Matumona
 
 Xindi Liu
 
-- Wrote integration tests for the newly added features such as History, persistent users
+- Wrote integration tests for the newly added features such as History, persistent users #158, #159
 - Minor change to the DTO to cover new features
 
 ## 13.05 - 19.05
@@ -214,8 +214,66 @@ Noé Matumona
 - implemented automatic exiting of game when logging out from lobby
 
 Noah Isaak
+
 - Finish #54, #55, #56 for Leaderboard
 - Finish #51, #53 for Voting
 - Minor UI changes
-- Refactorings
+- Refactoring
 - Fix for draw tool
+
+Xindi liu
+
+- Design and implement the database schema to support user accounts, temporary sessions, and play history. #157
+- Readjusted the tests #158
+
+## 20.05 - 24.05
+
+Victor Cruz da Silva
+
+- Updated tests to work with new sign up functionality, removed email from user. #11
+- Adapted joinRoom, added false as standard for persistent. #11, #3
+- Changed gameSettings standard values #68
+- Wrote and updated tests to test functionality of code. #143, #3
+- Fixed saveHistory test. #11
+- Adapted text prompt and drawing assignment to fix minor bug during gameplay. #4, #5
+- Fixed assignment issues.
+
+Xindi Liu
+
+- Writing integration tests for History service #158
+
+Noé Matumona
+
+- changes to PresentationDrawing and PresentationText #57
+- implemented image downloading for leaderboard #57
+- fixed automatic admin nomination #31
+- fixed leaderboard not showing after first click #55
+- manually appointing new admin preparation #29
+- fixed profile change during lobby #41
+- implemented drawing of avatars #39
+- added back-to-lobby functionality in PresentationContainer and Leaderboard
+- implementation History
+- Menu changes
+- hide next round button when too few players
+- fix profile and history ghosting
+- implemented automatic routing
+- fixed background gradient
+- fixed voting sound
+- added enter key functionality in various places
+- adjusted unavailableRoomView to handle full room
+- fix to correct exitGame in PresentationContainer and Game/Leaderboard
+- deletion of guest users after logout
+- login visibility fix
+- default persistence set to false
+- visual change DrawContainer (stable width)
+- waiting room fix (based on status now)
+
+Noah Isaak
+- Many bugfixes
+- Added tooltip for settings
+- Server textprompt/drawings assignment overhaul
+- Image downloading prototype #57
+- Initial History feature implementation #11
+- Minor change to drawing brushsize
+- Fix audio sources not uploaded on deployment
+- Fix for upvote button, upvoting own prompts was possible

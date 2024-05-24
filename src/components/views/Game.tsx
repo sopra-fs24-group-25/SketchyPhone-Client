@@ -18,6 +18,7 @@ import PresentationContainer from "components/ui/PresentationContainer";
 import { Spinner } from "components/ui/Spinner";
 import { useNavigate } from "react-router-dom";
 import Leaderboard from "components/ui/Leaderboard";
+import HistoryPopUp from "components/ui/HistoryPopUp";
 
 const Game = () => {
 
@@ -55,6 +56,10 @@ const Game = () => {
 
     const gameSettings = useRef(JSON.parse(sessionStorage.getItem("gameSettings")));
 
+    const [visibleHistoryButton, setVisibleHistoryButton] = useState<boolean>(false);
+    const [openHistoryPopUp, setOpenHistoryPopUp] = useState<boolean>(false);
+
+
     // Initialize to empty array
     const [presentationElements, setPresentationElements] = useState(null);
     const startIndex = useRef(0);
@@ -67,7 +72,7 @@ const Game = () => {
         try {
             const headers = { "Authorization": user.current.token, "X-User-ID": user.current.userId };
             await api.delete(`/games/${gameObject.gameId}/leave/${user.current.userId}`, { headers: headers });
-            const userToSave = {...user.current, role: null};
+            const userToSave = { ...user.current, role: null };
             sessionStorage.setItem("user", JSON.stringify(userToSave));
             sessionStorage.removeItem("numCycles");
             sessionStorage.removeItem("gameSpeed");
@@ -98,6 +103,7 @@ const Game = () => {
                 setTopThreeDrawings(null);
                 setTopThreeTextPrompts(null);
                 setPresentationIndex(-1);
+                setVisibleHistoryButton(true);
 
                 // set current task for client to update view
                 setCurrentTask(gameSession.current.gameLoopStatus);
@@ -112,9 +118,13 @@ const Game = () => {
                 fetchTopThreeTextPrompts(user.current, gameSession.current);
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.TEXTPROMPT && !isInitialPrompt) {
+                setVisibleHistoryButton(true);
+                setTimeout(() => 2 * TIMEOUT);
                 fetchDrawing();
             }
             else if (gameSession.current.gameLoopStatus === GameLoopStatus.DRAWING) {
+                setVisibleHistoryButton(true);
+                setTimeout(() => 2 * TIMEOUT);
                 fetchPrompt();
             }
         }
@@ -136,7 +146,7 @@ const Game = () => {
             if (gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION) {
                 fetchPresentationIndex(user.current, gameSession.current);
             }
-        }, TIMEOUT); // Set interval to wait
+        }, TIMEOUT); // Set interval to TIMEOUT
 
         return () => clearInterval(interval);
 
@@ -197,19 +207,49 @@ const Game = () => {
 
     // Send to server to start game ADMIN METHOD
     async function backToLobby(user: User, game: GameObject) {
+        setVisibleHistoryButton(true);
         try {
             console.log("back to lobby");
+            const resetGame = new GameObject({...gameObject, status: "OPEN"});
+            setGameObject(resetGame);
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameId}`;
             console.log(requestHeader)
             await api.put(url, null, { headers: requestHeader });
-            navigate("/gameRoom", {state: {isGameCreated: true, isGameCreator: true, gameRoom: gameObject}});
+            console.log(resetGame);
+            navigate("/gameRoom", { state: { isGameCreated: true, isGameCreator: true, gameRoom: resetGame } });
         }
         catch (error) {
             alert(
                 `Error while attempting to go back to lobby: \n${handleError(error)}`
             );
         }
+    }
+
+    async function saveHistory(user: User, game: GameSession, historyName) {
+        console.log("save history");
+        try {
+            const headers = { "Authorization": user.token, "X-User-ID": user.userId };
+            const requestBody = JSON.stringify({historyName: historyName});
+            const response = await api.post(`/users/${game.gameSessionId}/${user.userId}/history`, requestBody, { headers: headers })
+            console.log(response.status);
+            if (response.status === 201) {
+                setVisibleHistoryButton(false);
+            }
+        }
+        catch (error) {
+            alert(
+                `Error while saving history: \n${handleError(error)}`
+            );
+        }
+    }
+
+    function passHistoryName(name: string) {
+        saveHistory(user.current, gameSession.current, name);
+    }
+
+    function toggleHistoryPopUp() {
+        setOpenHistoryPopUp(!openHistoryPopUp);
     }
 
     async function fetchPresentationElements(user: User, game: GameSession) {
@@ -260,9 +300,9 @@ const Game = () => {
                 const isUserAdmin = fetchedGameUpdate.users.find(u => u.userId === user.userId)?.role === "admin" || false;
                 let userToSave;
                 if (isUserAdmin) {
-                    userToSave = {...user, role: "admin"};
+                    userToSave = { ...user, role: "admin" };
                 } else {
-                    userToSave = {...user, role: "player"};
+                    userToSave = { ...user, role: "player" };
                 }
                 sessionStorage.setItem("user", JSON.stringify(userToSave));
                 user = userToSave;
@@ -493,7 +533,7 @@ const Game = () => {
         }
 
         let elementsToShow = presentationElements ? presentationElements.slice(startIndex.current, endIndex + 1) : null; // End not included thats why + 1
-        
+
         return (
             <BaseContainer>
                 <div className="gameroom header">
@@ -510,12 +550,17 @@ const Game = () => {
                     onClickNextRound={() => startNewRound(user.current, gameObject)}
                     onClickBackToLobby={() => backToLobby(user.current, gameObject)}
                     onClickResults={() => { fetchTopThreeDrawings(user.current, gameSession.current); fetchTopThreeTextPrompts(user.current, gameSession.current) }}
+                    onSaveToHistory={() => toggleHistoryPopUp()}
                     onExitGame={() => exitGame()}
                     gameSession={gameSession.current}
                     user={user.current}
                     lowPlayerCount={gameObject.users.length < MIN_PLAYERS}
+                    allElementsShown={endIndex >= presentationElements.length}
+                    enableTextToSpeech={gameSettings.current.enableTextToSpeech}
+                    visibleHistoryButton={visibleHistoryButton}
                 ></PresentationContainer>
                 {Menu(openMenu, toggleMenu, user.persistent, true)}
+                {HistoryPopUp(openHistoryPopUp, toggleHistoryPopUp, passHistoryName)}
             </BaseContainer>)
     });
 
@@ -552,7 +597,7 @@ const Game = () => {
         if (user.current.role !== sameUser.role) {
             user.current = new User(JSON.parse(sessionStorage.getItem("user")));
         }
-        
+
         if (gameSession.current !== null && gameSession.current.gameLoopStatus === GameLoopStatus.PRESENTATION && presentationElements !== null) {
             return <PresentationView />;
         }
@@ -564,6 +609,8 @@ const Game = () => {
                 backToLobby(user.current, gameObject);
             }
             setPlayerCount(gameObject.users.length);
+
+            return;
         }
         if (!isReadyForTask.current) {
             return <WaitingView />;
@@ -578,7 +625,7 @@ const Game = () => {
         // Waiting room fallback
         return <WaitingView />;
 
-    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts, sameUser, gameSession.current.gameLoopStatus, user.current, gameObject.users.length]);
+    }, [isReadyForTask.current, presentationElements, presentationIndex, openMenu, topThreeDrawings, topThreeTextPrompts, sameUser, gameSession.current.gameLoopStatus, user.current, gameObject.users.length, visibleHistoryButton, openHistoryPopUp]);
 
     return renderComponent;
 };
