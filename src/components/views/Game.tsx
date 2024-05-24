@@ -214,9 +214,7 @@ const Game = () => {
             setGameObject(resetGame);
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameId}`;
-            console.log(requestHeader)
             await api.put(url, null, { headers: requestHeader });
-            console.log(resetGame);
             navigate("/gameRoom", { state: { isGameCreated: true, isGameCreator: true, gameRoom: resetGame } });
         }
         catch (error) {
@@ -232,7 +230,6 @@ const Game = () => {
             const headers = { "Authorization": user.token, "X-User-ID": user.userId };
             const requestBody = JSON.stringify({historyName: historyName});
             const response = await api.post(`/users/${game.gameSessionId}/${user.userId}/history`, requestBody, { headers: headers })
-            console.log(response.status);
             if (response.status === 201) {
                 setVisibleHistoryButton(false);
             }
@@ -257,7 +254,6 @@ const Game = () => {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${game.gameSessionId}/sequence`;
             const response = await api.get(url, { headers: requestHeader })
-            console.log(response.data);
 
             const fetchedPresentationElements = response.data.map(element => {
                 if (element.drawingId === undefined) {
@@ -339,7 +335,6 @@ const Game = () => {
                     receivedPreviousDrawingPrompt.current = receivedDrawingPrompt.current;
                     const newDrawingPrompt = new DrawingPrompt(response.data);
                     receivedDrawingPrompt.current = newDrawingPrompt;
-                    console.log(receivedDrawingPrompt.current);
                 }
 
                 return (
@@ -383,7 +378,6 @@ const Game = () => {
                     receivedPreviousTextPrompt.current = receivedTextPrompt.current;
                     const newTextPrompt = new TextPrompt(response.data);
                     receivedTextPrompt.current = newTextPrompt;
-                    console.log(receivedTextPrompt.current);
                 }
 
             }
@@ -413,9 +407,6 @@ const Game = () => {
                     fetchedTopDrawings = fetchedTopDrawings.slice(0, 4);
                 }
 
-                console.log(fetchedTopDrawings);
-
-
                 if (fetchedTopDrawings.length !== 0)
                     setTopThreeDrawings(fetchedTopDrawings);
             }
@@ -441,8 +432,6 @@ const Game = () => {
                 if (fetchedTopTextPrompts.length > 3) {
                     fetchedTopTextPrompts = fetchedTopTextPrompts.slice(0, 4);
                 }
-
-                console.log(fetchedTopTextPrompts);
 
                 if (fetchedTopTextPrompts.length !== 0)
                     setTopThreeTextPrompts(fetchedTopTextPrompts);

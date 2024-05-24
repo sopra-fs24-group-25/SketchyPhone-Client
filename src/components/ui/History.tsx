@@ -55,7 +55,6 @@ const History = (openHistory, toggleHistory) => {
     useEffect(() => {
         if (openHistory) {
             setUser(new User(JSON.parse(sessionStorage.getItem("user"))));
-            console.log("Fetching history");
             fetchHistory(user);
         }
 
@@ -67,7 +66,6 @@ const History = (openHistory, toggleHistory) => {
             const requestHeader = { "Authorization": user.token };
             const url = `/users/${user.userId}/history`;
             const response = await api.get(url, { headers: requestHeader })
-            console.log(response.data);
 
             const fetchedHistory = response.data.map(element => {
                 return new SessionHistory(element);
@@ -85,13 +83,10 @@ const History = (openHistory, toggleHistory) => {
 
     // function to fetch a sequence corresponding to history element
     async function fetchSequenceFromHistory(user: User, gameSessionId: number, name: string, id: number) {
-        console.log("fetching with", user, `gameSessionId ${gameSessionId}`)
         try {
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
             const url = `/games/${gameSessionId}/sequence`;
             const response = await api.get(url, { headers: requestHeader });
-            console.log(response.data);
-
 
             const fetchedHistorySequence = response.data.map(element => {
                 if (element.drawingId === undefined) {

@@ -58,7 +58,6 @@ export const AvatarDrawer = ({ height, width, user }) => {
     const onMouseDown = (e) => {
         // Check if in range
         if (curX > 0 && curX < width && curY > 0 && curY < height) {
-            console.log("mouse pressed");
 
             pressed = true;
             newAction = true;
@@ -112,7 +111,6 @@ export const AvatarDrawer = ({ height, width, user }) => {
 
         buttons.forEach((element) => {
             if (element.id === currentShape) {
-                console.log(element.id)
                 element.className = "drawContainer button selected"
             }
             else {
@@ -146,10 +144,7 @@ export const AvatarDrawer = ({ height, width, user }) => {
                     // then set avatar id of user to newly created avatar
                     user.avatarId = response.data.avatarId + 6;
 
-                    console.log(user.avatarId);
-
                     const userUpdateResponse = await api.put(`/users/${user.userId}`, user);
-                    console.log(userUpdateResponse.data)
 
                     if(userUpdateResponse.data){
                         sessionStorage.setItem("user", JSON.stringify(userUpdateResponse.data));
@@ -162,8 +157,6 @@ export const AvatarDrawer = ({ height, width, user }) => {
                 // We pass the received isGameCreator to /join
                 navigate("/join", { state: { isGameCreator: location.state.isGameCreator, view: "avatarView" }});
             }
-            console.log(response.data)
-
         }
         catch (error) {
             alert(
@@ -198,8 +191,7 @@ export const AvatarDrawer = ({ height, width, user }) => {
         }
 
         if (lastLineDrawn + lastEllipseDrawn + lastRectDrawn + lastEraserDrawn === -4) {
-            console.log("nothing to undo");
-
+            
             return
         }
 

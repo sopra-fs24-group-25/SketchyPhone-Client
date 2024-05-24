@@ -47,9 +47,6 @@ const AppRouter = () => {
                     <Route path="/" element={<Start/>} />
                 </Route>
 
-                <Route path="/sandboxView" element={<SandboxView />}>
-                </Route>
-
                 <Route path="/join" element={<GameRoomJoinGuard />}>
                     <Route path="/join" element={<GameJoin/>} />
                 </Route>

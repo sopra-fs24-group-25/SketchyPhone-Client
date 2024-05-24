@@ -61,7 +61,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
     const onMouseDown = (e) => {
         // Check if in range
         if (curX > 0 && curX < width && curY > 0 && curY < height) {
-            console.log("mouse pressed");
 
             pressed = true;
             newAction = true;
@@ -152,7 +151,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
             const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
 
             const url = `/games/${currentGameSessionId}/drawings/${user.userId}/${previousTextPromptId}`;
-            console.log(url);
             const response = await api.post(url, requestBody, { headers: requestHeader });
 
             if (response.status === 201) {
@@ -196,7 +194,6 @@ export const DrawContainer = ({ height, width, user, game, textPrompt, timerDura
         }
 
         if (lastLineDrawn + lastEllipseDrawn + lastRectDrawn + lastEraserDrawn === -4) {
-            console.log("nothing to undo");
 
             return
         }

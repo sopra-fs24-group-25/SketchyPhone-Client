@@ -95,7 +95,6 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying, showProfile = true)
             await removeFromGame(user, game, headers);
         }
         if (user.userId && !user.persistent) {
-            console.log("Guest user...");
             await deleteUser(user, headers);
         }
         
