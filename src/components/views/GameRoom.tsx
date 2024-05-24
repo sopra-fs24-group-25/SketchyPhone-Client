@@ -15,7 +15,8 @@ import User from "models/User";
 import GameSession from "models/GameSession";
 import Game from "../../models/Game";
 import GameSettings from "../../models/GameSettings";
-import GameSpeedEnum from "../../helpers/gameSpeedEnum";
+import GameSpeedEnum from "../../helpers/gameSpeedEnum"
+import Avatar from "../../models/Avatar";
 import { Tooltip } from "react-tooltip";
 
 
@@ -55,6 +56,8 @@ const GameRoom = () => {
 
     // Need to do it like this
     const [thisUser, setThisUser] = useState<User>(new User(JSON.parse(sessionStorage.getItem("user"))));
+
+    const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
 
     const [users, setUsers] = useState<Array<User>>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(location.state ? location.state.isGameCreator : false);
@@ -404,7 +407,8 @@ const GameRoom = () => {
                             onAdminMenu={handleAdminMenu}
                             isAdmin={isAdmin}
                             adminUserId={thisUser.userId}
-                            showUserNames={true}>
+                            showUserNames={true}
+                            avatars={avatars}>
                         </UserOverviewContainer>
                         <div className="gameroom buttons-container row-flex">
                             {users ? showUserControls() : null}

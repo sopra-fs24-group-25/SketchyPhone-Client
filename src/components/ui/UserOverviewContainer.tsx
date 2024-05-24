@@ -13,6 +13,7 @@ export const UserOverviewContainer = props => (
                     className={props.isAdmin && props.adminUserId !== item.userId ? "userpreview isAdmin" : ""}
                     id={item.avatarId}
                     onClick={() => props.onAdminMenu(item)}
+                    encodedImage={props.avatars.find(i => i.avatarId === item.avatarId)?.encodedImage}
                 >
                 </UserPreview>
                 <div style={{flexDirection: "column" }}>
@@ -44,5 +45,6 @@ UserOverviewContainer.propTypes = {
     onAdminMenu: PropTypes.func,
     isAdmin: PropTypes.bool,
     adminUserId: PropTypes.number,
-    showUserNames: PropTypes.bool
+    showUserNames: PropTypes.bool,
+    avatars: PropTypes.array,
 };
