@@ -57,7 +57,6 @@ const History = (openHistory, toggleHistory) => {
             setUser(new User(JSON.parse(sessionStorage.getItem("user"))));
             console.log("Fetching history");
             fetchHistory(user);
-            fetchedAvatars();
         }
 
     }, [openHistory])
@@ -112,32 +111,6 @@ const History = (openHistory, toggleHistory) => {
         catch (error) {
             console.log("Error while fetching history sequence: " + error);
         }
-    }
-
-    async function fetchedAvatars() {
-        let fetchedAvatars = new Array<Avatar>();
-        try {
-            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
-            const response = await api.get("/users/avatars", { headers: requestHeader });
-
-            fetchedAvatars = new Array<Avatar>(...response.data);
-            console.log(fetchedAvatars)
-            if (fetchedAvatars.length !== 0) {
-                fetchedAvatars.forEach(avatar => {
-                    avatar.avatarId += 6;
-                    avatar.encodedImage = `data:image/png;base64,${avatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`;
-                    avatar.selected = user.avatarId === avatar.avatarId ? "active" : "inactive"
-                });
-                console.log(fetchedAvatars);
-                sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
-                setAvatars(fetchedAvatars);
-            }
-
-        }
-        catch (error) {
-            console.log("Something went wrong while fetching all avatars: " + error);
-        }
-
     }
 
     function resetHistoryView(withToggleMenu: boolean) {
