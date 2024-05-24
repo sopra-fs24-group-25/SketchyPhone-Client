@@ -10,7 +10,7 @@ import Game from "../../models/Game";
 import Profile from "./Profile";
 import History from "./History";
 
-const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
+const Menu = (openMenu, toggleMenu, isPersistent, isPlaying, showProfile = true) => {
 
     const navigate = useNavigate();
 
@@ -111,13 +111,12 @@ const Menu = (openMenu, toggleMenu, isPersistent, isPlaying) => {
                     <BackButton className="menu-backbutton"
                         onClick={() => toggleMenu()}>
                     </BackButton>
-                    {!isPlaying ?
-                        <button //profile
-                            className="menu-button"
-                            onClick={() => handleOpenProfile()}
-                        >
-                            Profile
-                        </button>
+                    {!isPlaying && showProfile ? <button //profile
+                        className="menu-button"
+                        onClick={() => handleOpenProfile()}
+                    >
+                        Profile
+                    </button>
                         : null}
                     {isPersistent && !isPlaying ?
                         <button //history

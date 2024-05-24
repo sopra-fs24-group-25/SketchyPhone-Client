@@ -56,13 +56,32 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
     const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
 
     function toggleAvatar() {
-        let avatarCount = 6;
+        // Default avatars IDs
+        const defaultAvatarIds = [1, 2, 3, 4, 5, 6];
+    
+        // Initial variables
+        let avatarIds = [...defaultAvatarIds];
+        let avatarCount = defaultAvatarIds.length;
+    
         if (user.persistent) {
-            setAvatars(JSON.parse(sessionStorage.getItem("avatars")));
-            avatarCount += avatars ? avatars.length : 0;
+            // Retrieve avatars from session storage
+            const storedAvatars = avatars || [];
+    
+            // Filter avatars by user ID
+            const userCreatedAvatars = storedAvatars.filter(avatar => avatar.creatorId === user.userId);
+    
+            // Combine default and user-created avatars
+            avatarIds = avatarIds.concat(userCreatedAvatars.map(avatar => avatar.avatarId));
+            avatarCount = avatarIds.length;
         }
-        console.log(avatarCount)
-        setAvatarId(avatarId % avatarCount + 1);
+    
+        // Calculate next avatar index
+        const currentIndex = avatarIds.indexOf(avatarId);
+        const nextIndex = (currentIndex + 1) % avatarCount;
+    
+        // Set the next avatar ID
+        console.log(avatarIds, nextIndex);
+        setAvatarId(avatarIds[nextIndex]);
     }
 
     async function handleProfileChange() {
@@ -118,10 +137,6 @@ const Profile = (openProfile, toggleProfile, isInGameRoom) => {
 
     function checkButtonAvailability() {
         return user.persistent ? isEditing && (!nickname || !username) || password !== confirmPassword : isEditing && !nickname;
-    }
-
-    function checkFieldAvailability() {
-        return !isEditing ? {cursor: "default"} : {cursor: "text"};
     }
 
     return (

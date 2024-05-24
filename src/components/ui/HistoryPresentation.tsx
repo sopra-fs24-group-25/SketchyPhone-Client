@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { api } from "helpers/api";
 import { Button } from "components/ui/Button";
 import PresentationDrawing from "components/ui/PresentationDrawing";
@@ -15,8 +15,6 @@ import { BackButton } from "components/ui/BackButton";
 
 const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName, historyId, user, avatars) => {
 
-    
-    
     function presentTextPrompt(element) {
         return (
             <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">

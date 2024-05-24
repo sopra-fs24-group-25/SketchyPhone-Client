@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { api } from "helpers/api";
 import User from "models/User";
+import Avatar from "../../models/Avatar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "components/ui/Button";
 import { BackButton } from "components/ui/BackButton";
@@ -60,6 +61,32 @@ const Login = () => {
     const [isSignUp, setIsSignUp] = useState<boolean>(location.state?.isSignUp ?? true);
     const [toCreateAccount] = useState<boolean>(location.state?.toCreateAccount ?? false);
 
+    async function fetchedAvatars(user: User) {
+        let fetchedAvatars = new Array<Avatar>();
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const response = await api.get("/users/avatars", { headers: requestHeader });
+
+            fetchedAvatars = new Array<Avatar>(...response.data);
+            console.log(fetchedAvatars)
+            if (fetchedAvatars.length !== 0) {
+                fetchedAvatars.forEach(avatar => {
+                    avatar.avatarId += 6;
+                    avatar.encodedImage = `data:image/png;base64,${avatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`;
+                    avatar.selected = user.avatarId === avatar.avatarId ? "active" : "inactive"
+                });
+                console.log(fetchedAvatars);
+                sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
+            }
+
+            return fetchedAvatars;
+        }
+        catch (error) {
+            console.log("Something went wrong while fetching all avatars: " + error);
+        }
+
+    }
+
     const doLogin = async (isSignUp) => {
         try {
             const requestBody = JSON.stringify({ nickname: username, username, password, persistent: true });
@@ -75,6 +102,9 @@ const Login = () => {
 
             // Store the token into the local storage.
             sessionStorage.setItem("user", JSON.stringify(user));
+
+            // fetch avatars after login
+            await fetchedAvatars(user);
 
             // Login successfully worked --> navigate to the route /game in the GameRouter
             navigate("/gameRoom");

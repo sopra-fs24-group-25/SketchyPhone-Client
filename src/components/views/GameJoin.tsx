@@ -295,7 +295,7 @@ const GameJoin = () => {
                         <img src={require("../../icons/ChubbyGuy.png")} alt="Chubby Guy" draggable="false" />
                     </div>
                 </div>
-                {Menu(openMenu, toggleMenu, user.persistent, false)}
+                {Menu(openMenu, toggleMenu, user.persistent, false, false)}
             </BaseContainer>
         );
     }
