@@ -4,6 +4,7 @@ import UserPreview from "./UserPreview";
 import BaseContainer from "components/ui/BaseContainer";
 import "../../styles/ui/Leaderboard.scss";
 import { Button } from "./Button";
+import Avatar from "../../models/Avatar";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
 
@@ -32,6 +33,8 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
 
 
     const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
+
+    const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
 
     const separator = () => (
         <hr className="leaderboard separator"
@@ -82,6 +85,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
                         id={element.creator.avatarId}
+                        encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                     ></UserPreview>
                     <span>{element.creator.nickname}</span>
                     <span style={{ color: "gold" }}>{idx + 1 === 1 ? "THE BEST PROMPT WRITER EVER!!!!!" : ""}</span>
@@ -110,6 +114,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
                         id={element.creator.avatarId}
+                        encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                     ></UserPreview>
                     <span>{element.creator.nickname}</span>
                     <span style={{ color: "gold" }}>{idx + 1 === 1 ? "THE BEST ARTIST EVER!!!!!" : ""}</span>
@@ -140,23 +145,22 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
         }
 
         if (leaderboardType === LeaderboardType.TEXTPROMPT) {
-            // play sound if first time showing leaderboard
-            if (!leaderboardSoundPlayed) {
-                console.log("playing")
-                leaderboardReveal.handlePlay();
-                leaderboardSoundPlayed = true;
-            }
-            else {
-                textReveal.handlePlay();
-            }
-
-
+            
             let textPromptLeaderboardContent;
 
             if (topThreeTextPrompts === null) {
                 textPromptLeaderboardContent = <p className="leaderboard no-votes">No votes have been cast for text prompts!</p>
             }
             else {
+                // play sound if first time showing leaderboard
+                if (!leaderboardSoundPlayed) {
+                    console.log("playing")
+                    leaderboardReveal.handlePlay();
+                    leaderboardSoundPlayed = true;
+                }
+                else {
+                    textReveal.handlePlay();
+                }
                 textPromptLeaderboardContent = topThreeTextPrompts.map((element, idx) => {
                     return leaderboardTextPromptElement(element, idx);
                 })
@@ -171,8 +175,6 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             )
         }
         else if (leaderboardType === LeaderboardType.DRAWING) {
-            // play sound
-            drawingReveal.handlePlay();
 
             let drawingLeaderboardContent;
 
@@ -180,6 +182,8 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
                 drawingLeaderboardContent = <p className="leaderboard no-votes">No votes have been cast for drawings!</p>
             }
             else {
+                // play sound
+                drawingReveal.handlePlay();
                 drawingLeaderboardContent =
                     topThreeDrawings.map((element, idx) => {
                         return leaderboardDrawingElement(element, idx);

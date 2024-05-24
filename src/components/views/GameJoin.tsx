@@ -233,7 +233,7 @@ const GameJoin = () => {
 
         if (user.persistent) {
             // filter to only contain avatars a user created
-            const allAvatars = [...fetchedAvatars.filter((avatar) => (avatar.creatorId === user.userId)), ...defaultAvatars];
+            const allAvatars = [...fetchedAvatars.filter((avatar) => (avatar.creatorId === user.userId)).reverse(), ...defaultAvatars];
             setAvatarSelection(allAvatars);
         } else {
             setAvatarSelection(defaultAvatars);

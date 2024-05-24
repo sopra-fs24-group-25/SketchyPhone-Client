@@ -6,6 +6,7 @@ import "../../styles/ui/BackButton.scss";
 import "../../styles/ui/History.scss";
 import { BackButton } from "components/ui/BackButton";
 import User from "models/User";
+import Avatar from "../../models/Avatar";
 import { Button } from "./Button";
 import SessionHistory from "../../models/SessionHistory";
 import TextPrompt from "../../models/TextPrompt";
@@ -43,6 +44,8 @@ const History = (openHistory, toggleHistory) => {
 
     const [user, setUser] = useState(new User(JSON.parse(sessionStorage.getItem("user"))));
 
+    const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
+
     const [openHistorySession, setOpenHistorySession] = useState<boolean>(false);
     const [historyElements, setHistoryElements] = useState<[History]>(null);
     const [currentHistorySequence, setCurrentHistorySequence] = useState(null);
@@ -54,6 +57,7 @@ const History = (openHistory, toggleHistory) => {
             setUser(new User(JSON.parse(sessionStorage.getItem("user"))));
             console.log("Fetching history");
             fetchHistory(user);
+            fetchedAvatars();
         }
 
     }, [openHistory])
@@ -110,6 +114,32 @@ const History = (openHistory, toggleHistory) => {
         }
     }
 
+    async function fetchedAvatars() {
+        let fetchedAvatars = new Array<Avatar>();
+        try {
+            const requestHeader = { "Authorization": user.token, "X-User-ID": user.userId };
+            const response = await api.get("/users/avatars", { headers: requestHeader });
+
+            fetchedAvatars = new Array<Avatar>(...response.data);
+            console.log(fetchedAvatars)
+            if (fetchedAvatars.length !== 0) {
+                fetchedAvatars.forEach(avatar => {
+                    avatar.avatarId += 6;
+                    avatar.encodedImage = `data:image/png;base64,${avatar.encodedImage.replaceAll("\"", "").replaceAll("=", "")}`;
+                    avatar.selected = user.avatarId === avatar.avatarId ? "active" : "inactive"
+                });
+                console.log(fetchedAvatars);
+                sessionStorage.setItem("avatars", JSON.stringify(fetchedAvatars));
+                setAvatars(fetchedAvatars);
+            }
+
+        }
+        catch (error) {
+            console.log("Something went wrong while fetching all avatars: " + error);
+        }
+
+    }
+
     function resetHistoryView(withToggleMenu: boolean) {
         toggleHistory(withToggleMenu);
     }
@@ -162,7 +192,7 @@ const History = (openHistory, toggleHistory) => {
                 </div>
             </button>
             <button className={`history screen-layer ${openHistorySession ? "open" : "closed"}`}>
-                {currentHistorySequence && HistoryPresentation(currentHistorySequence, toggleHistorySession, openHistorySession, setOpenHistorySession, historyName, historyId, user)}
+                {currentHistorySequence && HistoryPresentation(currentHistorySequence, toggleHistorySession, openHistorySession, setOpenHistorySession, historyName, historyId, user, avatars)}
             </button>
         </div>
     );

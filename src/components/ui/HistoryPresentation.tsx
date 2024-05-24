@@ -4,7 +4,6 @@ import { Button } from "components/ui/Button";
 import PresentationDrawing from "components/ui/PresentationDrawing";
 import PresentationText from "components/ui/PresentationText";
 import "styles/ui/HistoryPresentation.scss";
-import User from "models/User";
 import TextPrompt from "models/TextPrompt";
 import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
@@ -14,13 +13,16 @@ import "../../styles/ui/HistoryPopUp.scss";
 import { BackButton } from "components/ui/BackButton";
 
 
-const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName, historyId, user) => {
+const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName, historyId, user, avatars) => {
 
+    
+    
     function presentTextPrompt(element) {
         return (
             <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
                 <UserPreview
                     id={element.creator.avatarId}
+                    encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                 ></UserPreview>
                 <PresentationText
                     textPrompt={element}
@@ -41,6 +43,7 @@ const HistoryPresentation = (presentationContents, toggleHistorySession, openHis
                 ></PresentationDrawing>
                 <UserPreview
                     id={element.creator.avatarId}
+                    encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                 ></UserPreview>
             </div>
         )
@@ -59,7 +62,7 @@ const HistoryPresentation = (presentationContents, toggleHistorySession, openHis
             const url = `/games/history/${historyId}/delete`;
             const response = await api.delete(url, { headers: requestHeader });
             console.log(response.data);
-            closeHistorySession(false);
+            closeHistorySession(true);
         } catch (error) {
             console.log("Error while deleting history session: " + error);
         }

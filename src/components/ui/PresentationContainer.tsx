@@ -10,6 +10,7 @@ import DrawingPrompt from "models/DrawingPrompt";
 import UserPreview from "./UserPreview";
 import AudioContextEnum from "../../helpers/audioContextEnum";
 import AudioPlayer from "../../helpers/AudioPlayer";
+import Avatar from "../../models/Avatar";
 import { api } from "helpers/api";
 
 
@@ -19,6 +20,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
     const previousLastElementRef = useRef();
 
     const [newVote, setNewVote] = useState<number>(0);
+    const [avatars, setAvatars] = useState<Array<Avatar>>(JSON.parse(sessionStorage.getItem("avatars")));
 
     // create audioplayer to use
     const revealAudio = new AudioPlayer(AudioContextEnum.PRESENTATION_REVEAL_DRAWING);
@@ -186,6 +188,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
             <div key={`${element.textPromptId}` + `${element.round}`} className="presentation subContainer">
                 <UserPreview
                     id={element.creator.avatarId}
+                    encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                 ></UserPreview>
                 <PresentationText
                     textPrompt={element}
@@ -206,6 +209,7 @@ const PresentationContainer = ({ presentationContents, isAdmin, onClickIncrement
                 ></PresentationDrawing>
                 <UserPreview
                     id={element.creator.avatarId}
+                    encodedImage={avatars.find(avatar => avatar.avatarId === element.creator.avatarId)?.encodedImage}
                 ></UserPreview>
             </div>
         )
