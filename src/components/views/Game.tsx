@@ -25,7 +25,7 @@ const Game = () => {
 
     const MIN_PLAYERS = 3;
 
-    const TIMEOUT = 1000;
+    const TIMEOUT = 500;
 
     const [openMenu, setOpenMenu] = useState<boolean>(false);
     const [currentTask, setCurrentTask] = useState<string>(GameLoopStatus.TEXTPROMPT);
