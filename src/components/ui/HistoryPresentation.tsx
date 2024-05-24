@@ -52,7 +52,7 @@ const HistoryPresentation = (presentationContents, toggleHistorySession, openHis
     }
 
     return (      
-        <button className={`history-presentation screen-layer ${openHistorySession ? "open" : "closed"}`}>
+        <button className={`screen-layer ${openHistorySession ? "open" : "closed"}`}>
             <div className="history-presentation container">
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                     <BackButton className="menu-backbutton"
