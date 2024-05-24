@@ -99,7 +99,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        background-color: $display-box-color;
+        background-color: white;
         border-radius: 2em;
         border-bottom-left-radius: 3em;
         border-bottom-right-radius: 3em;
@@ -121,7 +121,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        background-color: $menu-color;
+        background-color: $history;
         border-radius: 2em;
         margin: 20px;
         margin-bottom: 30px;
