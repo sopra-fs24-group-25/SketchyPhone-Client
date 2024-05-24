@@ -130,10 +130,11 @@ Finally, an admin can then decide to either immediately start a new game, return
 3. Create a Pull Request with a detailed description.
 
 ## Roadmap
+New developers who want to contribute could add the following features to our project:
 - Implement microphone feature for all users in the game
 - Allow users to spend their accumulated votes to manipulate other user's microphone output with humorous effects.
 - Provide users with a account recovery service, in case they lost their account credentials.
-
+- Implement Websockets for better traffic control and bidirectional communication
 
 ## Contributing / Authors
 - Noah Isaak Git: [guilloboi1917](https://github.com/guilloboi1917)
