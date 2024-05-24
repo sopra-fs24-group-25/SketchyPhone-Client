@@ -21,13 +21,6 @@ best text prompt writer and artist are revealed based on the votes.
 
   - [React.js](https://react.dev/)
 
-- Backend ([Server](https://github.com/sopra-fs24-group-25/SketchyPhone-Server))
-  - [Springboot](https://docs.spring.io/spring-boot/documentation.html)
-
-  - [H2 Database](https://www.h2database.com/html/quickstart.html)
-
-  - [Gradle](https://gradle.org/)
-
 - Github (Version Control)
 
 - SonarCloud (Code Analysis)
@@ -132,13 +125,13 @@ Finally, an admin can then decide to either immediately start a new game, return
  ## How to Contribute
 1. Clone the repositories to your local machine and create a new branch.
 
-2. Make your respective changes and ensuring there are no build errors and all tests pass.
+2. Make your respective changes and ensuring there are no build errors.
 
 3. Create a Pull Request with a detailed description.
 
 ## Roadmap
 - Implement microphone feature for all users in the game
-- All users to spend their accumulated votes to manipulate other user's microphone output with humorous effects.
+- Allow users to spend their accumulated votes to manipulate other user's microphone output with humorous effects.
 - Provide users with a account recovery service, in case they lost their account credentials.
 
 
@@ -149,8 +142,6 @@ Finally, an admin can then decide to either immediately start a new game, return
 - Victor Git: [vichcruz](https://github.com/vichcruz)
 
 ## Acknowledgements
-- [Template Server](https://github.com/HASEL-UZH/sopra-fs24-template-server)
-
 - [Template Client](https://github.com/HASEL-UZH/sopra-fs24-template-client)
 
 ## License
