@@ -57,7 +57,6 @@
     width: 300px;
     padding-left: 15px;
     padding-right: 15px;
-    margin-left: -4px;
     border: solid;
     border-color: $accentDark;
     border-radius: 2em;
@@ -145,11 +144,9 @@
     width: 300px;
     gap: 10px;
     margin: auto;
-    //padding: 20px;
   }
   &.button {
     font-size: larger;
-    color: white;
     max-height: 80px;
     width: 200px;
     @include center;

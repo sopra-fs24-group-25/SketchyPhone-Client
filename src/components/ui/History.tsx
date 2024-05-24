@@ -50,6 +50,7 @@ const History = (openHistory, toggleHistory) => {
 
     useEffect(() => {
         if (openHistory) {
+            setUser(new User(JSON.parse(sessionStorage.getItem("user"))));
             console.log("Fetching history");
             fetchHistory(user);
         }

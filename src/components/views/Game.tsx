@@ -56,7 +56,7 @@ const Game = () => {
 
     const gameSettings = useRef(JSON.parse(sessionStorage.getItem("gameSettings")));
 
-    const [visibleHistoryButton, setVisibleHistoryButton] = useState<boolean>(true);
+    const [visibleHistoryButton, setVisibleHistoryButton] = useState<boolean>(false);
     const [openHistoryPopUp, setOpenHistoryPopUp] = useState<boolean>(false);
 
 

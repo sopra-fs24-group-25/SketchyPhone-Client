@@ -12,7 +12,7 @@ import "../../styles/ui/HistoryPopUp.scss";
 import { BackButton } from "components/ui/BackButton";
 
 
-const HistoryPresentation = (presentationContents, goBack, openHistory, toggleHistory, historyName) => {
+const HistoryPresentation = (presentationContents, toggleHistorySession, openHistorySession, toggleOpenHistorySession, historyName) => {
 
     function presentTextPrompt(element) {
         return (
@@ -44,24 +44,26 @@ const HistoryPresentation = (presentationContents, goBack, openHistory, toggleHi
         )
     }
 
-    function closeHistory(x) {
-        toggleHistory(!openHistory);
-        goBack(x);
+    function closeHistorySession(withToggleHistory) {
+        toggleOpenHistorySession(!openHistorySession);
+        if (withToggleHistory) {
+            toggleHistorySession(withToggleHistory);
+        }
     }
 
     return (      
-        <button className={`presentation screen-layer ${openHistory ? "open" : "closed"}`}>
-            <div className="presentation container">
+        <button className={`history-presentation screen-layer ${openHistorySession ? "open" : "closed"}`}>
+            <div className="history-presentation container">
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                     <BackButton className="menu-backbutton"
-                        onClick={() => closeHistory(true)}>
+                        onClick={() => closeHistorySession(true)}>
                     </BackButton>
                     <BackButton className="menu-backbutton close"
-                        onClick={() => closeHistory(false)}>
+                        onClick={() => closeHistorySession(false)}>
                     </BackButton>
                 </div>
-                <div className="presentation title">{historyName}</div>
-                <div className="presentation scroll-container">
+                <div className="history-presentation title">{historyName}</div>
+                <div className="history-presentation scroll-container">
                     {presentationContents.map((element) => {
                         if (element instanceof TextPrompt) {
                             return presentTextPrompt(element);
@@ -69,8 +71,8 @@ const HistoryPresentation = (presentationContents, goBack, openHistory, toggleHi
                             return presentDrawing(element);
                         }
                     })}
-                    <div className="presentation separator">
-                        <hr className="presentation separator leftalign"
+                    <div className="history-presentation separator">
+                        <hr className="history-presentation separator leftalign"
                             style={{
                                 background: "black",
                                 color: "black",
@@ -80,9 +82,9 @@ const HistoryPresentation = (presentationContents, goBack, openHistory, toggleHi
                             }}
                         />
                     </div>
-                    <div className="presentation buttonsContainer">
+                    <div className="history-presentation buttonsContainer">
                         <Button 
-                            className="presentation buttonsContainer presentationButton"
+                            className="history-presentation buttonsContainer presentationButton"
                             width="20%"
                             onClick={() => console.log("possibly delete")}
                         >
