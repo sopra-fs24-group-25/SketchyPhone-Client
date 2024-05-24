@@ -28,6 +28,10 @@ export default class AudioPlayer {
         }
     }
 
+    setVolume(newVolume) {
+        this.audio.volume = newVolume;
+    }
+
     handlePause() {
         try {
             this.audio.pause();
