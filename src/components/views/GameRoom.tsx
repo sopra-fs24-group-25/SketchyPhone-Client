@@ -48,7 +48,7 @@ const GameRoom = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const TIMEOUT = 1000;
+    const TIMEOUT = 500;
 
     // Naming inconsistency for gameRoom
     const [game, setGame] = useState<Game>(location.state ? location.state.gameRoom : null);
