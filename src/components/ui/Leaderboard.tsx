@@ -80,7 +80,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
 
     function leaderboardTextPromptElement(element, idx) {
         return (
-            <div key={`${element.textPromptId}` + `_${element.creator.userId}` + `_${element.content}`} className="leaderboard elementcontainer">
+            <div key={`${element.textPromptId}` + `_${element.creator.userId}` + `_${idx}`} className="leaderboard elementcontainer">
                 <div className="leaderboard user">
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
@@ -109,7 +109,7 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
         }
 
         return (
-            <div key={`${element.drawingId}` + `_${element.creator.userId}`} className="leaderboard elementcontainer">
+            <div key={`${element.drawingId}` + `_${element.creator.userId}` + `_${idx}`} className="leaderboard elementcontainer">
                 <div className="leaderboard user">
                     <span style={{ fontSize: "x-large" }}>{IndexToRank[idx + 1][0]}<sup>{IndexToRank[idx + 1].slice(1, 4)}</sup></span>
                     <UserPreview
