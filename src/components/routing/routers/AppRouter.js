@@ -12,7 +12,6 @@ import { StartGuard } from "../routeProtectors/StartGuard";
 import Start from "../../views/Start";
 import { DrawAvatarGuard } from "../routeProtectors/DrawAvatarGuard";
 import DrawAvatar from "../../views/DrawAvatar";
-import SandboxView from "../../views/SandboxView"
 import User from "models/User";
 
 
