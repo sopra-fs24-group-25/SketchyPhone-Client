@@ -11,17 +11,25 @@
     margin-right: auto;
     padding-right: 10px;
     padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
     min-width: 40vw;
-    height: fit-content;
+    width: fit-content;
+    height: 73%;
     background-color: $menu-color;
     position: fixed;
     border-top-right-radius: 2em;
     border-bottom-right-radius: 2em;
-    top: 20vh;
-    bottom: 20vh;
+    margin-top: -20%;
     left: 0;
     transition: transform 0.3s cubic-bezier(0, 0.52, 0, 1);
     box-shadow: $dropShadow;
+    transition: width 0.3s ease; // Smooth transition for width change
+
+    @media (max-height: 800px) {
+      width: 45%;      
+    }
+
   }
   &.screen-layer {
     border: none;
@@ -51,13 +59,22 @@
   &.field {
     user-select: none;
     @include center;
+    flex-wrap: wrap;
     flex-direction: column;
+    flex-grow: 3;
     padding: 10px;
     gap: 20px;
+
+    transition: height 0.3s ease; // Smooth transition for width change
+
+    @media (max-height: 1200px) {
+      height: 40%;     
+    }
   }
   &.input {
     user-select: none;
-    height: 50px;
+    height: 70%;
+    min-height: 50%;
     max-width: 55vw;
     min-width: 150px;
     padding-left: 15px;
