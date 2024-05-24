@@ -4,6 +4,8 @@ import UserPreview from "./UserPreview";
 import BaseContainer from "components/ui/BaseContainer";
 import "../../styles/ui/Leaderboard.scss";
 import { Button } from "./Button";
+import AudioContextEnum from "../../helpers/audioContextEnum";
+import AudioPlayer from "../../helpers/AudioPlayer";
 
 const LeaderboardType = {
     TEXTPROMPT: "TEXTPROMPT",
@@ -16,7 +18,18 @@ const IndexToRank = {
     3: "3rd",
 }
 
+// dont want this to change on reloads
+let leaderboardSoundPlayed = false;
+
+
 const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, onClickBackToLobby, onExitGame, user, lowPlayerCount }) => {
+
+    const leaderboardReveal = new AudioPlayer(AudioContextEnum.LEADERBOARD);
+
+    const drawingReveal = new AudioPlayer(AudioContextEnum.LEADERBOARD_DRAWING);
+    const textReveal = new AudioPlayer(AudioContextEnum.LEADERBOARD_TEXT);
+    textReveal.setVolume(0.15);
+
 
     const [leaderboardType, setLeaderboardType] = useState<string>(LeaderboardType.TEXTPROMPT);
 
@@ -33,13 +46,13 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
     )
 
     const leaderboardButtons = (showSwitchButton = true) => {
-        
+
         return (
             <div className="leaderboard buttonsContainer">
                 {showSwitchButton &&
                     <Button width="20%"
                         onClick={() => setLeaderboardType(leaderboardType === LeaderboardType.DRAWING ? LeaderboardType.TEXTPROMPT : LeaderboardType.DRAWING)}>
-                        {`Show ${leaderboardType === LeaderboardType.DRAWING ? "PROMPTS": "DRAWINGS"}`}
+                        {`Show ${leaderboardType === LeaderboardType.DRAWING ? "PROMPTS" : "DRAWINGS"}`}
                     </Button>
                 }
                 {/* Only for admin */}
@@ -127,6 +140,17 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
         }
 
         if (leaderboardType === LeaderboardType.TEXTPROMPT) {
+            // play sound if first time showing leaderboard
+            if (!leaderboardSoundPlayed) {
+                console.log("playing")
+                leaderboardReveal.handlePlay();
+                leaderboardSoundPlayed = true;
+            }
+            else {
+                textReveal.handlePlay();
+            }
+
+
             let textPromptLeaderboardContent;
 
             if (topThreeTextPrompts === null) {
@@ -147,6 +171,9 @@ const Leaderboard = ({ topThreeDrawings, topThreeTextPrompts, onClickNextRound, 
             )
         }
         else if (leaderboardType === LeaderboardType.DRAWING) {
+            // play sound
+            drawingReveal.handlePlay();
+
             let drawingLeaderboardContent;
 
             if (topThreeDrawings === null) {
